@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--color-accent-300); overflow-wrap: anywhere; }
+  .btn, .tag { white-space: nowrap; }
+  .screen { display:flex; flex-direction:column; gap:var(--space-4); padding:var(--space-8); border-radius:var(--radius-lg); background:var(--color-surface); box-shadow:var(--shadow-md); }
+</style>
+</helmet>
+
+<div style="max-width:1180px; margin:0 auto; padding:calc(var(--space-8) * 2) var(--space-8) calc(var(--space-8) * 4); display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+
+  <header style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--space-6); flex-wrap:wrap">
+      <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:34px; width:auto; border-radius:var(--radius-md)">
+      <h6 class="text-muted" style="margin:0">Lot 3 · Authentification</h6>
+    </div>
+    <h1 style="margin:0; max-width:24ch">Auth — 8 écrans</h1>
+    <p class="text-muted" style="margin:0; max-width:64ch">Une seule surface centrée, la même pour les trois produits : le Website porte Register et Login, la Console porte les états de session, l'Admin partage les mêmes écrans avec MFA obligatoire. Aucun message d'erreur ne révèle si un compte existe.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+      <span class="tag tag-accent">Register</span><span class="tag tag-neutral">Login</span><span class="tag tag-neutral">Email verification</span><span class="tag tag-neutral">Forgot password</span><span class="tag tag-neutral">Reset password</span><span class="tag tag-neutral">MFA</span><span class="tag tag-neutral">Session expired</span><span class="tag tag-neutral">Invitation</span>
+    </div>
+  </header>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:var(--space-8)">
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">01 · Register</h6>
+      <div class="screen">
+        <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:26px; width:auto; border-radius:var(--radius-sm); align-self:flex-start">
+        <h4 style="margin:0">Créer votre compte</h4>
+        <p class="text-muted" style="margin:0; font-size:13px">Sandbox gratuit, aucune carte requise.</p>
+        <div class="field"><label>Nom complet</label><input class="input" type="text" placeholder="Awa Koffi"></div>
+        <div class="field"><label>Email professionnel</label><input class="input" type="email" placeholder="awa@entreprise.com"></div>
+        <div class="field"><label>Mot de passe</label><input class="input" type="password" placeholder="12 caractères minimum"></div>
+        <div class="field"><label>Pays</label><select class="input"><option>{{ countryToken }}</option></select></div>
+        <label class="radio" style="align-items:flex-start"><input type="checkbox"><span class="dot"></span><span class="text-muted" style="font-size:12px">J'accepte les CGU et la politique de confidentialité</span></label>
+        <button type="button" class="btn btn-primary btn-block">Créer mon compte</button>
+        <p class="text-muted" style="margin:0; font-size:12px">Déjà un compte ? <a href="#">Se connecter</a></p>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Liste des pays servie par le catalogue. Force du mot de passe et longueur minimale : règles de sécurité configurées en Admin.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">02 · Login</h6>
+      <div class="screen">
+        <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:26px; width:auto; border-radius:var(--radius-sm); align-self:flex-start">
+        <h4 style="margin:0">Se connecter</h4>
+        <div class="field"><label>Email</label><input class="input" type="email" placeholder="awa@entreprise.com"></div>
+        <div class="field"><label>Mot de passe</label><input class="input" type="password" placeholder="••••••••••"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)">
+          <label class="radio"><input type="checkbox"><span class="dot"></span><span style="font-size:13px">Rester connecté</span></label>
+          <a href="#" style="font-size:13px">Mot de passe oublié ?</a>
+        </div>
+        <button type="button" class="btn btn-primary btn-block">Se connecter</button>
+        <div class="card elev-sm" style="background:var(--color-neutral-900); gap:var(--space-1)">
+          <div class="card-kicker">État · erreur</div>
+          <p class="card-body" style="margin:0">Identifiants invalides. Après <span class="tok">{{ lockoutToken }}</span> tentatives, le compte est temporairement verrouillé.</p>
+        </div>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Message identique que l'email existe ou non. Seuil de verrouillage et durée : configurés en Admin (Settings → Sécurité).</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">03 · Email verification</h6>
+      <div class="screen">
+        <span class="tag tag-outline" style="align-self:flex-start">En attente</span>
+        <h4 style="margin:0">Vérifiez votre email</h4>
+        <p class="text-muted" style="margin:0; font-size:13px">Nous avons envoyé un lien à <strong style="color:var(--color-text)">awa@entreprise.com</strong>. Il expire dans <span class="tok">{{ linkTtlToken }}</span>.</p>
+        <button type="button" class="btn btn-secondary btn-block">Renvoyer le lien</button>
+        <button type="button" class="btn btn-ghost" style="align-self:flex-start">Modifier l'adresse</button>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <p class="text-muted" style="margin:0; font-size:12px">Tant que l'email n'est pas vérifié : accès sandbox uniquement, recharge et envoi live bloqués.</p>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">États : en attente · lien expiré · déjà vérifié · renvoi limité à N par heure.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">04 · Forgot password</h6>
+      <div class="screen">
+        <h4 style="margin:0">Réinitialiser votre mot de passe</h4>
+        <p class="text-muted" style="margin:0; font-size:13px">Saisissez votre email : si un compte existe, vous recevrez un lien de réinitialisation.</p>
+        <div class="field"><label>Email</label><input class="input" type="email" placeholder="awa@entreprise.com"></div>
+        <button type="button" class="btn btn-primary btn-block">Envoyer le lien</button>
+        <a href="#" style="font-size:13px">Retour à la connexion</a>
+        <div class="card elev-sm" style="background:var(--color-neutral-900); gap:var(--space-1)">
+          <div class="card-kicker">État · succès</div>
+          <p class="card-body" style="margin:0">Si un compte est associé à cette adresse, un lien vient d'être envoyé.</p>
+        </div>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Réponse volontairement neutre — pas d'énumération de comptes.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">05 · Reset password</h6>
+      <div class="screen">
+        <h4 style="margin:0">Nouveau mot de passe</h4>
+        <div class="field"><label>Nouveau mot de passe</label><input class="input" type="password" placeholder="••••••••••"></div>
+        <div class="field"><label>Confirmation</label><input class="input" type="password" placeholder="••••••••••"></div>
+        <div style="display:flex; gap:var(--space-1)">
+          <div style="height:3px; flex:1; border-radius:2px; background:var(--color-accent)"></div>
+          <div style="height:3px; flex:1; border-radius:2px; background:var(--color-accent)"></div>
+          <div style="height:3px; flex:1; border-radius:2px; background:var(--color-accent)"></div>
+          <div style="height:3px; flex:1; border-radius:2px; background:var(--color-neutral-800)"></div>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12px">Règles appliquées : <span class="tok">{{ passwordPolicyToken }}</span></p>
+        <button type="button" class="btn btn-primary btn-block">Enregistrer et se connecter</button>
+        <p class="text-muted" style="margin:0; font-size:12px">Toutes les autres sessions seront déconnectées.</p>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">États : lien valide · lien expiré · lien déjà utilisé · mots de passe différents.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">06 · MFA</h6>
+      <div class="screen">
+        <h4 style="margin:0">Vérification en deux étapes</h4>
+        <p class="text-muted" style="margin:0; font-size:13px">Saisissez le code de votre application d'authentification.</p>
+        <div class="field"><label>Code à 6 chiffres</label><input class="input" type="text" placeholder="000000" style="font-family:ui-monospace, Menlo, monospace; letter-spacing:.5em; text-align:center; font-size:18px"></div>
+        <button type="button" class="btn btn-primary btn-block">Vérifier</button>
+        <div class="seg" style="align-self:stretch">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="mfa" checked><span>App</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="mfa"><span>SMS</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="mfa"><span>Secours</span></label>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12px">MFA obligatoire pour les rôles Owner, Billing Manager et tous les rôles Admin internes.</p>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Méthodes disponibles selon la politique de sécurité de l'organisation. Codes de secours téléchargeables une seule fois.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">07 · Session expired</h6>
+      <div class="screen">
+        <span class="tag tag-outline" style="align-self:flex-start">Session terminée</span>
+        <h4 style="margin:0">Votre session a expiré</h4>
+        <p class="text-muted" style="margin:0; font-size:13px">Pour votre sécurité, vous avez été déconnecté après <span class="tok">{{ sessionTtlToken }}</span> d'inactivité. Votre travail en cours a été conservé en brouillon.</p>
+        <div class="field"><label>Mot de passe</label><input class="input" type="password" placeholder="••••••••••"></div>
+        <button type="button" class="btn btn-primary btn-block">Reprendre où j'en étais</button>
+        <a href="#" style="font-size:13px">Se connecter avec un autre compte</a>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Cas critique : expiration pendant la composition d'une campagne — le brouillon et l'audience sont restaurés, l'estimation de prix est refaite.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <h6 style="margin:0; color:var(--color-accent)">08 · Invitation</h6>
+      <div class="screen">
+        <span class="tag tag-accent" style="align-self:flex-start">Invitation</span>
+        <h4 style="margin:0">Rejoindre <span class="tok">{{ orgNameToken }}</span></h4>
+        <p class="text-muted" style="margin:0; font-size:13px">Vous avez été invité comme <span class="tok">{{ roleToken }}</span> par <span class="tok">{{ inviterToken }}</span>. L'invitation expire le <span class="tok">{{ inviteExpiryToken }}</span>.</p>
+        <div class="field"><label>Nom complet</label><input class="input" type="text" placeholder="Awa Koffi"></div>
+        <div class="field"><label>Mot de passe</label><input class="input" type="password" placeholder="12 caractères minimum"></div>
+        <button type="button" class="btn btn-primary btn-block">Accepter et rejoindre</button>
+        <button type="button" class="btn btn-secondary btn-block">Refuser l'invitation</button>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Si l'email est déjà un compte NotifyAfrica : écran réduit à « Rejoindre l'organisation », sans création de mot de passe.</p>
+    </div>
+  </section>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Email non vérifié = sandbox seul. MFA imposé par rôle et par politique d'organisation. Verrouillage après N échecs, N et durée configurables. Réinitialisation invalide toutes les sessions. Une invitation est liée à un rôle et à une portée (organisation ou projet), et expire. Aucun message ne confirme l'existence d'un compte.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">loading (bouton en cours), erreur de champ, erreur globale, succès, lien expiré, lien déjà utilisé, compte verrouillé, invitation expirée ou révoquée, MFA requis, MFA invalide, permission denied après changement de rôle, service d'email indisponible (renvoi impossible).</p></div>
+    <div class="card elev-sm"><div class="card-kicker">K · Responsive</div><p class="card-body">Surface centrée, largeur max ~400 px, plein écran sous 480 px avec padding réduit. Champs à 44 px minimum sur mobile — c'est le cas d'usage qui justifie la densité « comfortable » demandée au LOT 0.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">SSO Google / Microsoft dès la V1 ? Login par numéro de téléphone + OTP, pertinent sur le marché africain ? Durée de session Console vs Admin. MFA obligatoire pour tous, ou seulement les rôles sensibles ?</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 3 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 4 — Onboarding</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const tok = s => '{{' + s + '}}';
+    return {
+      countryToken: tok('catalog.countries[n].name'),
+      lockoutToken: tok('security.max_login_attempts'),
+      linkTtlToken: tok('security.email_link_ttl'),
+      passwordPolicyToken: tok('security.password_policy'),
+      sessionTtlToken: tok('security.session_idle_ttl'),
+      orgNameToken: tok('invitation.organization'),
+      roleToken: tok('invitation.role'),
+      inviterToken: tok('invitation.inviter'),
+      inviteExpiryToken: tok('invitation.expires_at')
+    };
+  }
+}
+</script>
+</body>
+</html>

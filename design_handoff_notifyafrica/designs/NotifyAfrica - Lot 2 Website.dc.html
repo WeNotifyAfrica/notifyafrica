@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="assets/nocturne/styles.css">
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--color-accent-300); overflow-wrap: anywhere; }
+  .btn, .tag { white-space: nowrap; }
+</style>
+</helmet>
+
+<div style="min-height:100%; display:flex; flex-direction:column">
+
+  <div class="nav" style="max-width:1180px; width:100%; margin:0 auto; padding:var(--space-6) var(--space-8); gap:var(--space-6); flex-wrap:wrap">
+    <a href="#" class="nav-brand" style="display:flex; align-items:center; margin-right:auto"><img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:38px; width:auto; border-radius:var(--radius-md)"></a>
+    <a href="#">Produits</a>
+    <a href="#">Solutions</a>
+    <a href="#" onClick="{{ goPricing }}">Tarifs</a>
+    <a href="#">Développeurs</a>
+    <a href="#">Docs</a>
+    <div style="display:flex; gap:var(--space-2); align-items:center">
+      <a href="#" class="btn btn-secondary">Se connecter</a>
+      <a href="#" class="btn btn-primary">Créer un compte</a>
+    </div>
+  </div>
+
+  <div style="max-width:1180px; width:100%; margin:0 auto; padding:0 var(--space-8) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:calc(var(--space-8) * 2)">
+
+    <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap">
+      <span class="text-muted" style="font-size:11px; letter-spacing:.08em; text-transform:uppercase">Lot 2 · maquette</span>
+      <button type="button" class="btn" onClick="{{ goHome }}" style="{{ homeStyle }}">Home</button>
+      <button type="button" class="btn" onClick="{{ goPricing }}" style="{{ pricingStyle }}">Pricing</button>
+      <span class="tag tag-outline" style="margin-left:auto">Valeurs = placeholders API, aucune donnée en dur</span>
+    </div>
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 2)">
+
+      <section style="display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:calc(var(--space-8) * 1.5); align-items:center">
+        <div style="display:flex; flex-direction:column; gap:var(--space-6); align-items:flex-start">
+          <span class="tag tag-accent">Communication Platform as a Service</span>
+          <h1 style="font-size:clamp(34px,4.6vw,54px); max-width:18ch; margin:0">Parlez à toute l'Afrique depuis une seule API.</h1>
+          <p class="text-muted" style="max-width:48ch; font-size:16px; margin:0">SMS, OTP, WhatsApp Business et Email — routage multi-opérateurs, tarification transparente, paiement à l'usage en prépayé. Une intégration, tous les canaux.</p>
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap">
+            <a href="#" class="btn btn-primary">Créer un compte</a>
+            <a href="#" class="btn btn-secondary">Parler à un expert</a>
+          </div>
+          <div style="display:flex; gap:var(--space-6); flex-wrap:wrap; margin-top:var(--space-4)">
+            <div><div class="tok" style="font-size:22px">{{ statCountries }}</div><div class="text-muted" style="font-size:12px">pays couverts</div></div>
+            <div><div class="tok" style="font-size:22px">{{ statOperators }}</div><div class="text-muted" style="font-size:12px">opérateurs connectés</div></div>
+            <div><div class="tok" style="font-size:22px">{{ statDelivery }}</div><div class="text-muted" style="font-size:12px">taux de délivrabilité</div></div>
+          </div>
+        </div>
+        <div style="border-radius:var(--radius-lg); box-shadow:var(--shadow-md); overflow:hidden">
+          <div style="display:flex; align-items:center; gap:var(--space-2); padding:var(--space-3) var(--space-4); background:var(--color-surface)">
+            <span class="tag tag-neutral">POST</span><span class="tok" style="font-size:12px">/v1/messages</span>
+            <div style="margin-left:auto; display:flex; gap:var(--space-1)"><span class="tag tag-outline">cURL</span></div>
+          </div>
+          <pre style="margin:0; padding:var(--space-6); background:var(--color-surface); font-size:12.5px; line-height:1.85; color:var(--color-neutral-300); overflow:auto">curl https://api.notifyafrica.com/v1/messages \
+  -H "Authorization: Bearer $NA_API_KEY" \
+  -d channel=sms \
+  -d to=+228XXXXXXXX \
+  -d sender_id=MYBRAND \
+  -d body="Votre code est 4821"
+
+<span style="color:var(--color-accent-300)">201 Created</span>
+{
+  "id": "msg_01HZ…",
+  "status": "queued",
+  "route": { "operator": "…", "provider": "…" },
+  "price": { "unit": "…", "total": "…", "currency": "…" }
+}</pre>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <div><h6 style="color:var(--color-accent)">Produits</h6><h2 style="margin:0">Quatre canaux, un seul compte</h2></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:var(--space-4)">
+          <sc-for list="{{ products }}" as="p" hint-placeholder-count="4">
+            <div class="card elev-sm" style="gap:var(--space-3)">
+              <div class="card-kicker">{{ p.kicker }}</div>
+              <div class="card-title">{{ p.name }}</div>
+              <p class="card-body">{{ p.desc }}</p>
+              <div class="card-meta"><span class="tok">{{ p.priceToken }}</span></div>
+              <a href="#" class="btn btn-ghost" style="align-self:flex-start">En savoir plus →</a>
+            </div>
+          </sc-for>
+        </div>
+        <p class="text-muted" style="font-size:12px; margin:0">La liste des produits, leur disponibilité et leur libellé tarifaire proviennent du catalogue Admin : un nouveau canal apparaît ici sans déploiement.</p>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-6); align-items:start">
+        <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+          <h6 style="color:var(--color-accent)">Développeurs</h6>
+          <h2 style="margin:0">Conçu pour être intégré en une après-midi</h2>
+          <p class="text-muted" style="margin:0">Clés API par environnement, sandbox gratuit, webhooks signés, logs de livraison en temps réel, SDK Node, PHP, Python et Java. Idempotence sur chaque envoi.</p>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+            <span class="tag tag-neutral">Sandbox</span><span class="tag tag-neutral">Webhooks</span><span class="tag tag-neutral">Idempotence</span><span class="tag tag-neutral">SDK</span><span class="tag tag-neutral">OpenAPI</span>
+          </div>
+          <a href="#" class="btn btn-primary" style="align-self:flex-start">Lire la documentation</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+          <h6 style="color:var(--color-accent)">Comment ça marche</h6>
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex; gap:var(--space-4); align-items:baseline">
+              <span class="tok" style="min-width:28px">{{ s.n }}</span>
+              <div><div style="font-size:15px">{{ s.title }}</div><div class="text-muted" style="font-size:13px">{{ s.desc }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <div><h6 style="color:var(--color-accent)">Cas d'usage</h6><h2 style="margin:0">Ce que nos clients envoient</h2></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:var(--space-4)">
+          <sc-for list="{{ useCases }}" as="u" hint-placeholder-count="6">
+            <div class="card"><div class="card-title" style="font-size:15px">{{ u.title }}</div><p class="card-body">{{ u.desc }}</p></div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-6); flex-wrap:wrap">
+          <div><h6 style="color:var(--color-accent)">Tarifs</h6><h2 style="margin:0">Payez à l'usage, sans abonnement</h2></div>
+          <a href="#" class="btn btn-secondary" onClick="{{ goPricing }}">Voir tous les tarifs</a>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:var(--space-4)">
+          <sc-for list="{{ products }}" as="p" hint-placeholder-count="4">
+            <div class="card elev-sm">
+              <div class="card-kicker">{{ p.name }}</div>
+              <div class="card-title" style="font-size:20px"><span class="tok">{{ p.priceToken }}</span></div>
+              <p class="card-body">à partir de · <span class="tok">{{ p.currencyToken }}</span> · <span class="tok">{{ p.unitToken }}</span></p>
+              <div class="card-meta">{{ p.tierNote }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <p class="text-muted" style="font-size:12px; margin:0">Les prix affichés, la devise, le pays de référence et la mention « sur devis » sont servis par <span class="tok">GET /public/pricing</span>. Aucune valeur n'est écrite dans la page.</p>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+        <div class="card elev-sm"><div class="card-kicker">Sécurité</div><div class="card-title">Vos données restent les vôtres</div><p class="card-body">Chiffrement en transit et au repos, clés API révocables par environnement, journal d'audit complet, contrôle d'accès par rôle et par projet, conformité aux exigences locales de conservation.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Fiabilité</div><div class="card-title">Routage avec repli automatique</div><p class="card-body">Plusieurs routes par opérateur, bascule sur repli en cas de dégradation, supervision de la latence et du taux de livraison, page de statut publique et historique des incidents.</p><div class="card-meta"><span class="tok">{{ statUptime }}</span> sur 30 jours</div></div>
+        <div class="card elev-sm"><div class="card-kicker">Couverture</div><div class="card-title">Multi-pays, multi-devises</div><p class="card-body">Opérateurs et providers déclarés en back-office, disponibilité par pays, facturation dans la devise du client. Les listes affichées ici suivent le catalogue.</p><div class="card-meta"><span class="tok">{{ statCurrencies }}</span></div></div>
+      </section>
+
+      <section class="card elev-lg" style="align-items:flex-start; gap:var(--space-4); padding:calc(var(--space-8) * 1.5)">
+        <h2 style="margin:0; max-width:24ch">Vos 100 premiers messages de test sont offerts en sandbox.</h2>
+        <p class="text-muted" style="margin:0; max-width:52ch">Créez un compte, générez une clé API, envoyez. La recharge n'intervient qu'au premier envoi réel.</p>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap"><a href="#" class="btn btn-primary">Créer un compte</a><a href="#" class="btn btn-secondary">Demander un devis</a></div>
+      </section>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isPricing }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6); align-items:flex-start">
+        <h6 style="color:var(--color-accent)">Tarifs</h6>
+        <h1 style="margin:0; max-width:22ch">Un prix par message, dégressif par volume</h1>
+        <p class="text-muted" style="max-width:60ch; margin:0">Prépayé, sans engagement. Le tarif applicable dépend du produit, du pays de destination, de l'opérateur et du volume — il est calculé par le Pricing Engine, jamais par cette page.</p>
+        <div style="display:flex; gap:var(--space-6); flex-wrap:wrap; align-items:flex-end">
+          <div class="field" style="min-width:180px"><label>Pays de destination</label>
+            <select class="input"><sc-for list="{{ countries }}" as="c" hint-placeholder-count="4"><option>{{ c }}</option></sc-for></select>
+          </div>
+          <div class="field" style="min-width:150px"><label>Devise d'affichage</label>
+            <select class="input"><sc-for list="{{ currencies }}" as="cur" hint-placeholder-count="8"><option>{{ cur }}</option></sc-for></select>
+          </div>
+          <span class="tag tag-outline">Listes servies par <span class="tok" style="margin-left:4px">GET /public/catalog</span></span>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <sc-for list="{{ productTabs }}" as="t" hint-placeholder-count="5">
+            <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+          <div class="card elev-md" style="gap:var(--space-4)">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap">
+              <div><div class="card-kicker">Paliers de volume</div><div class="card-title" style="font-size:20px">{{ activeName }}</div></div>
+              <span class="tag tag-neutral">{{ tierCountLabel }}</span>
+            </div>
+            <div style="overflow:auto">
+              <table class="table" style="min-width:520px">
+                <thead><tr><th>Palier</th><th>Volume</th><th>Prix unitaire</th><th>Mention</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="5">
+                    <tr>
+                      <td class="text-muted">{{ t.index }}</td>
+                      <td><span class="tok">{{ t.range }}</span></td>
+                      <td><span class="tok">{{ t.price }}</span></td>
+                      <td>{{ t.badge }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-muted" style="font-size:12px; margin:0">Le nombre de paliers, leurs bornes, le prix, la devise, le libellé public et la visibilité de chaque ligne sont configurés dans l'Admin. Un palier ajouté demain s'affiche ici sans modification de code.</p>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+            <div class="card elev-sm">
+              <div class="card-kicker">Simulateur</div>
+              <div class="card-title" style="font-size:16px">Estimez votre volume</div>
+              <div class="field"><label>Nombre de messages</label><input class="input" type="text" value="" placeholder="ex. 50 000"></div>
+              <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-2)">
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier appliqué</span><span class="tok" style="font-size:13px">{{ estTier }}</span></div>
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="tok" style="font-size:13px">{{ estUnit }}</span></div>
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise</span><span class="tok" style="font-size:13px">{{ estDiscount }}</span></div>
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe</span><span class="tok" style="font-size:13px">{{ estTax }}</span></div>
+                <hr class="hr" style="margin:var(--space-2) 0">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Total estimé</span><span class="tok" style="font-size:18px">{{ estTotal }}</span></div>
+              </div>
+              <a href="#" class="btn btn-primary btn-block">Créer un compte pour envoyer</a>
+              <p class="text-muted" style="font-size:11px; margin:0">Résultat de <span class="tok">POST /pricing/estimate</span> · valable <span class="tok">{{ estValid }}</span></p>
+            </div>
+
+            <div class="card elev-sm" style="border-left:2px solid var(--color-accent)">
+              <div class="card-kicker">État · quote required</div>
+              <p class="card-body">Au-delà du dernier palier public, le moteur renvoie <span class="tok">requires_quote</span> : la page remplace le prix par une tarification personnalisée.</p>
+              <a href="#" class="btn btn-secondary" style="align-self:flex-start">Demander un devis</a>
+            </div>
+
+            <div class="card elev-sm">
+              <div class="card-kicker">État · pricing unavailable</div>
+              <p class="card-body">Si le Pricing Engine ne répond pas, aucune valeur de repli n'est affichée : la page indique l'indisponibilité et propose le contact commercial.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <h4 style="margin:0">Moyens de paiement acceptés</h4>
+        <p class="text-muted" style="margin:0; max-width:60ch">Les méthodes disponibles, leurs frais, leurs devises et leurs plafonds dépendent du pays et sont déclarés en back-office.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:var(--space-3)">
+          <sc-for list="{{ paymentSlots }}" as="m" hint-placeholder-count="4">
+            <div class="card"><div class="card-title" style="font-size:14px"><span class="tok">{{ m.name }}</span></div><p class="card-body">{{ m.meta }}</p></div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section class="card elev-lg" style="gap:var(--space-4); padding:calc(var(--space-8) * 1.5); align-items:flex-start">
+        <div class="card-kicker">Enterprise</div>
+        <h2 style="margin:0; max-width:26ch">Gros volumes, intégration dédiée, tarif négocié</h2>
+        <p class="text-muted" style="margin:0; max-width:56ch">Au-delà des paliers publics : contrat sur mesure, routes dédiées, SLA contractuel, support prioritaire. Le devis accepté devient automatiquement votre grille tarifaire dans la Console.</p>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap"><a href="#" class="btn btn-primary">Demander un devis</a><a href="#" class="btn btn-secondary">Parler à un commercial</a></div>
+      </section>
+
+      <p class="text-muted" style="font-size:11px; margin:0; max-width:70ch">Mentions tarifaires : <span class="tok">{{ legalNote }}</span> — texte administrable depuis l'Admin (module Content), comme les libellés de CTA et le badge « populaire ».</p>
+    </div>
+    </sc-if>
+  </div>
+
+  <hr class="hr">
+  <footer style="max-width:1180px; width:100%; margin:0 auto; padding:var(--space-6) var(--space-8) calc(var(--space-8) * 2); display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-6)">
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:32px; width:auto; border-radius:var(--radius-md)">
+      <span class="text-muted" style="font-size:12px">Communication Platform as a Service</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Produits</span><a href="#">SMS</a><a href="#">OTP</a><a href="#">WhatsApp</a><a href="#">Email</a><a href="#">API</a></div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Développeurs</span><a href="#">Documentation</a><a href="#">Quickstart</a><a href="#">SDK</a><a href="#">Statut</a></div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Entreprise</span><a href="#">À propos</a><a href="#">Contact</a><a href="#">Devis</a><a href="#">Sécurité</a></div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Légal</span><a href="#">CGU</a><a href="#">Confidentialité</a><a href="#">Mentions tarifaires</a></div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;pricing&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;'home'|'pricing'&quot;,&quot;section&quot;:&quot;Affichage&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { page: props.defaultPage || 'home', product: 'sms' };
+  }
+
+  get catalog() {
+    return [
+      { code:'sms', name:'SMS', kicker:'Messagerie', desc:"Envoi unitaire ou en masse, sender ID personnalisé, routage multi-opérateurs avec repli." },
+      { code:'otp', name:'OTP', kicker:'Authentification', desc:"Génération, envoi et vérification de codes à usage unique, durée de vie et format configurables." },
+      { code:'whatsapp', name:'WhatsApp Business', kicker:'Conversationnel', desc:"Templates approuvés, conversations entrantes, catégories Marketing, Utility et Authentication." },
+      { code:'email', name:'Email', kicker:'Transactionnel', desc:"Domaines authentifiés, identités d'expédition, suppressions et suivi de délivrabilité." },
+      { code:'enterprise', name:'Enterprise', kicker:'Sur mesure', desc:"Volumes contractuels, routes dédiées, SLA et tarif négocié." }
+    ];
+  }
+
+  tabStyle(on) {
+    return {
+      whiteSpace: 'nowrap',
+      color: on ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: on ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: on ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    };
+  }
+
+  renderVals() {
+    const p = this.state.product;
+    const tok = s => '{{' + s + '}}';
+    const active = this.catalog.find(x => x.code === p) || this.catalog[0];
+
+    const tiers = [0,1,2,3,4].map(i => ({
+      index: 'Palier ' + (i + 1),
+      range: tok('pricing.' + p + '.tiers[' + i + '].range'),
+      price: tok('pricing.' + p + '.tiers[' + i + '].unit_price'),
+      badge: tok('pricing.' + p + '.tiers[' + i + '].public_label')
+    }));
+
+    return {
+      statCountries: tok('stats.countries'),
+      statOperators: tok('stats.operators'),
+      statDelivery: tok('stats.delivery_rate'),
+      statUptime: tok('status.uptime_30d'),
+      statCurrencies: tok('catalog.currencies'),
+      estTier: tok('estimate.tier.label'),
+      estUnit: tok('estimate.unit_price'),
+      estDiscount: tok('estimate.discount'),
+      estTax: tok('estimate.tax'),
+      estTotal: tok('estimate.total'),
+      estValid: tok('estimate.valid_until'),
+      legalNote: tok('content.pricing_legal_note'),
+      isHome: this.state.page === 'home',
+      isPricing: this.state.page === 'pricing',
+      goHome: () => this.setState({ page: 'home' }),
+      goPricing: () => this.setState({ page: 'pricing' }),
+      homeStyle: this.tabStyle(this.state.page === 'home'),
+      pricingStyle: this.tabStyle(this.state.page === 'pricing'),
+
+      products: this.catalog.slice(0, 4).map(x => ({
+        name: x.name, kicker: x.kicker, desc: x.desc,
+        priceToken: tok('pricing.' + x.code + '.from'),
+        currencyToken: tok('pricing.' + x.code + '.currency'),
+        unitToken: tok('pricing.' + x.code + '.unit'),
+        tierNote: tok('pricing.' + x.code + '.tier_note')
+      })),
+
+      steps: [
+        { n:'01', title:'Créez votre organisation', desc:"Un compte, une organisation, autant de projets que d'environnements." },
+        { n:'02', title:'Générez une clé API', desc:'Clés distinctes sandbox et live, révocables à tout moment.' },
+        { n:'03', title:'Envoyez en sandbox', desc:"Gratuit, avec les mêmes réponses et webhooks qu'en production." },
+        { n:'04', title:'Rechargez et passez en live', desc:'Le coût est estimé avant envoi et débité de votre solde.' }
+      ],
+
+      useCases: [
+        { title:'Codes de connexion', desc:'OTP pour banques, fintechs et applications grand public.' },
+        { title:'Alertes transactionnelles', desc:'Confirmations de paiement, relevés, rappels d\u2019échéance.' },
+        { title:'Campagnes marketing', desc:'Audiences segmentées, planification, rapport de campagne.' },
+        { title:'Notifications logistiques', desc:'Statuts de livraison et confirmations de rendez-vous.' },
+        { title:'Service public', desc:'Convocations, rappels de vaccination, alertes institutionnelles.' },
+        { title:'Support conversationnel', desc:'WhatsApp entrant relié à vos outils internes.' }
+      ],
+
+      countries: [tok('catalog.countries[0].name'), tok('catalog.countries[1].name'), tok('catalog.countries[2].name'), tok('catalog.countries[n].name')],
+      currencies: ['XOF','XAF','GHS','NGN','KES','USD','EUR','ZAR'].map(c => tok('catalog.currency.' + c)),
+
+      productTabs: this.catalog.map(x => ({
+        label: x.name,
+        style: this.tabStyle(x.code === p),
+        onClick: () => this.setState({ product: x.code })
+      })),
+      activeName: active.name,
+      tierCountLabel: tok('pricing.' + p + '.tiers.length') + ' paliers configurés',
+      tiers,
+
+      paymentSlots: [0,1,2,3].map(i => ({
+        name: tok('payment_methods[' + i + '].label'),
+        meta: 'frais, devises, plafonds et délai de créditation configurés en back-office'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="assets/nocturne/styles.css">
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+</style>
+</helmet>
+
+<div style="max-width:1120px; margin:0 auto; padding:calc(var(--space-8) * 2) var(--space-8) calc(var(--space-8) * 4); display:flex; flex-direction:column; gap:var(--space-8)">
+
+  <header style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--space-6); flex-wrap:wrap">
+      <img src="assets/notifyafrica-logo-white.png" alt="notifyAfrica" style="height:30px; width:auto">
+      <h6 class="text-muted" style="margin:0">Cadrage · v2 · Nocturne</h6>
+    </div>
+    <h1 style="max-width:22ch">Écosystème digital NotifyAfrica</h1>
+    <p style="max-width:64ch; font-size:16px; margin:0" class="text-muted">Audit du Design System Nocturne, architecture produit des trois plateformes et architecture fonctionnelle du Pricing Engine. Document à valider avant les maquettes détaillées — le LOT 2 (Website) est livré à part.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+      <span class="tag tag-accent">CPaaS</span>
+      <span class="tag tag-neutral">Prepaid wallet</span>
+      <span class="tag tag-neutral">Config-driven</span>
+      <span class="tag tag-outline">Zéro valeur en dur</span>
+    </div>
+  </header>
+
+  <nav style="position:sticky; top:0; z-index:20; display:flex; gap:var(--space-2); flex-wrap:wrap; padding:var(--space-3) 0; background:var(--color-bg)">
+    <button type="button" class="btn" onClick="{{ goL0 }}" style="{{ tab0Style }}">LOT 0 · Audit DS</button>
+    <button type="button" class="btn" onClick="{{ goL1 }}" style="{{ tab1Style }}">LOT 1 · Architecture</button>
+    <button type="button" class="btn" onClick="{{ goL1B }}" style="{{ tab2Style }}">LOT 1B · Pricing Engine</button>
+  </nav>
+
+  <sc-if value="{{ isL0 }}">
+  <section style="display:flex; flex-direction:column; gap:var(--space-8)">
+    <div>
+      <h6 style="color:var(--color-accent)">Lot 0</h6>
+      <h2 style="margin:0">Audit du Design System Nocturne</h2>
+      <p class="text-muted" style="max-width:66ch; margin-top:var(--space-3)">Système dark, compact (densité 0,70×), mono-accent blurple #9184d9, Inter/Inter, radius 8, actions en contour. Verdict : <strong>socle sain, couverture partielle</strong> — suffisant pour le Website, insuffisant en l'état pour la Console et l'Admin.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><div class="card-kicker">A · Objectif</div><p class="card-body">Faire parler trois produits très différents — marketing, self-service, back-office dense — avec un seul langage, et lister ce qu'il faut créer avant de dessiner 200 écrans.</p></div>
+      <div class="card elev-sm"><div class="card-kicker">B · Users du DS</div><p class="card-body">Designers NotifyAfrica, développeurs front des 3 fronts, marketing, futurs intégrateurs partenaires.</p></div>
+      <div class="card elev-sm"><div class="card-kicker">Compatibilité marque</div><p class="card-body">L'accent Nocturne (hue 289) et le violet du logotype sont de la même famille : le logo blanc sur fond sombre fonctionne sans retouche. Le violet de marque reste réservé au logo.</p></div>
+    </div>
+
+    <div>
+      <h4>Couvert par Nocturne — à réutiliser tel quel</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-3); margin-top:var(--space-4)">
+        <div class="card"><div class="card-title" style="font-size:14px">Actions</div><p class="card-body"><code>.btn</code> primary / secondary / ghost / icon / block. Contour, jamais aplat.</p></div>
+        <div class="card"><div class="card-title" style="font-size:14px">Formulaires</div><p class="card-body"><code>.field</code>, <code>.input</code>, <code>.radio</code>, <code>.seg</code> — éléments natifs, états thémés.</p></div>
+        <div class="card"><div class="card-title" style="font-size:14px">Surfaces</div><p class="card-body"><code>.card</code> + kicker/title/body/meta, <code>.elev-sm/md/lg</code>.</p></div>
+        <div class="card"><div class="card-title" style="font-size:14px">Données</div><p class="card-body"><code>.table</code> — en-tête discret, filets en dégradé, hover de ligne.</p></div>
+        <div class="card"><div class="card-title" style="font-size:14px">Statuts</div><p class="card-body"><code>.tag</code> accent / neutral / outline — base des badges de statut.</p></div>
+        <div class="card"><div class="card-title" style="font-size:14px">Overlay &amp; nav</div><p class="card-body"><code>.dialog</code> + backdrop, <code>.nav</code> + <code>.nav-brand</code>, <code>.lighten</code> pour les photos.</p></div>
+      </div>
+    </div>
+
+    <div>
+      <h4>Problèmes de cohérence identifiés</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-3); margin-top:var(--space-4)">
+        <div class="card elev-sm"><div class="card-kicker">Palette</div><p class="card-body">Mono-accent : <strong>aucune couleur sémantique</strong> success / warning / danger / info. Un CPaaS en a besoin en permanence (delivered, failed, insufficient funds, incident). À ajouter en OKLCH sur la même échelle de luminance que les ramps, chroma basse.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Palette</div><p class="card-body"><code>--color-accent-2-*</code> est un doublon machine de l'accent. Le réaffecter à un rôle utile (données secondaires en graphique) ou l'interdire explicitement.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Contraste</div><p class="card-body">L'accent est tuné à 3:1 : interdit pour du texte courant. Toute mention tarifaire en accent doit passer par <code>--color-accent-300</code>. À inscrire dans le lint d'adhérence.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Densité</div><p class="card-body">L'échelle 0,70× donne des cibles &lt; 44 px. Il faut une variante <em>comfortable</em> pour le mobile du Website et de la Console, l'Admin gardant la variante compacte.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Filets fondus</div><p class="card-body">Le fondu de 48 px des filets casse dans une colonne étroite (&lt; 200 px) : le filet disparaît. Prévoir une règle de repli pour les panneaux latéraux et les cards.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Bouton primaire</div><p class="card-body">Primaire en contour = hiérarchie faible dans un écran d'envoi payant. Décision à prendre : un <code>.btn-commit</code> (aplat accent) réservé aux confirmations financières, en exception documentée.</p></div>
+      </div>
+    </div>
+
+    <div>
+      <h4>M · Composants manquants — à créer pour le CPaaS</h4>
+      <div style="overflow:auto; margin-top:var(--space-4)">
+        <table class="table" style="min-width:700px">
+          <thead><tr><th>Composant</th><th>Rôle</th><th>Priorité</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PricingBreakdown</strong></td><td class="text-muted">Volume → prix unitaire → remise → taxe → total → solde après. Rendu piloté par la réponse API, nombre de lignes inconnu.</td><td><span class="tag tag-accent">Lot 2 &amp; 7</span></td></tr>
+            <tr><td><strong>VolumeTierTable</strong></td><td class="text-muted">N paliers, palier courant surligné, palier « sur devis », libellé public configurable.</td><td><span class="tag tag-accent">Lot 2</span></td></tr>
+            <tr><td><strong>WalletBalanceCard</strong></td><td class="text-muted">Current / Available / Reserved / Pending, multi-devises (8 devises au catalogue).</td><td><span class="tag tag-accent">Lot 6</span></td></tr>
+            <tr><td><strong>StateBlock</strong></td><td class="text-muted">Les 13 états exigés, dont insufficient funds, provider unavailable, quote required, expired price.</td><td><span class="tag tag-accent">Transverse</span></td></tr>
+            <tr><td><strong>DataTable serveur</strong></td><td class="text-muted">Extension de <code>.table</code> : tri/filtre/pagination API, colonnes configurables, sélection, export.</td><td><span class="tag tag-accent">Transverse</span></td></tr>
+            <tr><td><strong>CountryOperatorPicker</strong></td><td class="text-muted">Pays + opérateur + catégorie, listes chargées du catalogue — jamais figées.</td><td><span class="tag tag-neutral">Lot 7 / 10</span></td></tr>
+            <tr><td><strong>PaymentMethodPicker</strong></td><td class="text-muted">Mobile money, carte, virement, agrégateur — méthodes déclarées en back-office, avec frais et devises propres.</td><td><span class="tag tag-neutral">Lot 15</span></td></tr>
+            <tr><td><strong>RuleBuilder</strong></td><td class="text-muted">Conditions, priorités, dates d'effet du Pricing &amp; Discount Engine.</td><td><span class="tag tag-neutral">Lot 25 / 26</span></td></tr>
+            <tr><td><strong>ProviderForm &amp; HealthIndicator</strong></td><td class="text-muted">Déclarer un provider/opérateur sans développement ; santé, latence, delivery rate, SLA.</td><td><span class="tag tag-neutral">Lot 23 / 24</span></td></tr>
+            <tr><td><strong>VersionDiffViewer</strong></td><td class="text-muted">Audit : ancien prix → nouveau prix, auteur, motif, horodatage.</td><td><span class="tag tag-neutral">Lot 31</span></td></tr>
+            <tr><td><strong>BulkImportDropzone</strong></td><td class="text-muted">Import CSV destinataires et tarifs Meta : mapping colonnes, rapport d'erreurs ligne à ligne.</td><td><span class="tag tag-neutral">Lot 27</span></td></tr>
+            <tr><td><strong>CodeSnippetTabs</strong></td><td class="text-muted">cURL / Node / PHP / Python, copier-coller — Website Developers et Console.</td><td><span class="tag tag-accent">Lot 2</span></td></tr>
+            <tr><td><strong>ContextSwitcher</strong></td><td class="text-muted">Organisation → Projet → Environnement (live / sandbox).</td><td><span class="tag tag-accent">Lot 5</span></td></tr>
+            <tr><td><strong>Charts</strong></td><td class="text-muted">Line, bar empilée par canal, funnel de délivrabilité, avec loading et empty. Absents du DS.</td><td><span class="tag tag-neutral">Lot 13</span></td></tr>
+            <tr><td><strong>Wizard</strong></td><td class="text-muted">Onboarding et campagnes : étapes, brouillon, validation serveur, résumé d'erreurs.</td><td><span class="tag tag-neutral">Lot 4 / 8</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)">
+      <div class="card-kicker">N · Décisions DS à valider</div>
+      <p class="card-body">1 · Ajouter 4 couleurs sémantiques aux tokens (recommandé) — sinon les statuts d'envoi seront illisibles. 2 · Un seul DS avec deux densités (recommandé) plutôt que deux thèmes. 3 · Autoriser un bouton primaire en aplat pour les seules confirmations financières. 4 · Le Website reste-t-il dark comme Nocturne, ou faut-il un mode clair pour la documentation ?</p>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{ isL1 }}" hint-placeholder-val="{{ true }}">
+  <section style="display:flex; flex-direction:column; gap:var(--space-8)">
+    <div>
+      <h6 style="color:var(--color-accent)">Lot 1</h6>
+      <h2 style="margin:0">Architecture globale</h2>
+      <p class="text-muted" style="max-width:68ch; margin-top:var(--space-3)">Trois interfaces, un seul noyau de configuration. L'Admin écrit, le Website et la Console lisent. Aucune règle commerciale ne vit dans un front.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:var(--space-4)">
+      <div class="card elev-md"><div class="card-kicker">Écrit la configuration</div><div class="card-title">NotifyAfrica Admin</div><p class="card-body">Source de vérité : produits, pays, opérateurs, providers, routes, devises, moyens de paiement, pricing, remises, taxes, textes et CTA tarifaires.</p></div>
+      <div class="card elev-md" style="box-shadow:0 0 0 1px var(--color-accent)"><div class="card-kicker">Calcule &amp; expose</div><div class="card-title">Pricing &amp; Config API</div><p class="card-body">Pricing Engine + Discount Engine + Catalog. Un seul calcul, plusieurs consommateurs. Réponses versionnées et horodatées.</p></div>
+      <div class="card elev-md"><div class="card-kicker">Consomment &amp; affichent</div><div class="card-title">Website + Console</div><p class="card-body">Affichent, n'interprètent pas. Le Website lit les prix publics, la Console les prix contextualisés (client, projet, volume).</p></div>
+    </div>
+    <p class="text-muted" style="font-size:13px; margin:0">Admin → Pricing Engine → Pricing API → { Website · Console } &nbsp;·&nbsp; zéro déploiement pour changer un prix.</p>
+
+    <div>
+      <h4>F · Sitemap</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-4)">
+        <div class="card elev-sm">
+          <div class="card-kicker">Public</div><div class="card-title">Website</div>
+          <p class="card-body" style="line-height:2">Home<br>Products › SMS · OTP · WhatsApp · Email · API<br>Solutions › par secteur<br>Pricing <span style="color:var(--color-accent-300)">◆ dynamique</span><br>Developers › Quickstart · SDK · Sandbox<br>Docs<br>Trust › Sécurité · Fiabilité · Status<br>About · Contact · Devis<br>Legal › CGU · Confidentialité · Mentions tarifaires<br>Auth › Login · Register</p>
+        </div>
+        <div class="card elev-sm">
+          <div class="card-kicker">Client</div><div class="card-title">Console</div>
+          <p class="card-body" style="line-height:2">Overview<br>Messages › Send · Bulk · History · Sender IDs · Templates · Scheduled<br>Campaigns<br>OTP › Apps · Templates · Logs<br>WhatsApp › Send · Templates · Numbers · Conversations · Pricing<br>Email › Send · Domains · Identities · Suppressions<br>Developers › API Keys · Webhooks · Sandbox · Environments<br>Analytics<br>Pricing &amp; Quotes <span style="color:var(--color-accent-300)">◆ dynamique</span><br>Billing › Wallet · Add Funds · Transactions · Invoices<br>Team · Settings · Support</p>
+        </div>
+        <div class="card elev-sm">
+          <div class="card-kicker">Interne</div><div class="card-title">Admin</div>
+          <p class="card-body" style="line-height:2">Dashboard<br>Customers › Customer 360<br>Organizations · Users · Projects<br>Catalog › Products · Countries · Currencies · Taxes<br>Payments › méthodes, frais, devises<br>Providers › Meta WhatsApp Pricing · Credentials · SLA<br>Operators &amp; Routing<br>Pricing Engine <span style="color:var(--color-accent-300)">◆ cœur</span><br>Discounts · Quotes<br>Wallets · Transactions · Billing<br>Support · Fraud &amp; Risk · Incidents<br>Audit · Settings · Content</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4>D · Parcours structurants</h4>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4); margin-top:var(--space-4)">
+        <div class="card elev-sm">
+          <div class="card-title" style="font-size:15px">Acquisition → premier message</div>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center; margin:var(--space-2) 0">
+            <span class="tag tag-neutral">Pricing public</span><span class="text-muted">→</span><span class="tag tag-neutral">Register</span><span class="text-muted">→</span><span class="tag tag-neutral">Verify email</span><span class="text-muted">→</span><span class="tag tag-neutral">Organization</span><span class="text-muted">→</span><span class="tag tag-neutral">Project</span><span class="text-muted">→</span><span class="tag tag-neutral">Services</span><span class="text-muted">→</span><span class="tag tag-neutral">API key</span><span class="text-muted">→</span><span class="tag tag-neutral">Sandbox send</span><span class="text-muted">→</span><span class="tag tag-accent">Add funds</span><span class="text-muted">→</span><span class="tag tag-accent">Live send</span>
+          </div>
+          <p class="card-body">Le sandbox précède la recharge : on intègre avant de payer. La recharge est déclenchée par la première tentative d'envoi live, pas par l'onboarding.</p>
+        </div>
+        <div class="card elev-sm">
+          <div class="card-title" style="font-size:15px">Envoi payant — contrôle du solde</div>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center; margin:var(--space-2) 0">
+            <span class="tag tag-neutral">Compose</span><span class="text-muted">→</span><span class="tag tag-neutral">Audience</span><span class="text-muted">→</span><span class="tag tag-outline">POST /pricing/estimate</span><span class="text-muted">→</span><span class="tag tag-neutral">Breakdown</span><span class="text-muted">→</span><span class="tag tag-neutral">Balance check</span><span class="text-muted">→</span><span class="tag tag-neutral">Reserve</span><span class="text-muted">→</span><span class="tag tag-neutral">Execute</span><span class="text-muted">→</span><span class="tag tag-neutral">Capture</span><span class="text-muted">→</span><span class="tag tag-neutral">Release</span>
+          </div>
+          <p class="card-body">Branches d'échec : <strong>insufficient balance</strong> → CTA Add Funds avec le montant manquant pré-rempli ; <strong>quote required</strong> → bascule vers le devis en conservant la saisie ; <strong>expired price</strong> → nouvelle estimation obligatoire.</p>
+        </div>
+        <div class="card elev-sm">
+          <div class="card-title" style="font-size:15px">Cycle de vie d'un devis — Console ↔ Admin</div>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center; margin:var(--space-2) 0">
+            <span class="tag tag-neutral">Draft</span><span class="text-muted">→</span><span class="tag tag-neutral">Submitted</span><span class="text-muted">→</span><span class="tag tag-neutral">Under review</span><span class="text-muted">→</span><span class="tag tag-neutral">Info required</span><span class="text-muted">→</span><span class="tag tag-neutral">Offer available</span><span class="text-muted">→</span><span class="tag tag-accent">Accepted → Pricing Rule</span><span class="text-muted">/</span><span class="tag tag-outline">Rejected · Expired · Cancelled</span>
+          </div>
+          <p class="card-body">L'acceptation d'un devis génère automatiquement une Pricing Rule customer-specific datée, versionnée et auditée. Seul pont entre le commerce et le moteur.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4>Rôles &amp; permissions — Console</h4>
+      <div style="overflow:auto; margin-top:var(--space-4)">
+        <table class="table" style="min-width:760px">
+          <thead><tr><th>Rôle</th><th>Portée</th><th>Peut</th><th>Ne peut pas</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Owner</strong></td><td class="text-muted">Organisation</td><td class="text-muted">Tout, y compris suppression de l'organisation et transfert de propriété</td><td class="text-muted">Se retirer sans successeur</td></tr>
+            <tr><td><strong>Admin</strong></td><td class="text-muted">Organisation</td><td class="text-muted">Projets, équipe, services, envois, devis</td><td class="text-muted">Supprimer l'org., changer l'Owner</td></tr>
+            <tr><td><strong>Billing Manager</strong></td><td class="text-muted">Organisation</td><td class="text-muted">Wallet, recharges, moyens de paiement, factures, devis</td><td class="text-muted">Envoyer, lire les contenus</td></tr>
+            <tr><td><strong>Developer</strong></td><td class="text-muted">Projet</td><td class="text-muted">API keys, webhooks, sandbox, logs techniques, envois live</td><td class="text-muted">Recharger, gérer l'équipe</td></tr>
+            <tr><td><strong>Campaign Manager</strong></td><td class="text-muted">Projet</td><td class="text-muted">Campagnes, templates, audiences, envois dans une limite de dépense configurable</td><td class="text-muted">API keys, facturation</td></tr>
+            <tr><td><strong>Support Agent</strong></td><td class="text-muted">Organisation</td><td class="text-muted">Logs et statuts de livraison, renvoi d'un OTP, ouverture de tickets</td><td class="text-muted">Campagnes, wallet, clés API</td></tr>
+            <tr><td><strong>Viewer / Auditor</strong></td><td class="text-muted">Org. ou projet</td><td class="text-muted">Lecture seule : analytics, logs, factures, audit</td><td class="text-muted">Toute action mutante</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="card-body" style="margin-top:var(--space-4)">Côté Admin, rôles internes distincts : <strong>Support</strong>, <strong>Commercial</strong> (devis, remises sous plafond), <strong>Pricing Manager</strong> (règles, marges, publication), <strong>Finance</strong> (wallets, ajustements, réconciliation), <strong>Super Admin</strong>. Toute action sur un prix ou un wallet exige un motif obligatoire, et un double contrôle au-delà d'un seuil configurable.</p>
+    </div>
+
+    <div>
+      <h4>Extensibilité exigée dès l'architecture</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:var(--space-3); margin-top:var(--space-4)">
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Providers &amp; opérateurs</div><p class="card-body">Moov, MTN, Yas, Telecel et les suivants ne sont pas un enum de code : ce sont des enregistrements créés en back-office (Providers → New, Operators → New) avec credentials, pays, canaux, préfixes/MCC-MNC, limites, SLA, coûts et santé. Ajouter un opérateur = un formulaire, pas un déploiement.</p></div>
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Moyens de paiement</div><p class="card-body">Multi-méthodes par pays : mobile money par opérateur, carte, virement, agrégateur. Chaque méthode porte ses devises, frais, plafonds, délai de créditation et disponibilité — configurés, pas codés. La Console affiche la liste retournée par l'API.</p></div>
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Devises</div><p class="card-body">XOF, XAF, GHS, NGN, KES, USD, EUR, ZAR au catalogue initial, avec arrondi et format propres à chacune. Aucune conversion implicite : un wallet par devise.</p></div>
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Canaux futurs</div><p class="card-body">Un nouveau canal (RCS, voix, push) est un Product de plus dans le catalogue, avec ses champs requis et ses règles de devis — sans refonte de la navigation.</p></div>
+      </div>
+    </div>
+
+    <div>
+      <h4>K · Responsive &amp; L · Edge cases</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:var(--space-3); margin-top:var(--space-4)">
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Website — mobile first</div><p class="card-body">Trafic majoritairement mobile. Pricing en cards empilées avec sélecteur de produit, jamais un tableau à scroll horizontal.</p></div>
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Console — tablette OK</div><p class="card-body">Sidebar repliable, tableaux dégradés en listes de cards sous 768 px. Envoi et recharge restent faisables au téléphone.</p></div>
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Admin — desktop ≥ 1280</div><p class="card-body">Assumé desktop ; sur mobile, seules consultation et validation de devis/incidents.</p></div>
+        <div class="card elev-sm"><div class="card-title" style="font-size:14px">Cas limites</div><p class="card-body">Service désactivé pendant la composition · pays retiré du catalogue avec campagne planifiée · prix modifié entre estimation et confirmation · devise de wallet ≠ devise du tarif · organisation sans projet · clé API révoquée en cours d'envoi · moyen de paiement retiré avec recharge en attente.</p></div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{ isL1B }}">
+  <section style="display:flex; flex-direction:column; gap:var(--space-8)">
+    <div>
+      <h6 style="color:var(--color-accent)">Lot 1B</h6>
+      <h2 style="margin:0">Architecture fonctionnelle du Pricing Engine</h2>
+      <p class="text-muted" style="max-width:70ch; margin-top:var(--space-3)">Un seul moteur, déterministe, versionné, auditable. Il répond toujours à la même question : pour ce client, ce produit, ce pays, ce volume, à cette date — quel est le prix, et pourquoi ?</p>
+    </div>
+
+    <div class="card elev-md">
+      <div class="card-kicker">Chaîne de résolution</div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center; margin:var(--space-3) 0">
+        <span class="tag tag-outline">Provider cost</span><span class="text-muted">→</span><span class="tag tag-neutral">Base price</span><span class="text-muted">→</span><span class="tag tag-neutral">Pricing rule</span><span class="text-muted">→</span><span class="tag tag-neutral">Volume tier</span><span class="text-muted">→</span><span class="tag tag-neutral">Markup</span><span class="text-muted">→</span><span class="tag tag-neutral">Customer rule</span><span class="text-muted">→</span><span class="tag tag-neutral">Discounts</span><span class="text-muted">→</span><span class="tag tag-neutral">Fees</span><span class="text-muted">→</span><span class="tag tag-neutral">Tax</span><span class="text-muted">→</span><span class="tag tag-accent">Final price</span>
+      </div>
+      <p class="card-body">Ordre normatif. Le markup s'applique <strong>avant</strong> les remises — on ne remise jamais un coût fournisseur — et les taxes <strong>après</strong> tout le reste. Chaque étape retourne sa contribution : c'est ce qui permet un breakdown explicable côté client et une marge réelle côté Admin.</p>
+      <pre style="margin:0; overflow:auto; background:var(--color-bg); border-radius:var(--radius-md); padding:var(--space-4); font-size:12px; line-height:1.9; color:var(--color-neutral-300)">resolve(context) → PriceResult
+context    = { org, project, product, channel, country, operator, category,
+               volume, currency, payment_method, date, contract }
+PriceResult = { unit_price, quantity, subtotal, markup_applied[],
+               discounts_applied[], fees[], tax[], total, currency,
+               rule_id, rule_version, tier, requires_quote, valid_until, explain[] }</pre>
+    </div>
+
+    <div>
+      <h4>Entités &amp; relations</h4>
+      <div style="overflow:auto; margin-top:var(--space-4)">
+        <table class="table" style="min-width:820px">
+          <thead><tr><th>Entité</th><th>Champs clés</th><th>Relations</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--color-accent-300)"><strong>Product</strong></td><td class="text-muted">code, channel, unit, active, public, required_fields, quote_rules</td><td class="text-muted">1–N Country · 1–N PricingRule</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Country / Currency / Tax</strong></td><td class="text-muted">iso, currency, tax_rate, rounding, format, availability</td><td class="text-muted">N–N Product · 1–N Operator</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Operator</strong></td><td class="text-muted">name, country, mcc_mnc, prefixes, status — créé en back-office</td><td class="text-muted">1–N Route</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Provider</strong></td><td class="text-muted">name, channels, credentials, limits, sla, health — créé en back-office</td><td class="text-muted">1–N ProviderCost · 1–N Route</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>ProviderCost</strong></td><td class="text-muted">provider, product, country, operator, category, cost, currency, effective_from/to, source, version</td><td class="text-muted">Historisé, jamais écrasé</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Route</strong></td><td class="text-muted">operator, provider, priority, fallback, quality, latency, delivery_rate</td><td class="text-muted">Détermine le ProviderCost retenu</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>PricingRule</strong></td><td class="text-muted">scope, dimensions{}, base_price, markup, tiers[], currency, priority, effective_from/to, status, version, parent_version</td><td class="text-muted">Cœur du moteur · 1–N VolumeTier</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>VolumeTier</strong></td><td class="text-muted">from, to (nullable = ∞), unit_price, mode (flat/graduated), requires_quote, public_label, visible</td><td class="text-muted">N par règle, nombre libre</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Markup</strong></td><td class="text-muted">scope (global/product/category/country/customer/volume/enterprise), type, value, priority</td><td class="text-muted">Le plus spécifique gagne</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Discount</strong></td><td class="text-muted">type (percent/fixed/unit/promo/customer), conditions{}, min/max_volume, dates, max_usages, cumulative, priority, status, code</td><td class="text-muted">N éligibles, résolus par priorité</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>CustomerPricing</strong></td><td class="text-muted">organization, product, override_price ou override_markup, contract_ref, dates, origin</td><td class="text-muted">Hérite de PricingRule, surcharge</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Quote</strong></td><td class="text-muted">org, product, dimensions, est_volume, use_case, frequency, status, offered_price, conditions, valid_until, pdf</td><td class="text-muted">Accepted → crée CustomerPricing</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>PaymentMethod</strong></td><td class="text-muted">code, type, countries, currencies, fees, min/max, settlement_delay, status</td><td class="text-muted">Impacte le pricing via fees</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>Wallet / Transaction</strong></td><td class="text-muted">balances (current/available/reserved/pending), currency · type (credit/debit/reserve/capture/release/refund/adjustment), ref, reason</td><td class="text-muted">1 wallet par org &amp; devise</td></tr>
+            <tr><td style="color:var(--color-accent-300)"><strong>PriceSnapshot</strong></td><td class="text-muted">le PriceResult figé au moment de l'opération, avec rule_version</td><td class="text-muted">Attaché à chaque envoi &amp; facture</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm">
+        <div class="card-title">Héritage du pricing</div>
+        <p class="card-body">Cascade du général au spécifique. Une seule PricingRule est retenue : la plus spécifique valide à la date demandée. Les niveaux ne s'additionnent pas, ils se surchargent.</p>
+        <pre style="margin:0; background:var(--color-bg); border-radius:var(--radius-md); padding:var(--space-4); font-size:12px; line-height:1.9; color:var(--color-neutral-300)">1 · global product default
+2 · + country
+3 · + operator / category
+4 · + provider / route
+5 · + segment / plan
+6 · + organization
+7 · + project
+8 · + contract / quote   ← gagne</pre>
+        <p class="card-body">Égalité de spécificité → <code>priority</code> décroissante, puis <code>effective_from</code> la plus récente. Aucune règle trouvée → <strong>pricing_unavailable</strong>, jamais un prix par défaut inventé.</p>
+      </div>
+      <div class="card elev-sm">
+        <div class="card-title">Priorité des réductions</div>
+        <p class="card-body">Plusieurs remises peuvent être éligibles. Algorithme déterministe :</p>
+        <pre style="margin:0; background:var(--color-bg); border-radius:var(--radius-md); padding:var(--space-4); font-size:12px; line-height:1.9; color:var(--color-neutral-300)">1 · filtrer les éligibles (conditions, dates,
+    volume, usages restants)
+2 · trier par priority DESC
+3 · appliquer la 1ʳᵉ
+4 · si cumulative = true → continuer
+5 · si cumulative = false → stop
+6 · plafonner au max_discount configuré
+7 · journaliser chaque remise écartée + motif</pre>
+        <p class="card-body">Ordre des types : unit → percent → fixed. Un <strong>plancher de marge</strong> configurable bloque toute combinaison déficitaire, avec alerte Admin.</p>
+      </div>
+      <div class="card elev-sm">
+        <div class="card-title">Customer-specific pricing</div>
+        <p class="card-body">Trois formes : prix absolu imposé, markup dédié, ou grille de paliers propre. Toujours borné par des dates et rattaché à une origine (devis, contrat, geste commercial).</p>
+        <p class="card-body">À l'expiration, retour automatique à la cascade standard — avec notification Admin 30 jours avant (délai configurable) pour éviter une hausse subie par le client.</p>
+      </div>
+      <div class="card elev-sm">
+        <div class="card-title">Versioning &amp; audit</div>
+        <p class="card-body">Aucune règle n'est modifiée en place : toute édition crée une nouvelle version (draft → scheduled → active → superseded → archived). Les anciennes restent lisibles pour recalculer une facture passée.</p>
+        <pre style="margin:0; background:var(--color-bg); border-radius:var(--radius-md); padding:var(--space-4); font-size:12px; line-height:1.9; color:var(--color-neutral-300)">audit_entry = { entity, entity_id,
+  version_from, version_to, field,
+  old_value, new_value, actor,
+  reason*, source, ip, timestamp }
+
+* motif obligatoire sur pricing,
+  discount, wallet</pre>
+      </div>
+    </div>
+
+    <div>
+      <h4>Synchronisation Website / Console / Admin</h4>
+      <div style="overflow:auto; margin-top:var(--space-4)">
+        <table class="table" style="min-width:740px">
+          <thead><tr><th>Consommateur</th><th>Endpoint</th><th>Contexte</th><th>Fraîcheur</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Website — Pricing</strong></td><td style="color:var(--color-accent-300)">GET /public/pricing</td><td class="text-muted">Anonyme, pays détecté, devise d'affichage</td><td class="text-muted">Cache CDN, invalidé à la publication</td></tr>
+            <tr><td><strong>Console — catalogue</strong></td><td style="color:var(--color-accent-300)">GET /pricing/catalog</td><td class="text-muted">Org + projet, inclut les tarifs négociés</td><td class="text-muted">Cache court, revalidé à l'ouverture</td></tr>
+            <tr><td><strong>Console — avant envoi</strong></td><td style="color:var(--color-accent-300)">POST /pricing/estimate</td><td class="text-muted">Contexte complet + volume réel</td><td class="text-muted">Jamais caché · <code>valid_until</code></td></tr>
+            <tr><td><strong>Console — exécution</strong></td><td style="color:var(--color-accent-300)">POST /wallet/reserve</td><td class="text-muted">estimate_id + clé d'idempotence</td><td class="text-muted">Revalide le prix, refuse si expiré</td></tr>
+            <tr><td><strong>Admin — simulation</strong></td><td style="color:var(--color-accent-300)">POST /pricing/simulate</td><td class="text-muted">N'importe quel contexte, versions draft incluses</td><td class="text-muted">Temps réel, retourne <code>explain[]</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card elev-sm" style="margin-top:var(--space-4); border-left:2px solid var(--color-accent)"><p class="card-body">Garde-fou UX : la Console n'affiche <strong>jamais</strong> un prix qu'elle a calculé. Si <code>/pricing/estimate</code> échoue, l'écran montre l'état <strong>pricing_unavailable</strong> et désactive la confirmation — il ne retombe pas sur une valeur du catalogue.</p></div>
+    </div>
+
+    <div>
+      <h4>N · Décisions à valider avant les maquettes</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-3); margin-top:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><div class="card-title" style="font-size:14px">Paliers flat ou graduated ?</div><p class="card-body">Prix unique appliqué à toute la quantité, ou tranches successives ? Recommandation : <strong>flat</strong>, plus lisible commercialement, graduated disponible par règle.</p></div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><div class="card-title" style="font-size:14px">Volume = achat ou usage ?</div><p class="card-body">Palier sur la quantité achetée d'un coup, ou sur le cumul consommé glissant ? Recommandation : <strong>quantité achetée</strong> en V1, cumul en V2.</p></div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><div class="card-title" style="font-size:14px">Wallet multi-devises</div><p class="card-body">Un wallet par devise, ou un wallet unique avec conversion au débit ? Recommandation : <strong>un wallet par devise</strong>, pas de conversion implicite.</p></div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><div class="card-title" style="font-size:14px">Transparence du markup</div><p class="card-body">Le client voit-il « prix Meta + marge » ou seulement le prix final ? Recommandation : <strong>prix final seul</strong> ; le coût provider ne sort pas de l'Admin.</p></div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><div class="card-title" style="font-size:14px">Validité d'une estimation</div><p class="card-body">Combien de temps un <code>estimate_id</code> est-il honoré ? Recommandation : configurable, défaut 15 min, revalidation systématique à l'exécution.</p></div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><div class="card-title" style="font-size:14px">Publication des prix</div><p class="card-body">Changement immédiat, ou validation à deux mains + date d'effet ? Recommandation : <strong>draft → review → scheduled</strong>, publication immédiate réservée au Super Admin.</p></div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · cadrage lots 0 / 1 / 1B · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Lot 2 (Website) livré dans un fichier séparé</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultLot&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;l0&quot;,&quot;l1&quot;,&quot;l1b&quot;],&quot;default&quot;:&quot;l1&quot;,&quot;tsType&quot;:&quot;'l0'|'l1'|'l1b'&quot;,&quot;section&quot;:&quot;Affichage&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: props.defaultLot || 'l1' };
+  }
+  tabStyle(id) {
+    const on = this.state.tab === id;
+    return {
+      whiteSpace: 'nowrap',
+      color: on ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: on ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: on ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    };
+  }
+  renderVals() {
+    const set = t => () => this.setState({ tab: t });
+    return {
+      isL0: this.state.tab === 'l0',
+      isL1: this.state.tab === 'l1',
+      isL1B: this.state.tab === 'l1b',
+      goL0: set('l0'), goL1: set('l1'), goL1B: set('l1b'),
+      tab0Style: this.tabStyle('l0'),
+      tab1Style: this.tabStyle('l1'),
+      tab2Style: this.tabStyle('l1b')
+    };
+  }
+}
+</script>
+</body>
+</html>

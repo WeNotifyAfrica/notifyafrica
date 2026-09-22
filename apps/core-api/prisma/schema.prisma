@@ -1,0 +1,466 @@
+// NotifyAfrica Core API — relational schema (00_Contexte_Global §19).
+// Covers Phase A (Config Registry, Catalog, Pricing, Accounts, Notifications,
+// Audit) with schema-level preparation for Phase D+ (Wallet/Ledger) and the
+// future aggregator (04_Prompt §16: Provider/Route/mappings), so those areas
+// don't require a breaking migration later even though their engines aren't
+// wired yet.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Environment {
+  sandbox
+  production
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum ConsoleRole {
+  OWNER
+  ADMIN
+  BILLING_MANAGER
+  DEVELOPER
+  CAMPAIGN_MANAGER
+  SUPPORT_AGENT
+  VIEWER_AUDITOR
+}
+
+// Internal (Admin) roles are pending design lot 27 (not yet designed per
+// design_handoff_notifyafrica/README §8). Keep a single placeholder role so
+// the Admin app can gate on RBAC today without inventing the final role set.
+enum InternalRole {
+  SUPER_ADMIN
+  STAFF
+}
+
+enum ConfigScope {
+  GLOBAL
+  COUNTRY
+  ORGANIZATION
+  PROJECT
+}
+
+enum ConfigStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  SCHEDULED
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProductStatus {
+  ACTIVE
+  BETA
+  COMING_SOON
+  PRIVATE
+  DISABLED
+}
+
+enum MarkupType {
+  PERCENT
+  FIXED_AMOUNT
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED_AMOUNT
+  UNIT_DISCOUNT
+  FIXED_PRICE
+  PROMO
+  BONUS
+}
+
+enum QuoteStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  INFO_REQUIRED
+  OFFER_AVAILABLE
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum LedgerEntryType {
+  CREDIT
+  DEBIT
+  HOLD
+  CAPTURE
+  RELEASE
+  REFUND
+  ADJUSTMENT
+}
+
+model User {
+  id              String     @id @default(cuid())
+  email           String     @unique
+  passwordHash    String
+  phone           String?
+  emailVerifiedAt DateTime?
+  status          UserStatus @default(ACTIVE)
+  internalRole    InternalRole? // set only for Admin-app users
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  memberships   Membership[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  country   String
+  currency  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships  Membership[]
+  projects     Project[]
+  wallet       Wallet?
+  quotes       Quote[]
+  transactions Transaction[]
+
+  @@map("organizations")
+}
+
+model Membership {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  role           ConsoleRole
+  createdAt      DateTime     @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@map("memberships")
+}
+
+model Project {
+  id             String      @id @default(cuid())
+  organizationId String
+  name           String
+  environment    Environment @default(sandbox)
+  createdAt      DateTime    @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  apiKeys      ApiKey[]
+  transactions Transaction[]
+
+  @@map("projects")
+}
+
+model ApiKey {
+  id          String      @id @default(cuid())
+  projectId   String
+  name        String
+  environment Environment
+  hashedKey   String      @unique
+  prefix      String
+  scopes      String[]
+  expiresAt   DateTime?
+  createdAt   DateTime    @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("api_keys")
+}
+
+/// Generic Config Registry object (02_Specifications_Backoffice §31).
+/// Each publish inserts a new row (never mutates a published one) so the
+/// version/effectiveFrom/reason trail required by 00_Contexte_Global §9
+/// falls out of the table itself.
+model ConfigEntry {
+  id             String       @id @default(cuid())
+  key            String
+  value          Json
+  type           String
+  scope          ConfigScope
+  scopeId        String?
+  environment    Environment  @default(sandbox)
+  version        Int
+  status         ConfigStatus @default(DRAFT)
+  reason         String?
+  authorId       String?
+  effectiveFrom  DateTime?
+  effectiveTo    DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@unique([key, scope, scopeId, environment, version])
+  @@index([key, scope, scopeId, environment, status])
+  @@map("config_entries")
+}
+
+model CatalogProduct {
+  id                 String        @id @default(cuid())
+  key                String        @unique
+  name               String
+  slug               String        @unique
+  category           String
+  summary            String?
+  description        String?
+  icon               String?
+  countries          String[]
+  status             ProductStatus @default(COMING_SOON)
+  publicPageEnabled  Boolean       @default(false)
+  order              Int           @default(0)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@map("catalog_products")
+}
+
+model PricingRule {
+  id             String     @id @default(cuid())
+  productKey     String
+  countryCode    String?
+  operatorId     String?
+  providerId     String?
+  category       String?
+  volumeMin      Int        @default(0)
+  volumeMax      Int?
+  currency       String
+  baseCost       Decimal?   @db.Decimal(18, 6)
+  basePrice      Decimal    @db.Decimal(18, 6)
+  markupType     MarkupType @default(PERCENT)
+  markupValue    Decimal    @default(0) @db.Decimal(9, 4)
+  customerScope  ConfigScope @default(GLOBAL)
+  organizationId String?
+  priority       Int        @default(0)
+  publicVisible  Boolean    @default(true)
+  quoteRequired  Boolean    @default(false)
+  status         ConfigStatus @default(DRAFT)
+  version        Int        @default(1)
+  effectiveFrom  DateTime?
+  effectiveTo    DateTime?
+  reason         String?
+  createdAt      DateTime   @default(now())
+
+  @@index([productKey, countryCode, status])
+  @@map("pricing_rules")
+}
+
+model DiscountRule {
+  id             String       @id @default(cuid())
+  type           DiscountType
+  scope          ConfigScope
+  scopeId        String?
+  value          Decimal      @db.Decimal(18, 6)
+  priority       Int          @default(0)
+  stackable      Boolean      @default(false)
+  maxDiscount    Decimal?     @db.Decimal(18, 6)
+  usageLimit     Int?
+  startAt        DateTime?
+  endAt          DateTime?
+  eligibility    Json?
+  status         ConfigStatus @default(DRAFT)
+  createdAt      DateTime     @default(now())
+
+  @@map("discount_rules")
+}
+
+model Quote {
+  id             String      @id @default(cuid())
+  organizationId String
+  productKey     String
+  status         QuoteStatus @default(DRAFT)
+  payload        Json
+  assignedToUserId String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("quotes")
+}
+
+model Wallet {
+  id             String   @id @default(cuid())
+  organizationId String   @unique
+  currency       String
+  availableMinor BigInt   @default(0)
+  reservedMinor  BigInt   @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  ledgerEntries LedgerEntry[]
+
+  @@map("wallets")
+}
+
+model LedgerEntry {
+  id          String          @id @default(cuid())
+  walletId    String
+  type        LedgerEntryType
+  amountMinor BigInt
+  reason      String?
+  relatedTransactionId String?
+  createdAt   DateTime        @default(now())
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@map("ledger_entries")
+}
+
+/// Every financial transaction freezes the pricing rule applied onto
+/// `pricingSnapshot` (design handoff invariant #2) — never recomputed later.
+model Transaction {
+  id              String   @id @default(cuid())
+  organizationId  String
+  projectId       String?
+  type            String
+  amountMinor     BigInt
+  currency        String
+  pricingSnapshot Json
+  status          String
+  providerId      String?
+  idempotencyKey  String   @unique
+  createdAt       DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project?     @relation(fields: [projectId], references: [id])
+
+  @@map("transactions")
+}
+
+model Country {
+  code      String  @id
+  name      String
+  dialCode  String
+  currency  String
+  timezone  String
+  status    String  @default("ACTIVE")
+
+  @@map("countries")
+}
+
+model Currency {
+  code     String @id
+  symbol   String
+  decimals Int    @default(2)
+  status   String @default("ACTIVE")
+
+  @@map("currencies")
+}
+
+model Operator {
+  id          String @id @default(cuid())
+  name        String
+  countryCode String
+  code        String
+  status      String @default("ACTIVE")
+
+  @@map("operators")
+}
+
+/// Future aggregator concepts (04_Prompt §16). Schema exists now so the
+/// Admin proxy/gateway config (04_Prompt §17) has somewhere to live; no
+/// adapter/routing logic is implemented before Phase D+.
+model Provider {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  countryCode String?
+  status      String   @default("ACTIVE")
+  healthState String   @default("UNKNOWN")
+
+  endpoints ProviderEndpoint[]
+  routes    Route[]
+
+  @@map("providers")
+}
+
+model ProviderEndpoint {
+  id            String      @id @default(cuid())
+  providerId    String
+  environment   Environment @default(sandbox)
+  baseUrl       String
+  path          String
+  method        String
+  authType      String
+  timeoutMs     Int         @default(10000)
+  retryPolicy   Json?
+  requestMapping  Json?
+  responseMapping Json?
+  errorMapping    Json?
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@map("provider_endpoints")
+}
+
+model Route {
+  id          String  @id @default(cuid())
+  productKey  String
+  countryCode String?
+  operatorId  String?
+  providerId  String
+  priority    Int     @default(0)
+  strategy    String  @default("priority")
+  status      String  @default("ACTIVE")
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@map("routes")
+}
+
+model NotificationRule {
+  id             String   @id @default(cuid())
+  event          String
+  active         Boolean  @default(true)
+  channel        String
+  audienceRole   String?
+  recipientEmails String[]
+  template       String?
+  priority       Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@map("notification_rules")
+}
+
+/// In-app Admin notification center entries (02_Specifications_Backoffice §5).
+model Notification {
+  id             String    @id @default(cuid())
+  event          String
+  organizationId String?
+  userId         String?
+  payload        Json
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  action      String
+  resource    String
+  resourceId  String?
+  before      Json?
+  after       Json?
+  ip          String?
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  actor User? @relation(fields: [actorUserId], references: [id])
+
+  @@map("audit_logs")
+}

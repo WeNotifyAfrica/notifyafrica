@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 25 · Finance &amp; rentabilité</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Finance · Août 2026</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Finance &amp; rentabilité</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Où l'argent entre, où il sort, et ce qu'il reste. Cinq écrans : la rentabilité par canal et par pays, le rapprochement des factures fournisseurs avec le trafic réel, le recouvrement des encours, les taxes par pays et la clôture comptable du mois.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isPnl }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Chiffre d'affaires</span><span class="num" style="font-size:24px">186,4 M FCFA</span><span class="text-muted" style="font-size:12px">+ 8,2 % vs juillet</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Coûts fournisseurs</span><span class="num" style="font-size:24px">128,9 M FCFA</span><span class="text-muted" style="font-size:12px">69,2 % du CA</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Marge brute</span><span class="num" style="font-size:24px; color:var(--color-accent)">30,8 %</span><span class="text-muted" style="font-size:12px">57,5 M FCFA · objectif 32 %</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Surcoûts absorbés</span><span class="num" style="font-size:24px">3,1 M FCFA</span><span class="text-muted" style="font-size:12px">routes de secours + frais de paiement</span></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap; padding:0 var(--space-2)">
+        <span class="card-kicker">Par canal et pays</span>
+        <div class="seg">
+          <label class="seg-opt"><input type="radio" name="per" checked><span>Août</span></label>
+          <label class="seg-opt"><input type="radio" name="per"><span>T3</span></label>
+          <label class="seg-opt"><input type="radio" name="per"><span>12 mois</span></label>
+        </div>
+      </div>
+      <table class="table" style="min-width:980px; margin-top:var(--space-3)">
+        <thead><tr><th>Canal · pays</th><th>Volume</th><th>CA</th><th>Coût</th><th>Marge</th><th>Part de marge</th><th>Tendance</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ pnl }}" as="p" hint-placeholder-count="8">
+            <tr>
+              <td style="font-size:12.5px">{{ p.scope }}</td>
+              <td class="num text-muted">{{ p.volume }}</td>
+              <td class="num">{{ p.revenue }}</td>
+              <td class="num text-muted">{{ p.cost }}</td>
+              <td class="num" style="{{ p.marginStyle }}">{{ p.margin }}</td>
+              <td style="min-width:140px"><div style="height:6px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ p.barStyle }}"></div></div></td>
+              <td class="num text-muted" style="font-size:12px">{{ p.trend }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Ce qui tient la marge</span><p class="card-body" style="margin:0">SMS Togo et OTP concentrent 64 % de la marge brute. Les liens directs Moov et Yas en sont la raison : ils coûtent 25 % de moins que l'agrégateur.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Ce qui la dégrade</span><p class="card-body" style="margin:0">WhatsApp Marketing Bénin (7,9 %) et SMS Nigeria (11,2 %, effet de change USD). Ensemble moins de 4 % du CA : le sujet est ciblé, pas structurel.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Source unique</span><p class="card-body" style="margin:0">Chaque ligne est la somme des prix figés des messages (lot 21) et des coûts d'achat datés (lot 20). Aucun chiffre saisi à la main.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSuppliers }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">Chaque facture fournisseur est confrontée au trafic mesuré par NotifyAfrica. Un écart au-delà du seuil de tolérance bloque le paiement jusqu'à justification.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1060px">
+        <thead><tr><th>Fournisseur</th><th>Facture</th><th>Volume facturé</th><th>Volume mesuré</th><th>Montant facturé</th><th>Montant attendu</th><th>Écart</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ invoices }}" as="i" hint-placeholder-count="7">
+            <tr>
+              <td style="font-size:12.5px"><strong>{{ i.supplier }}</strong></td>
+              <td class="mono text-muted" style="font-size:11.5px">{{ i.ref }}</td>
+              <td class="num">{{ i.billedVol }}</td>
+              <td class="num text-muted">{{ i.measuredVol }}</td>
+              <td class="num">{{ i.billed }}</td>
+              <td class="num text-muted">{{ i.expected }}</td>
+              <td class="num" style="{{ i.gapStyle }}">{{ i.gap }}</td>
+              <td>{{ i.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <div><span class="card-kicker">Écart à justifier · Panafric PF-2026-08</span><div class="card-title" style="font-size:17px">+ 1,86 M FCFA facturés en trop</div></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Messages facturés non mesurés</span><span class="num" style="font-size:13px">+ 214 800</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Dont échecs techniques facturés</span><span class="num" style="font-size:13px">188 400</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Dont décalage de fuseau (31/08)</span><span class="num" style="font-size:13px">26 400</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Pénalité d'engagement mobilisable</span><span class="num" style="font-size:13px">− 2,40 M FCFA</span></div>
+        <p class="text-muted" style="margin:0; font-size:12px">Le contrat exclut la facturation des échecs techniques (codes 0x00FF). Le détail message par message est exportable pour la contestation.</p>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Contester avec pièces</button><button type="button" class="btn btn-secondary">Exporter le détail</button></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm"><span class="card-kicker">Seuil de tolérance</span><p class="card-body" style="margin:0">Écart inférieur à 0,5 % du montant : validé automatiquement. Au-delà : blocage, justification et validation par la Finance.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Devises</span><p class="card-body" style="margin:0">Les factures en USD ou EUR sont rapprochées au taux du jour de chaque message, pas au taux du jour de la facture, pour que l'écart de change soit visible séparément.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRecovery }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ aging }}" as="a" hint-placeholder-count="4">
+        <div class="card elev-sm" style="gap:2px"><span class="card-kicker">{{ a.label }}</span><span class="num" style="font-size:22px; {{ a.style }}">{{ a.value }}</span><span class="text-muted" style="font-size:12px">{{ a.note }}</span></div>
+      </sc-for>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1000px">
+        <thead><tr><th>Client</th><th>Facture</th><th>Montant</th><th>Échéance</th><th>Retard</th><th>Relances</th><th>Prochaine étape</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ dues }}" as="d" hint-placeholder-count="6">
+            <tr>
+              <td style="font-size:12.5px"><strong>{{ d.client }}</strong></td>
+              <td class="mono text-muted" style="font-size:11.5px">{{ d.ref }}</td>
+              <td class="num">{{ d.amount }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ d.due }}</td>
+              <td class="num" style="{{ d.lateStyle }}">{{ d.late }}</td>
+              <td class="num text-muted">{{ d.reminders }}</td>
+              <td>{{ d.next }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+      <span class="card-kicker">Calendrier de relance — paramétrable</span>
+      <div style="display:flex; gap:var(--space-3); flex-wrap:wrap">
+        <sc-for list="{{ ladder }}" as="l" hint-placeholder-count="5">
+          <div class="card" style="flex:1; min-width:170px; background:var(--color-neutral-900); gap:var(--space-1)">
+            <span class="num" style="font-size:12px; color:var(--color-accent-300)">{{ l.when }}</span>
+            <span style="font-size:13px">{{ l.what }}</span>
+            <span class="text-muted" style="font-size:11.5px">{{ l.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTax }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">La taxe dépend du pays de facturation du client, pas du pays de destination des messages. Les taux sont des paramètres datés, comme les prix : un changement de taux ne s'applique qu'aux factures émises après sa date d'effet.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:940px">
+        <thead><tr><th>Pays</th><th>Taxe</th><th>Taux</th><th>En vigueur depuis</th><th>Base août</th><th>Collectée</th><th>Déclaration</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ taxes }}" as="x" hint-placeholder-count="6">
+            <tr>
+              <td style="font-size:12.5px">{{ x.country }}</td>
+              <td class="text-muted" style="font-size:12px">{{ x.tax }}</td>
+              <td class="num">{{ x.rate }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ x.since }}</td>
+              <td class="num text-muted">{{ x.base }}</td>
+              <td class="num">{{ x.collected }}</td>
+              <td>{{ x.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Exonérations</span><p class="card-body" style="margin:0">Certains clients (organisations internationales, ONG sous convention) sont exonérés. L'exonération est une pièce jointe datée sur la fiche client, avec date d'expiration et rappel 30 jours avant.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Validation fiscale requise</span><p class="card-body" style="margin:0">Les taux et règles affichés ici sont des exemples de structure. Leur exactitude par pays doit être confirmée par un conseil fiscal avant mise en production.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isClose }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Clôture mensuelle</span><div class="card-title" style="font-size:18px">Août 2026 · {{ doneCount }} étapes sur {{ totalCount }}</div></div>
+        <span class="{{ closeTagCls }}">{{ closeTag }}</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+        <sc-for list="{{ closeSteps }}" as="s" hint-placeholder-count="7">
+          <button type="button" onClick="{{ s.onClick }}" style="{{ s.rowStyle }}">
+            <span style="{{ s.boxStyle }}">{{ s.mark }}</span>
+            <div style="display:flex; flex-direction:column; gap:2px; flex:1; text-align:left"><span style="font-size:13.5px">{{ s.label }}</span><span class="text-muted" style="font-size:11.5px">{{ s.note }}</span></div>
+          </button>
+        </sc-for>
+      </div>
+      <button type="button" class="btn btn-primary" style="align-self:flex-start" disabled="{{ closeDisabled }}">Clôturer août 2026</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Exports comptables</span>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Journal des ventes</span><a href="#" style="font-size:12px">CSV · SYSCOHADA</a></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Journal des achats</span><a href="#" style="font-size:12px">CSV · SYSCOHADA</a></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Encaissements par moyen</span><a href="#" style="font-size:12px">CSV</a></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Soldes prépayés (passif)</span><a href="#" style="font-size:12px">CSV</a></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Taxes collectées par pays</span><a href="#" style="font-size:12px">CSV</a></div>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Après clôture</span><p class="card-body" style="margin:0">Un mois clôturé est figé : aucune facture, aucun ajustement ne peut plus y être imputé. Une correction passe par un avoir daté du mois en cours.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Soldes prépayés</span><p class="card-body" style="margin:0">Les soldes non consommés des clients sont une dette de NotifyAfrica, pas un revenu. Le revenu n'est reconnu qu'à la consommation, message par message.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Le revenu est reconnu à la consommation, pas à la recharge : les soldes prépayés sont un passif. Toute facture fournisseur est rapprochée du trafic mesuré avant paiement ; au-delà de 0,5 % d'écart, blocage et justification. La taxe suit le pays de facturation du client, avec des taux datés. Un mois clôturé ne peut plus être modifié ; les corrections passent par avoir.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Facture fournisseur reçue · rapprochée · écart à justifier · contestée · validée · payée. Créance à échoir · en retard · relancée · en recouvrement · passée en perte. Déclaration de taxe à préparer · prête · déposée. Mois ouvert · en clôture · clôturé.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Facture fournisseur reçue après la clôture du mois concerné : imputée au mois en cours, avec rattachement analytique au mois d'origine. Client en retard qui recharge en prépayé : la recharge n'éteint pas la créance post-payée, sauf accord explicite. Taux de change manquant pour un jour donné : le taux du dernier jour ouvré est utilisé et signalé.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Le plan comptable cible est-il SYSCOHADA pour toutes les entités, ou certaines filiales suivent-elles un autre référentiel ? Les exports suffisent-ils, ou faut-il une connexion directe au logiciel comptable ? Recommandation : exports SYSCOHADA en phase 1, connexion directe une fois le logiciel choisi.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 25 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 26</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'pnl', done: [true, true, true, false, false, true, false] };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['pnl', 'Rentabilité'],
+      ['suppliers', 'Factures fournisseurs'],
+      ['recovery', 'Recouvrement'],
+      ['tax', 'Taxes'],
+      ['close', 'Clôture du mois']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const warn = { color: 'var(--color-accent-300)' };
+    const bar = pct => ({ width: pct + '%', height: '100%', background: 'var(--color-accent)' });
+
+    const stepsDef = [
+      ['Prix figés et consommation arrêtés', 'Tous les messages d\u2019août valorisés · 18,2 M messages'],
+      ['Factures clients émises', '412 factures · 14 post-payées'],
+      ['Encaissements rapprochés', '2 418 paiements · 1 virement sans référence traité'],
+      ['Factures fournisseurs rapprochées', 'Panafric PF-2026-08 en écart · contestation en cours'],
+      ['Écart de change calculé', 'Lagos Net et Meta en USD · taux BCEAO quotidiens'],
+      ['Taxes collectées ventilées par pays', '6 pays · montants prêts pour déclaration'],
+      ['Validation du directeur financier', 'Après les étapes précédentes']
+    ];
+    const done = this.state.done;
+    const doneCount = done.filter(Boolean).length;
+    const all = doneCount === stepsDef.length;
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isPnl: t === 'pnl',
+      isSuppliers: t === 'suppliers',
+      isRecovery: t === 'recovery',
+      isTax: t === 'tax',
+      isClose: t === 'close',
+
+      pnl: [
+        { scope:'SMS · Togo', volume:'9,8 M', revenue:'66,6 M', cost:'47,5 M', margin:'28,7 %', trend:'+ 0,4 pt', marginStyle:{}, barStyle: bar(100) },
+        { scope:'OTP · tous pays', volume:'4,8 M', revenue:'29,3 M', cost:'19,7 M', margin:'32,8 %', trend:'+ 1,1 pt', marginStyle:{}, barStyle: bar(50) },
+        { scope:'SMS · Bénin', volume:'3,2 M', revenue:'25,3 M', cost:'17,3 M', margin:'31,6 %', trend:'stable', marginStyle:{}, barStyle: bar(42) },
+        { scope:'WhatsApp · Togo', volume:'0,48 M', revenue:'11,5 M', cost:'8,8 M', margin:'23,3 %', trend:'− 0,6 pt', marginStyle:{}, barStyle: bar(14) },
+        { scope:'SMS · Côte d\u2019Ivoire', volume:'1,6 M', revenue:'18,9 M', cost:'13,2 M', margin:'30,2 %', trend:'+ 0,2 pt', marginStyle:{}, barStyle: bar(30) },
+        { scope:'Email · tous pays', volume:'2,4 M', revenue:'4,8 M', cost:'2,2 M', margin:'54,2 %', trend:'+ 3,0 pt', marginStyle:{}, barStyle: bar(14) },
+        { scope:'SMS · Nigeria', volume:'0,62 M', revenue:'9,4 M', cost:'8,3 M', margin:'11,2 %', trend:'− 4,1 pt', marginStyle: warn, barStyle: bar(6) },
+        { scope:'WhatsApp Marketing · Bénin', volume:'0,12 M', revenue:'5,8 M', cost:'5,3 M', margin:'7,9 %', trend:'− 5,6 pt', marginStyle: warn, barStyle: bar(2) }
+      ],
+
+      invoices: [
+        { supplier:'Moov Africa Togo', ref:'MV-2608-114', billedVol:'8 420 100', measuredVol:'8 418 950', billed:'40,42 M', expected:'40,41 M', gap:'+ 0,01 %', gapStyle:{}, state: tag('tag-accent','Validée auto') },
+        { supplier:'Yas Togo', ref:'YS-0826-77', billedVol:'6 940 000', measuredVol:'6 936 200', billed:'34,35 M', expected:'34,33 M', gap:'+ 0,05 %', gapStyle:{}, state: tag('tag-accent','Validée auto') },
+        { supplier:'MTN Bénin', ref:'MTNBJ-826', billedVol:'3 200 400', measuredVol:'3 199 800', billed:'17,28 M', expected:'17,28 M', gap:'0,00 %', gapStyle:{}, state: tag('tag-accent','Payée') },
+        { supplier:'Agrégateur Panafric', ref:'PF-2026-08', billedVol:'4 800 000', measuredVol:'4 585 200', billed:'30,72 M', expected:'28,86 M', gap:'+ 6,45 %', gapStyle: warn, state: tag('tag-outline','Contestée') },
+        { supplier:'Lagos Net', ref:'LN-AUG-26', billedVol:'620 000', measuredVol:'617 300', billed:'13 950 USD', expected:'13 890 USD', gap:'+ 0,43 %', gapStyle:{}, state: tag('tag-accent','Validée auto') },
+        { supplier:'Meta', ref:'META-0826', billedVol:'600 120 conv.', measuredVol:'600 040 conv.', billed:'19,84 M', expected:'19,83 M', gap:'+ 0,05 %', gapStyle:{}, state: tag('tag-accent','Validée auto') },
+        { supplier:'Passerelle email', ref:'MR-2608', billedVol:'2 401 000', measuredVol:'2 400 900', billed:'2,16 M', expected:'2,16 M', gap:'0,00 %', gapStyle:{}, state: tag('tag-accent','Payée') }
+      ],
+
+      aging: [
+        { label:'À échoir', value:'24,1 M FCFA', note:'10 factures', style:{} },
+        { label:'1 – 15 jours', value:'9,4 M FCFA', note:'3 factures', style:{} },
+        { label:'16 – 45 jours', value:'4,2 M FCFA', note:'2 factures', style: warn },
+        { label:'Plus de 45 jours', value:'0,9 M FCFA', note:'1 facture · recouvrement', style: warn }
+      ],
+      dues: [
+        { client:'Agence Digitale Lomé', ref:'F-2026-0811', amount:'2 812 000', due:'28/08/2026', late:'18 j', reminders:'2', lateStyle: warn, next: tag('tag-outline','Suspension à J+21') },
+        { client:'Clinique du Golfe', ref:'F-2026-0716', amount:'920 000', due:'30/07/2026', late:'47 j', reminders:'3', lateStyle: warn, next: tag('tag-outline','Recouvrement') },
+        { client:'Transco Cotonou', ref:'F-2026-0844', amount:'1 380 000', due:'05/09/2026', late:'10 j', reminders:'1', lateStyle:{}, next: tag('tag-neutral','Relance 2 à J+14') },
+        { client:'Assur Ouest', ref:'F-2026-0892', amount:'1 500 000', due:'10/09/2026', late:'—', reminders:'0', lateStyle:{}, next: tag('tag-accent','Payée · rapprochée') },
+        { client:'Banque Atlantique Togo', ref:'F-2026-0901', amount:'4 200 000', due:'30/09/2026', late:'—', reminders:'0', lateStyle:{}, next: tag('tag-neutral','À échoir') },
+        { client:'MaBanque SA', ref:'—', amount:'—', due:'—', late:'—', reminders:'0', lateStyle:{}, next: tag('tag-neutral','Prépayé · sans encours') }
+      ],
+      ladder: [
+        { when:'J − 5', what:'Rappel courtois', note:'Email au Billing Manager' },
+        { when:'J + 3', what:'Relance 1', note:'Email + notification console' },
+        { when:'J + 14', what:'Relance 2', note:'Email + SMS à l\u2019Owner · commercial prévenu' },
+        { when:'J + 21', what:'Suspension', note:'Nouveaux envois bloqués · OTP honorés 24 h' },
+        { when:'J + 45', what:'Recouvrement', note:'Décision Finance · dossier transmis' }
+      ],
+
+      taxes: [
+        { country:'Togo', tax:'TVA', rate:'18 %', since:'01/01/2024', base:'92,4 M', collected:'16,6 M', state: tag('tag-accent','Prête') },
+        { country:'Bénin', tax:'TVA', rate:'18 %', since:'01/01/2024', base:'38,1 M', collected:'6,9 M', state: tag('tag-accent','Prête') },
+        { country:'Côte d\u2019Ivoire', tax:'TVA', rate:'18 %', since:'01/01/2024', base:'24,8 M', collected:'4,5 M', state: tag('tag-accent','Prête') },
+        { country:'Nigeria', tax:'VAT', rate:'7,5 %', since:'01/02/2020', base:'9,4 M', collected:'0,7 M', state: tag('tag-outline','À vérifier') },
+        { country:'Ghana', tax:'VAT + levies', rate:'selon régime', since:'—', base:'1,2 M', collected:'—', state: tag('tag-outline','Conseil requis') },
+        { country:'Exonérés', tax:'—', rate:'0 %', since:'par convention', base:'3,8 M', collected:'0', state: tag('tag-neutral','2 conventions') }
+      ],
+
+      doneCount, totalCount: stepsDef.length,
+      closeTag: all ? 'Prête à clôturer' : 'En cours',
+      closeTagCls: all ? 'tag tag-accent' : 'tag tag-outline',
+      closeDisabled: !all,
+      closeSteps: stepsDef.map(([label, note], i) => ({
+        label, note,
+        mark: done[i] ? '✓' : '',
+        onClick: () => { const d = done.slice(); d[i] = !d[i]; this.setState({ done: d }); },
+        rowStyle: { display:'flex', gap:'var(--space-4)', alignItems:'flex-start', background:'transparent', border:'none', borderBottom:'1px solid var(--color-divider)', padding:'0 0 var(--space-3)', cursor:'pointer', color:'inherit', font:'inherit', width:'100%' },
+        boxStyle: { width:'18px', height:'18px', flex:'none', marginTop:'2px', borderRadius:'var(--radius-sm)', border:'1.5px solid ' + (done[i] ? 'var(--color-accent)' : 'var(--color-neutral-600)'), color:'var(--color-accent)', fontSize:'12px', display:'flex', alignItems:'center', justifyContent:'center' }
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

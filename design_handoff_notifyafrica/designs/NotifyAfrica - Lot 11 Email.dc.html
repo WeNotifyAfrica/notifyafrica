@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 11 · Email</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Application mobile · Live</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Email transactionnel</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Le canal le moins cher, mais celui dont la valeur dépend entièrement de la réputation d'expédition. Tout le lot est construit autour de cette réalité : authentifier le domaine, protéger la liste par les suppressions, surveiller la délivrabilité. Un email rejeté n'est pas facturé.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isSend }}" hint-placeholder-val="{{ true }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Envoi</span><div class="card-title" style="font-size:18px">Composer un email</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Expéditeur</label><select class="input"><option>MaBanque — notifications@mabanque.tg</option><option>Service client — support@mabanque.tg</option></select></div>
+        <div class="field"><label>Répondre à</label><select class="input"><option>support@mabanque.tg</option><option>Aucune réponse</option></select></div>
+      </div>
+      <div class="field"><label>Destinataires</label>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; padding:var(--space-2); border:1px solid var(--color-divider); border-radius:var(--radius-md); background:var(--color-bg)">
+          <span class="tag tag-accent">Liste « Relevés mensuels » · 48 900</span>
+          <span class="text-muted" style="font-size:12px; padding:3px 6px">Les adresses en liste de suppression sont exclues automatiquement</span>
+        </div>
+      </div>
+      <div class="field"><label>Objet</label><input class="input" type="text" value="Votre relevé de septembre est disponible"></div>
+      <div class="field"><label>Modèle</label><select class="input"><option>Relevé mensuel — HTML</option><option>Aucun — éditeur libre</option></select></div>
+      <div class="card" style="background:var(--color-neutral-900); gap:var(--space-2)">
+        <span class="card-kicker">Aperçu</span>
+        <p class="card-body" style="margin:0">Bonjour <span style="color:var(--color-accent-300)">[prenom]</span>, votre relevé du mois de <span style="color:var(--color-accent-300)">[mois]</span> est disponible dans votre espace. Solde au <span style="color:var(--color-accent-300)">[date]</span> : <span style="color:var(--color-accent-300)">[solde]</span> FCFA.</p>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)"><span class="tag tag-outline">Bouton · Consulter mon relevé</span><span class="tag tag-outline">Lien de désinscription</span></div>
+      </div>
+      <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center">
+        <button type="button" class="btn btn-secondary">Envoyer un test</button>
+        <span class="text-muted" style="font-size:12px">Contrôles passés : domaine authentifié · lien de désinscription présent · 4 variables résolues</span>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline"><span class="card-kicker">Estimation</span><span class="tag tag-outline">Moteur de prix</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Adresses de la liste</span><span class="num" style="font-size:13px">48 900</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Supprimées exclues</span><span class="num" style="font-size:13px">− 1 284</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Destinataires retenus</span><span class="num" style="font-size:13px">47 616</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier appliqué</span><span style="font-size:13px">0 – 100 000</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="num" style="font-size:13px">3,00 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sous-total</span><span class="num" style="font-size:13px">142 848 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe (18 %)</span><span class="num" style="font-size:13px">25 713 FCFA</span></div>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Coût total</span><span class="num" style="font-size:22px; color:var(--color-accent-300)">168 561 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde après envoi</span><span class="num" style="font-size:12px">1 091 439 FCFA</span></div>
+        <button type="button" class="btn btn-primary btn-block">Confirmer l'envoi</button>
+        <p class="text-muted" style="margin:0; font-size:11px">Les rejets définitifs sont remboursés au solde sous 24 h.</p>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Économie de palier</span><p class="card-body" style="margin:0">À partir de 100 001 emails mensuels, le prix passe à 2,50 FCFA. Vous êtes à 68 400 ce mois-ci.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTemplates }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Modèles HTML et texte brut. Chaque modèle transactionnel doit rester sobre : les emails lourds ou trop promotionnels dégradent la réputation du domaine, donc la délivrabilité de tous les autres.</p>
+      <button type="button" class="btn btn-primary">Créer un modèle</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:840px">
+        <thead><tr><th>Modèle</th><th>Type</th><th>Variables</th><th>Envois / mois</th><th>Ouverture</th><th>Statut</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ templates }}" as="t" hint-placeholder-count="5">
+            <tr>
+              <td><strong>{{ t.name }}</strong><div class="text-muted" style="font-size:11.5px">{{ t.subject }}</div></td>
+              <td class="text-muted">{{ t.type }}</td>
+              <td class="num text-muted">{{ t.vars }}</td>
+              <td class="num">{{ t.volume }}</td>
+              <td class="num">{{ t.open }}</td>
+              <td>{{ t.status }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isDomains }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Sans authentification complète, les emails partent en indésirables. L'onboarding email consiste à faire poser trois enregistrements DNS au client — c'est l'étape où il abandonne le plus souvent, donc elle doit être guidée.</p>
+      <button type="button" class="btn btn-primary">Ajouter un domaine</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Domaine</span><div class="card-title" style="font-size:18px">mabanque.tg</div></div>
+        <span class="tag tag-accent">Authentifié · prêt à l'envoi</span>
+      </div>
+      <div style="overflow:auto">
+        <table class="table" style="min-width:640px">
+          <thead><tr><th>Type</th><th>Nom</th><th>Rôle</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td class="num">TXT</td><td class="num text-muted">@</td><td>SPF — autorise NotifyAfrica à expédier</td><td><span class="tag tag-accent">Vérifié</span></td></tr>
+            <tr><td class="num">CNAME</td><td class="num text-muted">na1._domainkey</td><td>DKIM — signe chaque message</td><td><span class="tag tag-accent">Vérifié</span></td></tr>
+            <tr><td class="num">CNAME</td><td class="num text-muted">na2._domainkey</td><td>DKIM — clé de rotation</td><td><span class="tag tag-accent">Vérifié</span></td></tr>
+            <tr><td class="num">TXT</td><td class="num text-muted">_dmarc</td><td>DMARC — politique en cas d'échec</td><td><span class="tag tag-outline">Politique « none » — à durcir</span></td></tr>
+            <tr><td class="num">CNAME</td><td class="num text-muted">liens</td><td>Domaine de suivi des liens et désinscriptions</td><td><span class="tag tag-accent">Vérifié</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="background:var(--color-neutral-900)"><span class="card-kicker">Recommandation</span><p class="card-body" style="margin:0">Passer DMARC de « none » à « quarantine » une fois le trafic stabilisé : cela empêche l'usurpation de votre domaine, très recherchée pour l'hameçonnage bancaire.</p></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:620px">
+        <thead><tr><th>Domaine</th><th>Réputation</th><th>Volume / mois</th><th>Rejets</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><strong>mabanque.tg</strong></td><td><span class="tag tag-accent">Bonne</span></td><td class="num">68 400</td><td class="num">0,42 %</td><td><span class="tag tag-accent">Authentifié</span></td></tr>
+          <tr><td><strong>promo.mabanque.tg</strong></td><td class="text-muted">—</td><td class="num">0</td><td class="num text-muted">—</td><td><span class="tag tag-outline">DKIM manquant</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm"><span class="card-kicker">Bonne pratique</span><p class="card-body" style="margin:0">Séparer le domaine transactionnel du domaine marketing : une campagne mal reçue ne doit jamais empêcher un code de connexion d'arriver.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isIdentities }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Les adresses d'expédition autorisées, rattachées à un domaine authentifié. Une identité peut être réservée à un projet pour éviter qu'une équipe envoie sous une adresse qui n'est pas la sienne.</p>
+      <button type="button" class="btn btn-primary">Ajouter une identité</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:820px">
+        <thead><tr><th>Adresse</th><th>Nom affiché</th><th>Usage</th><th>Projet</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="num"><strong>notifications@mabanque.tg</strong></td><td>MaBanque</td><td class="text-muted">Transactionnel</td><td class="text-muted">Application mobile</td><td><span class="tag tag-accent">Vérifiée</span></td></tr>
+          <tr><td class="num"><strong>support@mabanque.tg</strong></td><td>Service client</td><td class="text-muted">Réponses clients</td><td class="text-muted">Tous</td><td><span class="tag tag-accent">Vérifiée</span></td></tr>
+          <tr><td class="num"><strong>releves@mabanque.tg</strong></td><td>Relevés MaBanque</td><td class="text-muted">Transactionnel</td><td class="text-muted">Back-office</td><td><span class="tag tag-accent">Vérifiée</span></td></tr>
+          <tr><td class="num"><strong>offres@promo.mabanque.tg</strong></td><td>Offres MaBanque</td><td class="text-muted">Marketing</td><td class="text-muted">Marketing</td><td><span class="tag tag-outline">Bloquée · domaine non authentifié</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLogs }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Remis</option><option>Ouvert</option><option>Rejet définitif</option><option>Rejet temporaire</option><option>Plainte</option></select></div>
+        <div class="field"><label>Identité</label><select class="input"><option>Toutes</option><option>notifications@mabanque.tg</option></select></div>
+        <div class="field"><label>Modèle</label><select class="input"><option>Tous</option><option>Relevé mensuel</option></select></div>
+        <div class="field"><label>Destinataire</label><input class="input" type="text" placeholder="adresse@exemple.com"></div>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:900px">
+        <thead><tr><th>Heure</th><th>Destinataire</th><th>Objet</th><th>Fournisseur</th><th>Statut</th><th>Détail</th><th>Facturé</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ logs }}" as="l" hint-placeholder-count="7">
+            <tr>
+              <td class="num text-muted">{{ l.time }}</td>
+              <td>{{ l.to }}</td>
+              <td class="text-muted">{{ l.subject }}</td>
+              <td class="text-muted">{{ l.provider }}</td>
+              <td>{{ l.status }}</td>
+              <td class="text-muted" style="font-size:12px">{{ l.detail }}</td>
+              <td class="num">{{ l.billed }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSuppressions }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Total supprimé</span><span class="num" style="font-size:24px">1 284</span><span class="text-muted" style="font-size:12px">adresses exclues d'office</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Rejets définitifs</span><span class="num" style="font-size:24px">742</span><span class="text-muted" style="font-size:12px">adresse inexistante</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Désinscriptions</span><span class="num" style="font-size:24px">418</span><span class="text-muted" style="font-size:12px">à la demande du destinataire</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Plaintes</span><span class="num" style="font-size:24px">124</span><span class="text-muted" style="font-size:12px">marqué comme indésirable</span></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:760px">
+        <thead><tr><th>Adresse</th><th>Motif</th><th>Depuis</th><th>Origine</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>k.mensah@exemple.com</td><td><span class="tag tag-neutral">Rejet définitif</span></td><td class="num text-muted">12/09</td><td class="text-muted">Relevé mensuel</td><td><button type="button" class="btn btn-ghost">Retirer</button></td></tr>
+          <tr><td>f.diallo@exemple.com</td><td><span class="tag tag-neutral">Désinscription</span></td><td class="num text-muted">11/09</td><td class="text-muted">Offres épargne</td><td class="text-muted" style="font-size:12px">Retrait interdit</td></tr>
+          <tr><td>y.amegan@exemple.com</td><td><span class="tag tag-neutral">Plainte</span></td><td class="num text-muted">09/09</td><td class="text-muted">Offres épargne</td><td class="text-muted" style="font-size:12px">Retrait interdit</td></tr>
+          <tr><td>a.sika@exemple.com</td><td><span class="tag tag-outline">Rejet temporaire × 5</span></td><td class="num text-muted">08/09</td><td class="text-muted">Relevé mensuel</td><td><button type="button" class="btn btn-ghost">Retirer</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Règle non négociable</span><p class="card-body" style="margin:0">Une désinscription ou une plainte ne peut pas être retirée depuis la Console. Seul le destinataire peut se réinscrire. C'est une protection juridique autant que technique.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Effet sur la facturation</span><p class="card-body" style="margin:0">Les adresses supprimées sont retirées avant l'estimation : elles ne sont ni envoyées ni facturées. Un rejet définitif survenu après envoi est remboursé au solde sous 24 h.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAnalytics }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+        <div class="card elev-sm" style="gap:2px"><span class="card-kicker">{{ k.label }}</span><span class="num" style="font-size:24px">{{ k.value }}</span><span class="text-muted" style="font-size:12px">{{ k.note }}</span></div>
+      </sc-for>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Entonnoir de délivrabilité</span><div class="card-title" style="font-size:17px">30 derniers jours</div></div>
+        <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="5">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13.5px">{{ f.label }}</span><span class="num text-muted" style="font-size:13px">{{ f.value }}</span></div>
+            <div style="height:7px; border-radius:4px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ f.barStyle }}"></div></div>
+            <span class="text-muted" style="font-size:11.5px">{{ f.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Par destinataire</span><div class="card-title" style="font-size:17px">Réception selon le fournisseur</div></div>
+        <div style="overflow:auto">
+          <table class="table" style="min-width:420px">
+            <thead><tr><th>Fournisseur</th><th>Envoyés</th><th>Remis</th><th>Ouverts</th><th>Plaintes</th></tr></thead>
+            <tbody>
+              <tr><td>Gmail</td><td class="num">31 200</td><td class="num">99,1 %</td><td class="num">42,8 %</td><td class="num">0,03 %</td></tr>
+              <tr><td>Yahoo</td><td class="num">14 800</td><td class="num">97,4 %</td><td class="num">31,2 %</td><td class="num">0,09 %</td></tr>
+              <tr><td>Outlook</td><td class="num">12 600</td><td class="num">98,2 %</td><td class="num">28,4 %</td><td class="num">0,05 %</td></tr>
+              <tr><td>Autres</td><td class="num">9 800</td><td class="num">96,1 %</td><td class="num">24,1 %</td><td class="num">0,04 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12px">Un taux de plainte supérieur à 0,10 % chez un fournisseur déclenche une alerte : au-delà de 0,30 %, il commence à filtrer tout le domaine.</p>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isPricing }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Vos tarifs Email</span><div class="card-title" style="font-size:18px">Prix par email envoyé</div></div>
+        <div class="field" style="min-width:140px"><label>Devise</label><select class="input"><option>XOF — FCFA</option><option>USD</option></select></div>
+      </div>
+      <div style="overflow:auto">
+        <table class="table" style="min-width:560px">
+          <thead><tr><th>Volume mensuel</th><th>Prix unitaire</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="num">0 – 100 000</td><td class="num" style="color:var(--color-accent-300)">3,00 FCFA</td><td><span class="tag tag-accent">Palier courant</span></td></tr>
+            <tr><td class="num">100 001 – 500 000</td><td class="num" style="color:var(--color-accent-300)">2,50 FCFA</td><td class="text-muted">Le plus choisi</td></tr>
+            <tr><td class="num">500 001 – 2 000 000</td><td class="num" style="color:var(--color-accent-300)">2,00 FCFA</td><td></td></tr>
+            <tr><td class="num">Plus de 2 000 000</td><td class="num" style="color:var(--color-accent-300)">Sur devis</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Ni les adresses supprimées, ni les rejets définitifs ne sont facturés. Le suivi d'ouverture et de clic est inclus.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Ce mois-ci</span><div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Emails facturés</span><span class="num" style="font-size:13px">68 400</span></div><div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Non facturés</span><span class="num" style="font-size:13px">1 572</span></div><div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Dépense</span><span class="num" style="font-size:19px; color:var(--color-accent-300)">205 200 FCFA</span></div></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Comparaison utile</span><p class="card-body" style="margin:0">Pour un relevé mensuel, l'email coûte environ deux fois moins qu'un SMS et porte davantage d'information. Le SMS reste préférable pour l'urgent et le sécuritaire.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Aucun envoi sans domaine authentifié (SPF + DKIM). Les adresses en liste de suppression sont exclues avant l'estimation, donc non facturées. Un rejet définitif après envoi est remboursé sous 24 h. Désinscriptions et plaintes sont irréversibles depuis la Console. Le lien de désinscription est obligatoire sur tout envoi non strictement transactionnel.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Domaine non vérifié, partiellement vérifié, authentifié, réputation dégradée. Identité bloquée. Modèle sans lien de désinscription. Rejet temporaire puis définitif après N tentatives. Plainte. Taux de plainte au-dessus du seuil (envois suspendus). Fournisseur email indisponible. Palier franchi en cours de mois.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Les enregistrements DNS sont retirés par le client après authentification : détection à l'envoi suivant et blocage. Une même adresse est supprimée pour un projet mais pas pour un autre : la suppression est-elle au niveau organisation ou projet ? Pic de plaintes en cours de campagne : suspension automatique. Adresse réinscrite manuellement alors qu'elle s'était désinscrite : refusé.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">La liste de suppression est-elle partagée à l'échelle de l'organisation ou isolée par projet ? Recommandation : organisation, avec dérogation possible pour les rejets temporaires. Faut-il imposer un domaine distinct pour le marketing ? Recommandation : oui, et le refuser sinon. Le suivi d'ouverture doit-il être activé par défaut, sachant qu'il ajoute un pixel et peut déplaire aux clients institutionnels ?</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 11 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 12 — Développeurs</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'send' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['send', 'Envoyer'],
+      ['templates', 'Modèles'],
+      ['domains', 'Domaines'],
+      ['identities', "Identités d'expédition"],
+      ['logs', 'Journaux'],
+      ['suppressions', 'Suppressions'],
+      ['analytics', 'Statistiques'],
+      ['pricing', 'Tarifs']
+    ];
+    const t = this.state.tab;
+    const bar = pct => ({ width: pct + '%', height: '100%', background: 'var(--color-accent)' });
+
+    return {
+      tabs: tabs.map(([key, label]) => ({
+        label,
+        onClick: () => this.setState({ tab: key }),
+        style: {
+          whiteSpace: 'nowrap',
+          color: key === t ? 'var(--color-accent)' : 'var(--color-text)',
+          borderColor: key === t ? 'var(--color-accent)' : 'var(--color-divider)',
+          background: key === t ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+        }
+      })),
+
+      isSend: t === 'send',
+      isTemplates: t === 'templates',
+      isDomains: t === 'domains',
+      isIdentities: t === 'identities',
+      isLogs: t === 'logs',
+      isSuppressions: t === 'suppressions',
+      isAnalytics: t === 'analytics',
+      isPricing: t === 'pricing',
+
+      kpis: [
+        { label:'Emails envoyés', value:'68 400', note:'sur 30 jours' },
+        { label:'Taux de remise', value:'98,3 %', note:'acceptés par le fournisseur' },
+        { label:"Taux d'ouverture", value:'36,2 %', note:'moyenne transactionnelle' },
+        { label:'Rejets définitifs', value:'0,42 %', note:'seuil d\u2019alerte à 2 %' },
+        { label:'Plaintes', value:'0,05 %', note:'seuil d\u2019alerte à 0,10 %' }
+      ],
+
+      funnel: [
+        { label:'1 · Destinataires retenus', value:'68 400', note:'après exclusion des adresses supprimées', barStyle: bar(100) },
+        { label:'2 · Acceptés par le fournisseur', value:'67 240', note:'1 160 rejets, non facturés', barStyle: bar(98) },
+        { label:'3 · Remis en boîte de réception', value:'65 810', note:'1 430 classés indésirables', barStyle: bar(96) },
+        { label:'4 · Ouverts', value:'24 760', note:'36,2 % des envois', barStyle: bar(36) },
+        { label:'5 · Clics sur un lien', value:'8 140', note:'11,9 % des envois', barStyle: bar(12) }
+      ],
+
+      templates: [
+        { name:'Relevé mensuel', subject:'Votre relevé de {mois} est disponible', type:'HTML', vars:'4', volume:'48 900', open:'41,2 %', status:'Actif' },
+        { name:'Confirmation de virement', subject:'Virement de {montant} FCFA exécuté', type:'HTML', vars:'3', volume:'12 400', open:'58,4 %', status:'Actif' },
+        { name:'Bienvenue', subject:'Bienvenue chez MaBanque', type:'HTML', vars:'1', volume:'4 820', open:'62,1 %', status:'Actif' },
+        { name:'Réinitialisation de mot de passe', subject:'Réinitialisez votre mot de passe', type:'Texte brut', vars:'2', volume:'2 280', open:'71,8 %', status:'Actif' },
+        { name:'Offres épargne', subject:'Nos taux évoluent en octobre', type:'HTML', vars:'2', volume:'—', open:'—', status:'Bloqué · domaine marketing non authentifié' }
+      ],
+
+      logs: [
+        { time:'09:12', to:'a.koffi@exemple.com', subject:'Votre relevé de septembre…', provider:'Gmail', status:'Ouvert', detail:'Ouvert à 09:31, 1 clic', billed:'3,54 FCFA' },
+        { time:'09:12', to:'k.mensah@exemple.com', subject:'Votre relevé de septembre…', provider:'Yahoo', status:'Rejet définitif', detail:'Adresse inexistante · ajoutée aux suppressions', billed:'remboursé' },
+        { time:'09:12', to:'f.diallo@exemple.com', subject:'Votre relevé de septembre…', provider:'Gmail', status:'Remis', detail:'Non ouvert', billed:'3,54 FCFA' },
+        { time:'09:11', to:'y.amegan@exemple.com', subject:'Virement de 45 000 FCFA…', provider:'Outlook', status:'Ouvert', detail:'Ouvert à 09:14', billed:'3,54 FCFA' },
+        { time:'09:11', to:'a.sika@exemple.com', subject:'Votre relevé de septembre…', provider:'Autres', status:'Rejet temporaire', detail:'Boîte pleine · 3ᵉ tentative dans 4 h', billed:'3,54 FCFA' },
+        { time:'09:10', to:'m.toure@exemple.com', subject:'Votre relevé de septembre…', provider:'Gmail', status:'Indésirable', detail:'Classé par le fournisseur', billed:'3,54 FCFA' },
+        { time:'09:10', to:'s.adjo@exemple.com', subject:'Bienvenue chez MaBanque', provider:'Gmail', status:'Plainte', detail:'Marqué indésirable · ajouté aux suppressions', billed:'3,54 FCFA' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

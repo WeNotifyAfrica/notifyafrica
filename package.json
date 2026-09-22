@@ -1,0 +1,27 @@
+{
+  "name": "notifyafrica",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:website": "turbo run dev --filter=@notifyafrica/website",
+    "dev:console": "turbo run dev --filter=@notifyafrica/console",
+    "dev:admin": "turbo run dev --filter=@notifyafrica/admin",
+    "dev:api": "turbo run dev --filter=@notifyafrica/core-api",
+    "dev:worker": "turbo run dev --filter=@notifyafrica/worker",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "db:generate": "pnpm --filter @notifyafrica/core-api run db:generate",
+    "db:migrate": "pnpm --filter @notifyafrica/core-api run db:migrate",
+    "db:seed": "pnpm --filter @notifyafrica/core-api run db:seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 10 · WhatsApp Business</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Application mobile · Live</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">WhatsApp Business</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Le canal le plus contraint : chaque message sortant hors conversation ouverte exige un modèle approuvé par Meta, déclaré dans une catégorie qui détermine le prix. NotifyAfrica enregistre les tarifs officiels Meta, applique sa marge configurée en back-office et n'expose au client que le <strong style="color:var(--color-text)">prix final</strong>.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-8)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <span class="card-kicker">{{ k.label }}</span>
+          <span class="num" style="font-size:25px; line-height:1.1">{{ k.value }}</span>
+          <span class="text-muted" style="font-size:12px">{{ k.note }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Conversations par catégorie</span><div class="card-title" style="font-size:17px">30 derniers jours</div></div>
+        <sc-for list="{{ byCategory }}" as="c" hint-placeholder-count="3">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13.5px">{{ c.name }}</span><span class="num text-muted" style="font-size:13px">{{ c.cost }}</span></div>
+            <div style="height:6px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ c.barStyle }}"></div></div>
+            <span class="text-muted num" style="font-size:11.5px">{{ c.detail }}</span>
+          </div>
+        </sc-for>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <p class="text-muted" style="margin:0; font-size:12px">Une conversation couvre 24 h d'échanges avec un même contact. La catégorie du <em>premier</em> message sortant fixe le prix de toute la fenêtre.</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+          <span class="card-kicker">Numéro professionnel</span>
+          <div class="card-title num" style="font-size:17px">+228 70 55 10 00</div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Nom affiché</span><span style="font-size:13px">MaBanque</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Qualité Meta</span><span style="font-size:13px">Élevée</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Limite d'envoi</span><span class="num" style="font-size:13px">10 000 / 24 h</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Badge vérifié</span><span style="font-size:13px">Obtenu</span></div>
+        </div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">À surveiller</span><p class="card-body" style="margin:0">Deux modèles marketing ont été signalés par des destinataires. Trois signalements de plus feraient passer la qualité du numéro en « moyenne » et diviseraient la limite d'envoi.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSend }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Envoi</span><div class="card-title" style="font-size:18px">Message à partir d'un modèle</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Numéro d'envoi</label><select class="input"><option>+228 70 55 10 00 — MaBanque</option></select></div>
+        <div class="field"><label>Modèle approuvé</label><select class="input"><option>echeance_rappel_fr — Utility</option><option>auth_login_fr — Authentication</option><option>promo_epargne_fr — Marketing</option></select></div>
+      </div>
+      <div class="field"><label>Destinataires</label>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; padding:var(--space-2); border:1px solid var(--color-divider); border-radius:var(--radius-md); background:var(--color-bg)">
+          <span class="tag tag-accent">Liste « Clients actifs » · 8 200</span>
+          <span class="text-muted" style="font-size:12px; padding:3px 6px">Seuls les contacts ayant donné leur accord WhatsApp sont retenus</span>
+        </div>
+      </div>
+      <div class="card" style="background:var(--color-neutral-900); gap:var(--space-2)">
+        <span class="card-kicker">Aperçu du modèle · Utility</span>
+        <p class="card-body" style="margin:0">Bonjour <span style="color:var(--color-accent-300)">[variable 1]</span>, votre échéance de <span style="color:var(--color-accent-300)">[variable 2]</span> FCFA arrive le <span style="color:var(--color-accent-300)">[variable 3]</span>. Consultez le détail dans l'application.</p>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)"><span class="tag tag-outline">Bouton · Ouvrir l'application</span><span class="tag tag-outline">Bouton · Nous contacter</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Variable 1</label><select class="input"><option>prenom</option></select></div>
+        <div class="field"><label>Variable 2</label><select class="input"><option>montant</option></select></div>
+        <div class="field"><label>Variable 3</label><select class="input"><option>date_echeance</option></select></div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline"><span class="card-kicker">Estimation</span><span class="tag tag-outline">Moteur de prix</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Destinataires éligibles</span><span class="num" style="font-size:13px">8 200</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Catégorie</span><span style="font-size:13px">Utility</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Destination</span><span style="font-size:13px">Togo</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix par conversation</span><span class="num" style="font-size:13px">24,00 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Conversations déjà ouvertes</span><span class="num" style="font-size:13px">− 1 140</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sous-total</span><span class="num" style="font-size:13px">169 440 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe (18 %)</span><span class="num" style="font-size:13px">30 499 FCFA</span></div>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Coût total</span><span class="num" style="font-size:22px; color:var(--color-accent-300)">199 939 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde après envoi</span><span class="num" style="font-size:12px">1 060 061 FCFA</span></div>
+        <button type="button" class="btn btn-primary btn-block">Confirmer l'envoi</button>
+        <p class="text-muted" style="margin:0; font-size:11px">Les contacts ayant déjà une conversation ouverte ne sont pas facturés une seconde fois.</p>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">État · catégorie plus chère</span><p class="card-body" style="margin:0">Choisir un modèle Marketing ferait passer le coût à 46,00 FCFA par conversation, soit 383 180 FCFA — l'écart est affiché avant confirmation.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTemplates }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Chaque modèle est soumis à Meta et rattaché à une catégorie. Meta peut reclasser un modèle : un Utility reclassé en Marketing double son coût, d'où l'alerte dédiée.</p>
+      <button type="button" class="btn btn-primary">Soumettre un modèle</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:880px">
+        <thead><tr><th>Modèle</th><th>Catégorie</th><th>Langue</th><th>Prix / conversation</th><th>Utilisations</th><th>Statut</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ templates }}" as="t" hint-placeholder-count="6">
+            <tr>
+              <td><strong>{{ t.name }}</strong><div class="text-muted" style="font-size:11.5px">{{ t.preview }}</div></td>
+              <td>{{ t.category }}</td>
+              <td class="text-muted">{{ t.lang }}</td>
+              <td class="num">{{ t.price }}</td>
+              <td class="num text-muted">{{ t.uses }}</td>
+              <td>{{ t.status }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Alerte de reclassement</span><p class="card-body" style="margin:0">Le modèle <strong>promo_epargne_fr</strong> a été reclassé par Meta de Utility vers Marketing le 08/09. Le prix par conversation est passé de 24 à 46 FCFA. Les envois planifiés utilisant ce modèle demandent une nouvelle confirmation.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isNumbers }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Un numéro professionnel par marque ou par pays. La qualité attribuée par Meta conditionne la limite d'envoi quotidienne — c'est la contrainte la plus sous-estimée du canal.</p>
+      <button type="button" class="btn btn-primary">Ajouter un numéro</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:820px">
+        <thead><tr><th>Numéro</th><th>Nom affiché</th><th>Pays</th><th>Qualité</th><th>Limite / 24 h</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="num"><strong>+228 70 55 10 00</strong></td><td>MaBanque</td><td class="text-muted">Togo</td><td><span class="tag tag-accent">Élevée</span></td><td class="num">10 000</td><td><span class="tag tag-accent">Vérifié</span></td></tr>
+          <tr><td class="num"><strong>+229 55 20 40 00</strong></td><td>MaBanque Bénin</td><td class="text-muted">Bénin</td><td><span class="tag tag-outline">Moyenne</span></td><td class="num">1 000</td><td><span class="tag tag-accent">Vérifié</span></td></tr>
+          <tr><td class="num"><strong>+225 01 02 03 04</strong></td><td>MaBanque CI</td><td class="text-muted">Côte d'Ivoire</td><td class="text-muted">—</td><td class="num text-muted">250</td><td><span class="tag tag-outline">Vérification Meta en cours</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Palier de limite</span><p class="card-body" style="margin:0">250 → 1 000 → 10 000 → 100 000 → illimité. La montée est automatique si la qualité reste élevée et le volume régulier. Une chute de qualité fait redescendre d'un palier.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Cas limite</span><p class="card-body" style="margin:0">Une campagne de 8 200 conversations sur le numéro Bénin (limite 1 000) serait étalée sur 9 jours : la Console l'annonce avant confirmation et propose de basculer sur un autre numéro.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isConversations }}">
+  <div style="display:grid; grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+      <div class="field"><label>Filtrer</label><select class="input"><option>Toutes les conversations</option><option>Non lues</option><option>Fenêtre ouverte</option><option>Fenêtre fermée</option></select></div>
+      <sc-for list="{{ threads }}" as="th" hint-placeholder-count="5">
+        <button type="button" onClick="{{ th.onClick }}" style="{{ th.style }}">
+          <span style="display:flex; flex-direction:column; gap:2px; align-items:flex-start; min-width:0">
+            <span style="font-size:13.5px">{{ th.name }}</span>
+            <span class="text-muted" style="font-size:11.5px">{{ th.last }}</span>
+          </span>
+          <span class="text-muted num" style="font-size:11px; margin-left:auto">{{ th.time }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Conversation</span><div class="card-title" style="font-size:17px">Awa Koffi · +228 90 12 34 56</div></div>
+        <span class="tag tag-accent">Fenêtre ouverte · 18 h restantes</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+        <div style="align-self:flex-start; max-width:76%; background:var(--color-neutral-900); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4)"><p class="card-body" style="margin:0">Bonjour, je n'ai pas reçu la confirmation de mon virement de ce matin.</p><span class="text-muted num" style="font-size:11px">09:14 · entrant</span></div>
+        <div style="align-self:flex-end; max-width:76%; background:color-mix(in srgb, var(--color-accent) 16%, transparent); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4)"><p class="card-body" style="margin:0">Bonjour Awa, votre virement de 45 000 FCFA a été exécuté à 08:52. Référence VIR-88421.</p><span class="text-muted num" style="font-size:11px">09:16 · sortant · dans la fenêtre, non facturé</span></div>
+        <div style="align-self:flex-start; max-width:76%; background:var(--color-neutral-900); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4)"><p class="card-body" style="margin:0">Merci beaucoup.</p><span class="text-muted num" style="font-size:11px">09:17 · entrant</span></div>
+      </div>
+      <div class="field"><label>Répondre</label><textarea class="input" placeholder="Message libre — possible tant que la fenêtre de 24 h est ouverte"></textarea></div>
+      <div style="display:flex; gap:var(--space-3); align-items:center; flex-wrap:wrap">
+        <button type="button" class="btn btn-primary">Envoyer</button>
+        <span class="text-muted" style="font-size:12px">Gratuit dans la fenêtre · hors fenêtre, un modèle approuvé est requis et une nouvelle conversation est facturée</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLogs }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Catégorie</label><select class="input"><option>Toutes</option><option>Utility</option><option>Authentication</option><option>Marketing</option></select></div>
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Lu</option><option>Remis</option><option>Échec</option></select></div>
+        <div class="field"><label>Numéro d'envoi</label><select class="input"><option>Tous</option><option>+228 70 55 10 00</option></select></div>
+        <div class="field"><label>Destinataire</label><input class="input" type="text" placeholder="+228…"></div>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:880px">
+        <thead><tr><th>Heure</th><th>Destinataire</th><th>Modèle</th><th>Catégorie</th><th>Conversation</th><th>Statut</th><th>Facturé</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ logs }}" as="l" hint-placeholder-count="7">
+            <tr>
+              <td class="num text-muted">{{ l.time }}</td>
+              <td class="num">{{ l.to }}</td>
+              <td class="text-muted">{{ l.template }}</td>
+              <td>{{ l.category }}</td>
+              <td class="text-muted">{{ l.conv }}</td>
+              <td>{{ l.status }}</td>
+              <td class="num">{{ l.billed }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAnalytics }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Taux de lecture</span><span class="num" style="font-size:24px">81,4 %</span><span class="text-muted" style="font-size:12px">contre 0 % mesurable en SMS</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Taux de réponse</span><span class="num" style="font-size:24px">12,8 %</span><span class="text-muted" style="font-size:12px">conversations entrantes générées</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Clics sur bouton</span><span class="num" style="font-size:24px">9,2 %</span><span class="text-muted" style="font-size:12px">ouvertures de l'application</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Signalements</span><span class="num" style="font-size:24px">0,04 %</span><span class="text-muted" style="font-size:12px">seuil d'alerte à 0,10 %</span></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div><span class="card-kicker">Par pays et catégorie</span><div class="card-title" style="font-size:17px">Volume, prix appliqué et dépense</div></div>
+      <div style="overflow:auto">
+        <table class="table" style="min-width:620px">
+          <thead><tr><th>Pays</th><th>Catégorie</th><th>Conversations</th><th>Prix appliqué</th><th>Dépense</th></tr></thead>
+          <tbody>
+            <tr><td>Togo</td><td>Utility</td><td class="num">5 120</td><td class="num">24,00 FCFA</td><td class="num">122 880 FCFA</td></tr>
+            <tr><td>Togo</td><td>Authentication</td><td class="num">1 840</td><td class="num">28,00 FCFA</td><td class="num">51 520 FCFA</td></tr>
+            <tr><td>Togo</td><td>Marketing</td><td class="num">980</td><td class="num">46,00 FCFA</td><td class="num">45 080 FCFA</td></tr>
+            <tr><td>Bénin</td><td>Utility</td><td class="num">260</td><td class="num">26,50 FCFA</td><td class="num">6 890 FCFA</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Le prix appliqué diffère par pays et par catégorie parce que la grille officielle Meta le fait varier. Le client ne voit que ce prix final.</p>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isPricing }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Vos tarifs WhatsApp</span><div class="card-title" style="font-size:18px">Prix par conversation, par catégorie</div></div>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap">
+          <div class="field" style="min-width:150px"><label>Pays</label><select class="input"><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option></select></div>
+          <div class="field" style="min-width:130px"><label>Devise</label><select class="input"><option>XOF — FCFA</option><option>USD</option></select></div>
+        </div>
+      </div>
+      <div style="overflow:auto">
+        <table class="table" style="min-width:620px">
+          <thead><tr><th>Catégorie</th><th>Usage</th><th>Prix par conversation</th><th>Fenêtre</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Utility</strong></td><td class="text-muted">Confirmations, rappels, statuts de commande</td><td class="num" style="color:var(--color-accent-300)">24,00 FCFA</td><td class="text-muted">24 h</td></tr>
+            <tr><td><strong>Authentication</strong></td><td class="text-muted">Codes de connexion et de validation</td><td class="num" style="color:var(--color-accent-300)">28,00 FCFA</td><td class="text-muted">24 h</td></tr>
+            <tr><td><strong>Marketing</strong></td><td class="text-muted">Promotions, nouveautés, réactivation</td><td class="num" style="color:var(--color-accent-300)">46,00 FCFA</td><td class="text-muted">24 h</td></tr>
+            <tr><td><strong>Service</strong></td><td class="text-muted">Réponses dans une fenêtre déjà ouverte</td><td class="num" style="color:var(--color-accent-300)">Gratuit</td><td class="text-muted">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Tarifs valables jusqu'au 30 septembre 2026. Meta révise sa grille périodiquement ; toute évolution est notifiée 15 jours avant application.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Simulateur</span><div class="card-title" style="font-size:17px">Estimer une campagne</div></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:var(--space-3)">
+          <div class="field"><label>Conversations</label><input class="input num" type="text" value="10 000"></div>
+          <div class="field"><label>Catégorie</label><select class="input"><option>Marketing</option><option>Utility</option><option>Authentication</option></select></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix par conversation</span><span class="num" style="font-size:13px">46,00 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sous-total</span><span class="num" style="font-size:13px">460 000 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise négociée</span><span class="num" style="font-size:13px">− 23 000 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe (18 %)</span><span class="num" style="font-size:13px">78 660 FCFA</span></div>
+          <hr class="hr" style="margin:var(--space-2) 0">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Total estimé</span><span class="num" style="font-size:20px; color:var(--color-accent-300)">515 660 FCFA</span></div>
+        </div>
+        <button type="button" class="btn btn-secondary" style="align-self:flex-start">Demander un devis au-delà de 100 000</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Ce que le client ne voit pas</span><p class="card-body" style="margin:0">Le coût officiel Meta, la marge appliquée et la règle de tarification retenue restent dans le back-office. Côté Console, une seule ligne : le prix par conversation. La marge est configurable par pays, par catégorie et par client — sans modification de code.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Vos conditions</span><p class="card-body" style="margin:0">Remise négociée de 5 % sur la catégorie Marketing, valable jusqu'au 31/12/2026, issue du devis QT-2026-0142.</p><a href="#" style="font-size:13px">Voir le devis</a></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">La facturation est par conversation de 24 h, pas par message : les réponses dans la fenêtre sont gratuites. La catégorie du premier message sortant fixe le prix de la fenêtre. Hors fenêtre, un modèle approuvé est obligatoire. Un contact sans consentement WhatsApp est exclu. Le prix final vient du moteur : coût Meta enregistré, marge configurée, remise éventuelle, règle client, taxe.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Numéro en vérification, vérifié, suspendu. Qualité élevée, moyenne, faible. Limite d'envoi atteinte. Modèle en attente, approuvé, rejeté, reclassé, désactivé. Conversation ouverte, expirée. Contact sans consentement. Tarif Meta expiré côté back-office (envoi bloqué plutôt que facturé au hasard).</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Meta reclasse un modèle Utility en Marketing entre la planification et l'envoi : nouvelle confirmation exigée. Le destinataire répond après expiration de la fenêtre : une nouvelle conversation payante s'ouvre. Campagne supérieure à la limite quotidienne du numéro : étalement annoncé avant confirmation. Qualité du numéro dégradée en cours de campagne : suspension automatique proposée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il afficher au client le détail « coût Meta + marge » pour les comptes Enterprise qui le réclament, ou tenir la règle du prix final partout ? Que fait-on si Meta augmente ses tarifs en cours de mois : absorption de la hausse jusqu'à la fin du mois, ou application immédiate avec notification ? Autorise-t-on l'envoi WhatsApp sans modèle vers les conversations ouvertes depuis l'API, ou seulement depuis la Console ?</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 10 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 11 — Email</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'overview', thread: 0 };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['overview', "Vue d'ensemble"],
+      ['send', 'Envoyer'],
+      ['templates', 'Modèles'],
+      ['numbers', 'Numéros'],
+      ['conversations', 'Conversations'],
+      ['logs', 'Journaux'],
+      ['analytics', 'Statistiques'],
+      ['pricing', 'Tarifs']
+    ];
+    const t = this.state.tab;
+    const bar = pct => ({ width: pct + '%', height: '100%', background: 'var(--color-accent)' });
+
+    const threadList = [
+      { name:'Awa Koffi', last:'Merci beaucoup.', time:'09:17' },
+      { name:'Kodjo Mensah', last:'Je souhaite bloquer ma carte.', time:'08:52' },
+      { name:'Fatou Diallo', last:'Quel est le plafond de virement ?', time:'Hier' },
+      { name:'Yao Amegan', last:'Reçu, merci pour la confirmation.', time:'Hier' },
+      { name:'Adjoa Sika', last:'Fenêtre fermée · dernier échange lundi', time:'Lun.' }
+    ];
+
+    return {
+      tabs: tabs.map(([key, label]) => ({
+        label,
+        onClick: () => this.setState({ tab: key }),
+        style: {
+          whiteSpace: 'nowrap',
+          color: key === t ? 'var(--color-accent)' : 'var(--color-text)',
+          borderColor: key === t ? 'var(--color-accent)' : 'var(--color-divider)',
+          background: key === t ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+        }
+      })),
+
+      isOverview: t === 'overview',
+      isSend: t === 'send',
+      isTemplates: t === 'templates',
+      isNumbers: t === 'numbers',
+      isConversations: t === 'conversations',
+      isLogs: t === 'logs',
+      isAnalytics: t === 'analytics',
+      isPricing: t === 'pricing',
+
+      kpis: [
+        { label:'Conversations', value:'8 200', note:'sur 30 jours' },
+        { label:'Taux de lecture', value:'81,4 %', note:'messages ouverts' },
+        { label:'Réponses reçues', value:'1 050', note:'12,8 % des conversations' },
+        { label:'Coût du mois', value:'226 370', note:'FCFA · toutes catégories' },
+        { label:'Qualité du numéro', value:'Élevée', note:'limite 10 000 / 24 h' }
+      ],
+
+      byCategory: [
+        { name:'Utility', cost:'129 770 FCFA', detail:'5 380 conversations · 24,00 à 26,50 FCFA selon le pays', barStyle: bar(57) },
+        { name:'Authentication', cost:'51 520 FCFA', detail:'1 840 conversations · 28,00 FCFA', barStyle: bar(23) },
+        { name:'Marketing', cost:'45 080 FCFA', detail:'980 conversations · 46,00 FCFA', barStyle: bar(20) }
+      ],
+
+      templates: [
+        { name:'echeance_rappel_fr', preview:'Bonjour …, votre échéance de … FCFA arrive le …', category:'Utility', lang:'Français', price:'24,00 FCFA', uses:'5 120', status:'Approuvé' },
+        { name:'auth_login_fr', preview:'Votre code de connexion est …', category:'Authentication', lang:'Français', price:'28,00 FCFA', uses:'1 840', status:'Approuvé' },
+        { name:'promo_epargne_fr', preview:'Ouvrez un compte épargne avant le …', category:'Marketing · reclassé', lang:'Français', price:'46,00 FCFA', uses:'980', status:'Approuvé' },
+        { name:'virement_confirme_fr', preview:'Votre virement de … a été exécuté.', category:'Utility', lang:'Français', price:'24,00 FCFA', uses:'3 240', status:'Approuvé' },
+        { name:'carte_livraison_en', preview:'Your card is ready for pickup at …', category:'Utility', lang:'English', price:'24,00 FCFA', uses:'—', status:'En attente Meta · 2 j' },
+        { name:'promo_credit_fr', preview:'Profitez de notre offre de crédit …', category:'Marketing', lang:'Français', price:'46,00 FCFA', uses:'—', status:'Rejeté · contenu promotionnel non conforme' }
+      ],
+
+      threads: threadList.map((th, i) => ({
+        name: th.name, last: th.last, time: th.time,
+        onClick: () => this.setState({ thread: i }),
+        style: {
+          display:'flex', alignItems:'center', gap:'var(--space-3)', width:'100%', cursor:'pointer',
+          textAlign:'left', padding:'var(--space-2) var(--space-3)', borderRadius:'var(--radius-md)',
+          border:'1px solid ' + (i === this.state.thread ? 'var(--color-accent)' : 'transparent'),
+          background: i === this.state.thread ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent',
+          color:'var(--color-text)'
+        }
+      })),
+
+      logs: [
+        { time:'09:16', to:'+228 90 12 34 56', template:'— réponse libre', category:'Service', conv:'Ouverte', status:'Lu', billed:'0 FCFA' },
+        { time:'08:40', to:'+228 91 44 20 08', template:'echeance_rappel_fr', category:'Utility', conv:'Nouvelle', status:'Lu', billed:'24,00 FCFA' },
+        { time:'08:38', to:'+228 92 31 77 10', template:'auth_login_fr', category:'Authentication', conv:'Nouvelle', status:'Lu', billed:'28,00 FCFA' },
+        { time:'08:35', to:'+229 97 11 08 42', template:'echeance_rappel_fr', category:'Utility', conv:'Nouvelle', status:'Remis', billed:'26,50 FCFA' },
+        { time:'08:31', to:'+228 70 00 12 99', template:'promo_epargne_fr', category:'Marketing', conv:'Nouvelle', status:'Remis', billed:'46,00 FCFA' },
+        { time:'08:28', to:'+228 93 02 64 73', template:'echeance_rappel_fr', category:'Utility', conv:'Déjà ouverte', status:'Lu', billed:'0 FCFA' },
+        { time:'08:22', to:'+228 90 88 45 21', template:'echeance_rappel_fr', category:'Utility', conv:'—', status:'Échec · pas de compte WhatsApp', billed:'0 FCFA' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

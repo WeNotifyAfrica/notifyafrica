@@ -1,0 +1,18 @@
+# Reverse proxy — domains come from environment (04_Prompt §8). Caddy reads
+# these from the shell environment it's launched with (docker-compose.yml's
+# env_file); substitute the placeholders or export them before `caddy run`.
+{$PUBLIC_SITE_DOMAIN:notifyafrica.com} {
+    reverse_proxy website:3000
+}
+
+{$CONSOLE_DOMAIN:app.notifyafrica.com} {
+    reverse_proxy console:3001
+}
+
+{$ADMIN_DOMAIN:admin.notifyafrica.com} {
+    reverse_proxy admin:3002
+}
+
+{$API_DOMAIN:api.notifyafrica.com} {
+    reverse_proxy core-api:3010
+}

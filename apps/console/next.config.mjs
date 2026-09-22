@@ -1,0 +1,15 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  transpilePackages: [
+    "@notifyafrica/api-client",
+    "@notifyafrica/auth",
+    "@notifyafrica/config-client",
+    "@notifyafrica/design-system",
+    "@notifyafrica/types",
+    "@notifyafrica/ui",
+    "@notifyafrica/validation",
+  ],
+};
+
+export default nextConfig;

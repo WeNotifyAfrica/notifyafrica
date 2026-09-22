@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 7 · SMS</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Application mobile · Live</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Messages SMS</h2>
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:14px">Sept écrans. Le principe qui gouverne tout le lot : aucun envoi n'est confirmé sans que le coût exact, la remise appliquée et le solde restant aient été affichés — et ces montants viennent du moteur de prix, jamais de l'interface.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isSend }}" hint-placeholder-val="{{ true }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Envoi direct</span><div class="card-title" style="font-size:18px">Composer un message</div></div>
+      <div class="field"><label>Destinataires</label>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; padding:var(--space-2); border:1px solid var(--color-divider); border-radius:var(--radius-md); background:var(--color-bg)">
+          <span class="tag tag-accent num">+228 90 12 34 56</span>
+          <span class="tag tag-accent num">+228 91 44 20 08</span>
+          <span class="tag tag-neutral">Liste « Clients actifs » · 1 248</span>
+          <span class="text-muted" style="font-size:12px; padding:3px 6px">Coller des numéros, importer un fichier ou choisir une liste</span>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Nom d'expéditeur</label><select class="input"><option>MABANQUE — validé</option><option>NOTIFY — partagé</option></select></div>
+        <div class="field"><label>Type de message</label><select class="input"><option>Transactionnel</option><option>Marketing</option></select></div>
+      </div>
+      <div class="field"><label>Message</label><textarea class="input" style="min-height:110px">Bonjour {prenom}, votre échéance de {montant} FCFA arrive le {date}. Répondez STOP pour ne plus recevoir ces messages.</textarea></div>
+      <div style="display:flex; justify-content:space-between; gap:var(--space-4); flex-wrap:wrap">
+        <span class="text-muted num" style="font-size:12px">148 caractères · 1 SMS par destinataire · variables détectées : prenom, montant, date</span>
+        <a href="#" style="font-size:12px">Insérer un modèle</a>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Moment d'envoi</label>
+          <div class="seg" style="width:100%">
+            <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="when" checked><span>Maintenant</span></label>
+            <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="when"><span>Planifier</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Fuseau</label><select class="input"><option>Afrique/Lomé (GMT)</option><option>Afrique/Abidjan (GMT)</option></select></div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline"><span class="card-kicker">Estimation</span><span class="tag tag-outline">Moteur de prix</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Destinataires</span><span class="num" style="font-size:13px">1 250</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier appliqué</span><span style="font-size:13px">0 – 25 000</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="num" style="font-size:13px">7,00 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sous-total</span><span class="num" style="font-size:13px">8 750 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise fidélité</span><span class="num" style="font-size:13px">− 262 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe (18 %)</span><span class="num" style="font-size:13px">1 528 FCFA</span></div>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Coût total</span><span class="num" style="font-size:22px; color:var(--color-accent-300)">10 016 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde disponible</span><span class="num text-muted" style="font-size:12px">1 260 000 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde après envoi</span><span class="num" style="font-size:12px">1 249 984 FCFA</span></div>
+        <button type="button" class="btn btn-primary btn-block">Confirmer l'envoi</button>
+        <p class="text-muted" style="margin:0; font-size:11px">Estimation valable 15 minutes. Le prix est revérifié à la confirmation.</p>
+      </div>
+
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent); gap:var(--space-2)">
+        <span class="card-kicker">État · solde insuffisant</span>
+        <p class="card-body" style="margin:0">Il manque <strong class="num" style="color:var(--color-text)">4 320 FCFA</strong> pour cet envoi. La confirmation est bloquée.</p>
+        <button type="button" class="btn btn-primary" style="align-self:flex-start">Recharger 4 320 FCFA</button>
+      </div>
+      <div class="card elev-sm" style="gap:var(--space-2)">
+        <span class="card-kicker">État · devis requis</span>
+        <p class="card-body" style="margin:0">Au-delà de 100 000 destinataires, le tarif passe sur devis : la saisie est conservée et transformée en demande.</p>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isBulk }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Envoi en masse</span><div class="card-title" style="font-size:18px">Importer un fichier de destinataires</div></div>
+      <div style="border:1px dashed var(--color-divider); border-radius:var(--radius-md); padding:calc(var(--space-8) * 1.2); display:flex; flex-direction:column; gap:var(--space-2); align-items:center; text-align:center">
+        <span style="font-size:14px">clients-septembre.csv · 52 480 lignes</span>
+        <span class="text-muted" style="font-size:12px">CSV ou XLSX · 200 000 lignes maximum par fichier</span>
+        <button type="button" class="btn btn-secondary">Remplacer le fichier</button>
+      </div>
+      <div>
+        <span class="card-kicker">Correspondance des colonnes</span>
+        <div style="overflow:auto; margin-top:var(--space-3)">
+          <table class="table" style="min-width:480px">
+            <thead><tr><th>Colonne du fichier</th><th>Champ NotifyAfrica</th><th>Exemple</th></tr></thead>
+            <tbody>
+              <tr><td>telephone</td><td style="color:var(--color-accent-300)">Destinataire</td><td class="num text-muted">+228 90 12 34 56</td></tr>
+              <tr><td>prenom</td><td style="color:var(--color-accent-300)">Variable {prenom}</td><td class="text-muted">Awa</td></tr>
+              <tr><td>montant</td><td style="color:var(--color-accent-300)">Variable {montant}</td><td class="num text-muted">45 000</td></tr>
+              <tr><td>email</td><td class="text-muted">Ignorée</td><td class="text-muted">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">52 480</span><span class="text-muted" style="font-size:12px">lignes lues</span></div>
+        <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">1 204</span><span class="text-muted" style="font-size:12px">doublons retirés</span></div>
+        <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">316</span><span class="text-muted" style="font-size:12px">numéros invalides</span></div>
+        <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">88</span><span class="text-muted" style="font-size:12px">désinscrits exclus</span></div>
+      </div>
+      <a href="#" style="font-size:13px">Télécharger le rapport des lignes rejetées</a>
+    </div>
+
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+      <div style="display:flex; justify-content:space-between; align-items:baseline"><span class="card-kicker">Estimation</span><span class="tag tag-outline">Moteur de prix</span></div>
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Destinataires retenus</span><span class="num" style="font-size:13px">50 872</span></div>
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier appliqué</span><span style="font-size:13px">25 001 – 100 000</span></div>
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="num" style="font-size:13px">6,80 FCFA</span></div>
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sous-total</span><span class="num" style="font-size:13px">345 930 FCFA</span></div>
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe (18 %)</span><span class="num" style="font-size:13px">62 267 FCFA</span></div>
+      <hr class="hr" style="margin:var(--space-2) 0">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Coût total</span><span class="num" style="font-size:22px; color:var(--color-accent-300)">408 197 FCFA</span></div>
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde après envoi</span><span class="num" style="font-size:12px">851 803 FCFA</span></div>
+      <div class="card" style="background:var(--color-neutral-900); gap:var(--space-1)">
+        <span class="card-kicker">Économie de palier</span>
+        <p class="card-body" style="margin:0">En ajoutant 1 000 destinataires, vous restez au même palier. Le palier suivant démarre à 100 001 messages.</p>
+      </div>
+      <button type="button" class="btn btn-primary btn-block">Réserver les fonds et envoyer</button>
+      <p class="text-muted" style="margin:0; font-size:11px">Les fonds sont réservés avant exécution ; le solde non consommé est libéré à la fin.</p>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isHistory }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Période</label><select class="input"><option>30 derniers jours</option><option>7 derniers jours</option><option>Personnalisée</option></select></div>
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Livré</option><option>Échec</option><option>En file</option></select></div>
+        <div class="field"><label>Pays</label><select class="input"><option>Tous</option><option>Togo</option><option>Bénin</option></select></div>
+        <div class="field"><label>Opérateur</label><select class="input"><option>Tous</option><option>Moov</option><option>Yas</option><option>MTN</option></select></div>
+        <div class="field"><label>Recherche</label><input class="input" type="text" placeholder="Numéro, identifiant, contenu"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">30 j</span><span class="tag tag-neutral">Tous statuts</span><button type="button" class="btn btn-ghost">Réinitialiser</button><button type="button" class="btn btn-secondary" style="margin-left:auto">Exporter (CSV)</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:820px">
+        <thead><tr><th>Date</th><th>Destinataire</th><th>Expéditeur</th><th>Opérateur</th><th>Statut</th><th>Coût</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ history }}" as="h" hint-placeholder-count="8">
+            <tr>
+              <td class="num text-muted">{{ h.date }}</td>
+              <td class="num">{{ h.to }}</td>
+              <td class="text-muted">{{ h.from }}</td>
+              <td class="text-muted">{{ h.operator }}</td>
+              <td>{{ h.status }}</td>
+              <td class="num">{{ h.cost }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+      <span class="text-muted num" style="font-size:12px">412 800 messages · page 1 sur 4 128</span>
+      <div style="display:flex; gap:var(--space-2)"><button type="button" class="btn btn-secondary">Précédent</button><button type="button" class="btn btn-secondary">Suivant</button></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Message</span><div class="card-title num" style="font-size:17px">msg_8f21c4b9</div></div>
+        <span class="tag tag-accent">Livré</span>
+      </div>
+      <div class="card" style="background:var(--color-neutral-900)"><p class="card-body" style="margin:0">Bonjour Awa, votre échéance de 45 000 FCFA arrive le 20 septembre. Répondez STOP pour ne plus recevoir ces messages.</p></div>
+      <div>
+        <span class="card-kicker">Suivi</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3); margin-top:var(--space-3)">
+          <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="5">
+            <div style="display:flex; gap:var(--space-4); align-items:baseline">
+              <span class="num text-muted" style="font-size:12px; min-width:62px">{{ t.time }}</span>
+              <span style="{{ t.dotStyle }}"></span>
+              <div style="display:flex; flex-direction:column"><span style="font-size:13.5px">{{ t.label }}</span><span class="text-muted" style="font-size:12px">{{ t.detail }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <span class="card-kicker">Acheminement</span>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Destinataire</span><span class="num" style="font-size:13px">+228 90 12 34 56</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Pays · opérateur</span><span style="font-size:13px">Togo · Moov</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Route utilisée</span><span style="font-size:13px">Route principale</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Tentatives</span><span class="num" style="font-size:13px">1</span></div>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <span class="card-kicker">Facturation</span>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire appliqué</span><span class="num" style="font-size:13px">7,00 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Règle de prix</span><span class="num" style="font-size:13px">rule_sms_tg · v4</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe</span><span class="num" style="font-size:13px">1,26 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Débité</span><span class="num" style="font-size:17px; color:var(--color-accent-300)">8,26 FCFA</span></div>
+        <p class="text-muted" style="margin:0; font-size:11px">Le prix est figé au moment de l'envoi : une modification tarifaire ultérieure ne change pas ce montant.</p>
+      </div>
+      <div class="card elev-sm" style="gap:var(--space-2)">
+        <span class="card-kicker">Actions</span>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Renvoyer</button><button type="button" class="btn btn-secondary">Copier l'identifiant</button><button type="button" class="btn btn-ghost">Signaler un problème</button></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSenders }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:60ch; font-size:13.5px">Un nom d'expéditeur doit être validé par chaque opérateur du pays visé. Les délais sont ceux des opérateurs : prévoyez plusieurs jours ouvrés.</p>
+      <button type="button" class="btn btn-primary">Demander un nom d'expéditeur</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:720px">
+        <thead><tr><th>Nom</th><th>Pays</th><th>Opérateurs</th><th>Usage</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><strong>MABANQUE</strong></td><td class="text-muted">Togo</td><td class="text-muted">Moov, Yas</td><td class="text-muted">Transactionnel</td><td><span class="tag tag-accent">Validé</span></td></tr>
+          <tr><td><strong>MABANQUE</strong></td><td class="text-muted">Bénin</td><td class="text-muted">MTN, Moov</td><td class="text-muted">Transactionnel</td><td><span class="tag tag-outline">En validation · 3 j</span></td></tr>
+          <tr><td><strong>MABPROMO</strong></td><td class="text-muted">Togo</td><td class="text-muted">Moov</td><td class="text-muted">Marketing</td><td><span class="tag tag-neutral">Refusé · motif opérateur</span></td></tr>
+          <tr><td><strong>NOTIFY</strong></td><td class="text-muted">Tous</td><td class="text-muted">Tous</td><td class="text-muted">Partagé, par défaut</td><td><span class="tag tag-accent">Validé</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Règle</span><p class="card-body" style="margin:0">Tant qu'aucun nom n'est validé pour un pays, les envois partent avec le nom partagé. Un nom refusé ne bloque pas l'envoi mais reste visible avec son motif, pour pouvoir le corriger et le resoumettre.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTemplates }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:60ch; font-size:13.5px">Les modèles évitent les erreurs de saisie et permettent de préparer des messages validés en interne. Les variables sont remplacées à l'envoi ou depuis un fichier importé.</p>
+      <button type="button" class="btn btn-primary">Créer un modèle</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ templates }}" as="t" hint-placeholder-count="5">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:15px">{{ t.name }}</span><span class="tag tag-neutral">{{ t.usage }}</span></div>
+          <p class="card-body" style="margin:0; font-size:13px">{{ t.body }}</p>
+          <div class="card-meta num">{{ t.meta }}</div>
+          <div style="display:flex; gap:var(--space-2)"><button type="button" class="btn btn-secondary">Utiliser</button><button type="button" class="btn btn-ghost">Modifier</button></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isScheduled }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:780px">
+        <thead><tr><th>Envoi prévu</th><th>Contenu</th><th>Destinataires</th><th>Fonds réservés</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="num">14/09 · 08:00</td><td>Rappel échéance — septembre</td><td class="num">50 872</td><td class="num" style="color:var(--color-accent-300)">408 197 FCFA</td><td><span class="tag tag-accent">Fonds réservés</span></td></tr>
+          <tr><td class="num">18/09 · 12:30</td><td>Promotion épargne</td><td class="num">12 400</td><td class="num text-muted">— </td><td><span class="tag tag-outline">Réservation à J-1</span></td></tr>
+          <tr><td class="num">01/10 · 09:00</td><td>Relevé mensuel</td><td class="num">48 900</td><td class="num text-muted">—</td><td><span class="tag tag-neutral">Récurrent · mensuel</span></td></tr>
+          <tr><td class="num">02/09 · 08:00</td><td>Rappel échéance — août</td><td class="num">49 310</td><td class="num text-muted">—</td><td><span class="tag tag-neutral">Annulé · solde insuffisant</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Règle de réservation</span><p class="card-body" style="margin:0">Les fonds sont réservés la veille de l'envoi, au tarif recalculé à ce moment-là. Si le solde est insuffisant, l'envoi est suspendu et l'utilisateur alerté — jamais envoyé partiellement sans avertissement.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Cas limite</span><p class="card-body" style="margin:0">Si le tarif change entre la planification et la réservation, le nouveau montant est affiché et notifié. Au-delà d'un écart configurable, l'envoi demande une nouvelle confirmation.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Le coût est toujours calculé par le moteur de prix, avec le palier, la remise et la taxe applicables au contexte (pays, opérateur, volume, client). L'estimation a une durée de validité et est revérifiée à la confirmation. Aucun envoi si le solde disponible est inférieur au coût estimé. Le prix est figé dans un instantané attaché au message et à la facture.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Estimation en cours · indisponible · expirée. Solde insuffisant. Devis requis. Nom d'expéditeur non validé. Opérateur non couvert. Fichier invalide ou trop volumineux. Envoi partiellement livré. Réservation échouée. Service SMS désactivé en cours de composition.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Numéros de plusieurs pays dans un même envoi : le coût est ventilé par destination et le total agrège les paliers. Un destinataire désinscrit est exclu et non facturé. Doublons retirés avant estimation, jamais après. Message dépassant un SMS : le nombre de segments multiplie le coût, affiché explicitement.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il autoriser l'envoi multi-pays dans un même lot, ou forcer un envoi par pays pour garder une facturation lisible ? La réservation des fonds doit-elle se faire à la planification (solde immobilisé longtemps) ou la veille (risque de suspension) ? Recommandation : la veille, avec alerte à J-3.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 7 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 8 — Campagnes</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'send' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['send', 'Envoyer un SMS'],
+      ['bulk', 'Envoi en masse'],
+      ['history', 'Historique'],
+      ['detail', 'Détail du message'],
+      ['senders', "Noms d'expéditeur"],
+      ['templates', 'Modèles'],
+      ['scheduled', 'Envois planifiés']
+    ];
+    const t = this.state.tab;
+
+    const dot = on => ({
+      width: '8px', height: '8px', flex: 'none', borderRadius: '50%',
+      background: on ? 'var(--color-accent)' : 'var(--color-neutral-700)'
+    });
+
+    return {
+      tabs: tabs.map(([key, label]) => ({
+        label,
+        onClick: () => this.setState({ tab: key }),
+        style: {
+          whiteSpace: 'nowrap',
+          color: key === t ? 'var(--color-accent)' : 'var(--color-text)',
+          borderColor: key === t ? 'var(--color-accent)' : 'var(--color-divider)',
+          background: key === t ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+        }
+      })),
+      isSend: t === 'send',
+      isBulk: t === 'bulk',
+      isHistory: t === 'history',
+      isDetail: t === 'detail',
+      isSenders: t === 'senders',
+      isTemplates: t === 'templates',
+      isScheduled: t === 'scheduled',
+
+      history: [
+        { date:'13/09 14:02', to:'+228 90 12 34 56', from:'MABANQUE', operator:'Moov', status:'Livré', cost:'8,26 FCFA' },
+        { date:'13/09 14:02', to:'+228 91 44 20 08', from:'MABANQUE', operator:'Yas', status:'Livré', cost:'8,26 FCFA' },
+        { date:'13/09 14:01', to:'+229 97 11 08 42', from:'NOTIFY', operator:'MTN Bénin', status:'Livré', cost:'9,44 FCFA' },
+        { date:'13/09 13:58', to:'+228 70 00 12 99', from:'MABANQUE', operator:'Moov', status:'Échec · numéro inexistant', cost:'0 FCFA' },
+        { date:'13/09 13:55', to:'+228 92 31 77 10', from:'MABANQUE', operator:'Yas', status:'En file', cost:'8,26 FCFA' },
+        { date:'13/09 13:40', to:'+228 90 88 45 21', from:'MABANQUE', operator:'Moov', status:'Livré', cost:'8,26 FCFA' },
+        { date:'13/09 13:22', to:'+225 07 58 90 11', from:'NOTIFY', operator:'Orange CI', status:'Livré', cost:'11,80 FCFA' },
+        { date:'13/09 12:05', to:'+228 93 02 64 73', from:'MABANQUE', operator:'Yas', status:'Échec · opérateur indisponible', cost:'0 FCFA' }
+      ],
+
+      timeline: [
+        { time:'14:02:11', label:'Accepté par NotifyAfrica', detail:'Prix figé · règle rule_sms_tg v4', dotStyle: dot(true) },
+        { time:'14:02:11', label:'Fonds débités', detail:'8,26 FCFA · solde 1 249 984 FCFA', dotStyle: dot(true) },
+        { time:'14:02:12', label:'Transmis à l\u2019opérateur', detail:'Route principale · Moov Togo', dotStyle: dot(true) },
+        { time:'14:02:14', label:'Accusé opérateur', detail:'Remise au réseau confirmée', dotStyle: dot(true) },
+        { time:'14:02:19', label:'Livré au destinataire', detail:'Délai total 8 secondes', dotStyle: dot(true) }
+      ],
+
+      templates: [
+        { name:'Code de vérification', usage:'OTP', body:'Votre code {code} est valable {duree} minutes. Ne le partagez avec personne.', meta:'2 variables · utilisé 184 200 fois' },
+        { name:'Rappel échéance', usage:'Transactionnel', body:'Bonjour {prenom}, votre échéance de {montant} FCFA arrive le {date}.', meta:'3 variables · utilisé 148 900 fois' },
+        { name:'Confirmation de paiement', usage:'Transactionnel', body:'Paiement de {montant} FCFA reçu. Référence {reference}. Merci.', meta:'2 variables · utilisé 96 400 fois' },
+        { name:'Promotion épargne', usage:'Marketing', body:'{prenom}, ouvrez un compte épargne avant le {date} et recevez un bonus. STOP au 1234.', meta:'2 variables · mention STOP obligatoire' },
+        { name:'Alerte de solde', usage:'Transactionnel', body:'Votre solde est de {solde} FCFA, sous votre seuil d\u2019alerte.', meta:'1 variable · utilisé 22 100 fois' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

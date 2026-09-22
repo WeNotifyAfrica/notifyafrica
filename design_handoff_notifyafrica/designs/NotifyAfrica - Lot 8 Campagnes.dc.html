@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 8 · Campagnes</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Application mobile · Live</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Campagnes</h2>
+    <p class="text-muted" style="margin:0; max-width:70ch; font-size:14px">Une campagne, contrairement à un envoi direct, engage un budget : elle est estimée, ses fonds sont réservés, elle s'exécute par lots et se solde par un rapport. Le parcours en sept étapes ne laisse jamais confirmer sans avoir montré le coût et le solde restant.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="9">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:var(--space-3); flex:1; min-width:260px">
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Brouillon</option><option>Planifiée</option><option>En cours</option><option>Terminée</option><option>Suspendue</option></select></div>
+        <div class="field"><label>Canal</label><select class="input"><option>Tous</option><option>SMS</option><option>WhatsApp</option><option>Email</option></select></div>
+        <div class="field"><label>Période</label><select class="input"><option>90 derniers jours</option><option>30 derniers jours</option></select></div>
+      </div>
+      <button type="button" class="btn btn-primary" onClick="{{ goChannel }}">Créer une campagne</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:860px">
+        <thead><tr><th>Campagne</th><th>Canal</th><th>Audience</th><th>Coût</th><th>Livraison</th><th>Statut</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="6">
+            <tr>
+              <td><strong>{{ c.name }}</strong><div class="text-muted num" style="font-size:11.5px">{{ c.date }}</div></td>
+              <td class="text-muted">{{ c.channel }}</td>
+              <td class="num">{{ c.audience }}</td>
+              <td class="num">{{ c.cost }}</td>
+              <td class="num text-muted">{{ c.delivery }}</td>
+              <td>{{ c.status }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isWizard }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap">
+        <span class="card-kicker">Étape {{ stepNumber }} sur 7 · {{ stepTitle }}</span>
+        <span class="text-muted" style="font-size:12px">Brouillon enregistré automatiquement</span>
+      </div>
+      <div style="height:3px; border-radius:2px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ progressStyle }}"></div></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="7">
+          <button type="button" onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ isChannel }}">
+    <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:var(--space-4)">
+        <sc-for list="{{ channels }}" as="ch" hint-placeholder-count="4">
+          <div class="card" style="{{ ch.style }}">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:16px">{{ ch.name }}</span><span class="tag tag-neutral">{{ ch.state }}</span></div>
+            <p class="card-body">{{ ch.desc }}</p>
+            <div class="card-meta num">{{ ch.price }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Nom de la campagne</label><input class="input" type="text" value="Rappel échéance — septembre"></div>
+        <div class="field"><label>Objectif</label><select class="input"><option>Transactionnel</option><option>Marketing</option><option>Information</option></select></div>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Conséquence du choix</span><p class="card-body" style="margin:0">Le canal détermine les champs obligatoires, les règles de consentement et la grille tarifaire chargée. WhatsApp impose un modèle approuvé et une catégorie ; le SMS marketing impose la mention de désinscription.</p></div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isAudience }}">
+    <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+        <div><span class="card-kicker">Audience</span><div class="card-title" style="font-size:18px">Qui va recevoir ce message</div></div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <span class="tag tag-accent">Liste « Clients actifs » · 48 200</span>
+          <span class="tag tag-accent">Import « échéances-sept.csv » · 4 280</span>
+          <button type="button" class="btn btn-ghost">+ Ajouter une source</button>
+        </div>
+        <div>
+          <span class="card-kicker">Filtres appliqués</span>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-3); margin-top:var(--space-3)">
+            <div class="field"><label>Pays</label><select class="input"><option>Togo</option><option>Togo + Bénin</option></select></div>
+            <div class="field"><label>Opérateur</label><select class="input"><option>Tous</option><option>Moov uniquement</option></select></div>
+            <div class="field"><label>Consentement</label><select class="input"><option>Requis (marketing)</option><option>Non requis</option></select></div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:var(--space-3)">
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">52 480</span><span class="text-muted" style="font-size:12px">contacts réunis</span></div>
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">1 204</span><span class="text-muted" style="font-size:12px">doublons retirés</span></div>
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">316</span><span class="text-muted" style="font-size:12px">numéros invalides</span></div>
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">88</span><span class="text-muted" style="font-size:12px">désinscrits exclus</span></div>
+        </div>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <span class="card-kicker">Audience retenue</span>
+        <span class="num" style="font-size:32px; color:var(--color-accent-300); line-height:1">50 872</span>
+        <p class="text-muted" style="margin:0; font-size:13px">destinataires uniques et joignables</p>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:13px">Moov Togo</span><span class="num" style="font-size:13px">31 440</span></div>
+          <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:13px">Yas Togo</span><span class="num" style="font-size:13px">17 210</span></div>
+          <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:13px">Autres</span><span class="num" style="font-size:13px">2 222</span></div>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:11px">La répartition par opérateur conditionne le coût : chaque destination a son tarif.</p>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isContent }}">
+    <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+        <div><span class="card-kicker">Contenu</span><div class="card-title" style="font-size:18px">Message et personnalisation</div></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+          <div class="field"><label>Modèle</label><select class="input"><option>Rappel échéance</option><option>Aucun — message libre</option></select></div>
+          <div class="field"><label>Nom d'expéditeur</label><select class="input"><option>MABANQUE — validé</option><option>NOTIFY — partagé</option></select></div>
+        </div>
+        <div class="field"><label>Message</label><textarea class="input" style="min-height:120px">Bonjour {prenom}, votre échéance de {montant} FCFA arrive le {date}. Réglez depuis l'application. STOP au 1234.</textarea></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-4); flex-wrap:wrap">
+          <span class="text-muted num" style="font-size:12px">152 caractères · 1 SMS par destinataire · 3 variables</span>
+          <span class="tag tag-outline">Mention STOP présente</span>
+        </div>
+        <div class="card" style="background:var(--color-neutral-900)"><span class="card-kicker">Aperçu avec données réelles</span><p class="card-body" style="margin:0">Bonjour Awa, votre échéance de 45 000 FCFA arrive le 20 septembre. Réglez depuis l'application. STOP au 1234.</p></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm"><span class="card-kicker">Contrôles automatiques</span><p class="card-body" style="margin:0">Variables présentes dans toutes les sources · mention de désinscription détectée · aucun lien raccourci suspect · longueur dans la limite d'un segment pour 99,4 % des destinataires.</p></div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Avertissement</span><p class="card-body" style="margin:0">316 contacts n'ont pas la variable {montant} : ils seront exclus de l'envoi plutôt que de recevoir un message incomplet.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Test</span><p class="card-body" style="margin:0">Envoyez le message à vous-même avant de continuer — gratuit en environnement de test.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Envoyer un test</button></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isEstimate }}">
+    <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4)"><div><span class="card-kicker">Estimation détaillée</span><div class="card-title" style="font-size:18px">Coût par destination</div></div><span class="tag tag-outline">Moteur de prix</span></div>
+        <div style="overflow:auto">
+          <table class="table" style="min-width:560px">
+            <thead><tr><th>Destination</th><th>Volume</th><th>Palier</th><th>Prix unitaire</th><th>Sous-total</th></tr></thead>
+            <tbody>
+              <tr><td>Togo · Moov</td><td class="num">31 440</td><td class="text-muted num">25 001 – 100 000</td><td class="num">6,80 FCFA</td><td class="num">213 792 FCFA</td></tr>
+              <tr><td>Togo · Yas</td><td class="num">17 210</td><td class="text-muted num">25 001 – 100 000</td><td class="num">6,80 FCFA</td><td class="num">117 028 FCFA</td></tr>
+              <tr><td>Bénin · MTN</td><td class="num">2 222</td><td class="text-muted num">0 – 25 000</td><td class="num">8,00 FCFA</td><td class="num">17 776 FCFA</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12px">Le volume total détermine le palier : les 50 872 messages placent la campagne dans le deuxième palier pour le Togo. Le Bénin reste au premier palier, son volume propre étant inférieur au seuil.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+          <span class="card-kicker">Total</span>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sous-total</span><span class="num" style="font-size:13px">348 596 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise volume</span><span class="num" style="font-size:13px">− 10 458 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe (18 %)</span><span class="num" style="font-size:13px">60 865 FCFA</span></div>
+          <hr class="hr" style="margin:var(--space-2) 0">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Coût estimé</span><span class="num" style="font-size:22px; color:var(--color-accent-300)">399 003 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde disponible</span><span class="num text-muted" style="font-size:12px">1 260 000 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde après campagne</span><span class="num" style="font-size:12px">860 997 FCFA</span></div>
+        </div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Meilleur palier</span><p class="card-body" style="margin:0">Le palier suivant démarre à 100 001 messages, à un tarif plus bas. Si vous prévoyez un second envoi ce mois-ci, le regrouper ferait baisser le prix unitaire.</p></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isSchedule }}">
+    <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+        <div><span class="card-kicker">Planification</span><div class="card-title" style="font-size:18px">Quand et à quel rythme</div></div>
+        <div class="field"><label>Moment d'envoi</label>
+          <div class="seg" style="width:100%">
+            <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="when"><span>Immédiat</span></label>
+            <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="when" checked><span>Planifié</span></label>
+            <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="when"><span>Récurrent</span></label>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+          <div class="field"><label>Date</label><input class="input num" type="text" value="14/09/2026"></div>
+          <div class="field"><label>Heure</label><input class="input num" type="text" value="08:00"></div>
+          <div class="field"><label>Fuseau</label><select class="input"><option>Afrique/Lomé (GMT)</option></select></div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+          <div class="field"><label>Débit d'envoi</label><select class="input"><option>Maximum disponible</option><option>5 000 messages / minute</option><option>Étalé sur 2 heures</option></select></div>
+          <div class="field"><label>Fenêtre autorisée</label><select class="input"><option>08:00 – 20:00</option><option>Aucune restriction</option></select></div>
+        </div>
+        <label class="radio" style="align-items:flex-start"><input type="checkbox" checked><span class="dot"></span><span class="text-muted" style="font-size:12.5px">Suspendre automatiquement si le taux d'échec dépasse 10 %</span></label>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+          <span class="card-kicker">Réservation des fonds</span>
+          <p class="card-body" style="margin:0">Les 399 003 FCFA seront réservés le 13/09 à 08:00, soit 24 h avant l'envoi, au tarif recalculé à cet instant.</p>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Solde immobilisé</span><span class="num" style="font-size:13px">399 003 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Solde restant disponible</span><span class="num" style="font-size:13px">860 997 FCFA</span></div>
+        </div>
+        <div class="card elev-sm"><span class="card-kicker">Fenêtre d'envoi</span><p class="card-body" style="margin:0">Les envois marketing sont interdits hors de la fenêtre autorisée dans certains pays. La restriction est appliquée automatiquement selon le pays de destination.</p></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isReview }}">
+    <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Revue</span><div class="card-title" style="font-size:18px">Tout vérifier avant de lancer</div></div>
+        <sc-for list="{{ review }}" as="r" hint-placeholder-count="7">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-4); align-items:baseline">
+            <span class="text-muted" style="font-size:13px">{{ r.label }}</span>
+            <span style="font-size:13.5px; text-align:right">{{ r.value }}</span>
+          </div>
+        </sc-for>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div class="card" style="background:var(--color-neutral-900)"><p class="card-body" style="margin:0">Bonjour Awa, votre échéance de 45 000 FCFA arrive le 20 septembre. Réglez depuis l'application. STOP au 1234.</p></div>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <span class="card-kicker">Confirmation</span>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Coût réservé</span><span class="num" style="font-size:22px; color:var(--color-accent-300)">399 003 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde après réservation</span><span class="num" style="font-size:12px">860 997 FCFA</span></div>
+        <label class="radio" style="align-items:flex-start; margin-top:var(--space-2)"><input type="checkbox"><span class="dot"></span><span class="text-muted" style="font-size:12.5px">Je confirme l'audience, le contenu et le coût de cette campagne</span></label>
+        <button type="button" class="btn btn-primary btn-block">Confirmer et planifier</button>
+        <button type="button" class="btn btn-secondary btn-block">Enregistrer comme brouillon</button>
+        <p class="text-muted" style="margin:0; font-size:11px">Le prix est revérifié au moment de la réservation. Tout écart supérieur au seuil configuré redemande une confirmation.</p>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isExecute }}">
+    <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+          <div><span class="card-kicker">En cours d'exécution</span><div class="card-title" style="font-size:18px">Rappel échéance — septembre</div></div>
+          <span class="tag tag-accent">78 % envoyé</span>
+        </div>
+        <div style="height:6px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="width:78%; height:100%; background:var(--color-accent)"></div></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:var(--space-3)">
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">39 680</span><span class="text-muted" style="font-size:12px">envoyés</span></div>
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">38 902</span><span class="text-muted" style="font-size:12px">livrés</span></div>
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">778</span><span class="text-muted" style="font-size:12px">échecs</span></div>
+          <div class="card" style="gap:2px"><span class="num card-title" style="font-size:20px">11 192</span><span class="text-muted" style="font-size:12px">restants</span></div>
+        </div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Suspendre</button><button type="button" class="btn btn-ghost">Voir les journaux</button></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+          <span class="card-kicker">Consommation en temps réel</span>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Fonds réservés</span><span class="num" style="font-size:13px">399 003 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Déjà consommé</span><span class="num" style="font-size:13px">311 222 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Non facturé (échecs)</span><span class="num" style="font-size:13px">6 424 FCFA</span></div>
+          <hr class="hr" style="margin:var(--space-2) 0">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">À libérer en fin de campagne</span><span class="num" style="font-size:17px; color:var(--color-accent-300)">81 357 FCFA</span></div>
+        </div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Route dégradée</span><p class="card-body" style="margin:0">Yas Togo répond lentement depuis 11 h 20 : les envois basculent sur la route de repli, à coût identique pour vous.</p></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isReport }}">
+    <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+        <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Envoyés</span><span class="num" style="font-size:24px">50 872</span></div>
+        <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Livrés</span><span class="num" style="font-size:24px">49 886</span><span class="text-muted" style="font-size:12px">98,1 %</span></div>
+        <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Échecs</span><span class="num" style="font-size:24px">986</span><span class="text-muted" style="font-size:12px">non facturés</span></div>
+        <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Désinscriptions</span><span class="num" style="font-size:24px">142</span><span class="text-muted" style="font-size:12px">0,3 %</span></div>
+        <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Coût réel</span><span class="num" style="font-size:24px; color:var(--color-accent-300)">391 219</span><span class="text-muted" style="font-size:12px">FCFA</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+        <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+          <div><span class="card-kicker">Résultats par destination</span><div class="card-title" style="font-size:17px">Livraison et coût</div></div>
+          <div style="overflow:auto">
+            <table class="table" style="min-width:560px">
+              <thead><tr><th>Destination</th><th>Envoyés</th><th>Livrés</th><th>Taux</th><th>Coût</th></tr></thead>
+              <tbody>
+                <tr><td>Togo · Moov</td><td class="num">31 440</td><td class="num">31 062</td><td class="num">98,8 %</td><td class="num">246 830 FCFA</td></tr>
+                <tr><td>Togo · Yas</td><td class="num">17 210</td><td class="num">16 640</td><td class="num">96,7 %</td><td class="num">130 420 FCFA</td></tr>
+                <tr><td>Bénin · MTN</td><td class="num">2 222</td><td class="num">2 184</td><td class="num">98,3 %</td><td class="num">13 969 FCFA</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+          <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+            <span class="card-kicker">Clôture financière</span>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Réservé</span><span class="num" style="font-size:13px">399 003 FCFA</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Consommé</span><span class="num" style="font-size:13px">391 219 FCFA</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Libéré sur le solde</span><span class="num" style="font-size:13px">7 784 FCFA</span></div>
+            <hr class="hr" style="margin:var(--space-2) 0">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Solde final</span><span class="num" style="font-size:19px; color:var(--color-accent-300)">868 781 FCFA</span></div>
+          </div>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Exporter le rapport</button><button type="button" class="btn btn-secondary">Dupliquer la campagne</button><button type="button" class="btn btn-ghost">Relancer les échecs</button></div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <div style="display:flex; gap:var(--space-3); align-items:center; flex-wrap:wrap">
+      <button type="button" class="btn btn-secondary" onClick="{{ prev }}">Retour</button>
+      <button type="button" class="btn btn-primary" onClick="{{ next }}">{{ nextLabel }}</button>
+      <span class="text-muted" style="font-size:11.5px; margin-left:auto">Étape {{ stepNumber }} / 7</span>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Une campagne suit le cycle estimer → réserver → exécuter → capturer → libérer. Les échecs ne sont pas facturés. Le palier est déterminé par le volume total de la campagne, ventilé par destination. La réservation a lieu 24 h avant l'envoi au tarif recalculé ; un écart supérieur au seuil configuré exige une nouvelle confirmation. Les campagnes marketing respectent la fenêtre horaire du pays et exigent le consentement.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Brouillon, planifiée, fonds réservés, en cours, suspendue (manuellement ou par seuil d'échec), terminée, annulée, échouée. Réservation impossible (solde insuffisant). Estimation expirée. Audience vide après filtrage. Modèle WhatsApp rejeté. Route dégradée pendant l'exécution.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Le solde baisse entre la réservation et l'exécution (autre envoi en parallèle) : la réservation protège la campagne. Le service est désactivé après planification. Le tarif change entre estimation et réservation. Campagne récurrente dont l'audience grossit de mois en mois et franchit un palier. Suspension à 60 % : les fonds non consommés sont libérés immédiatement.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Le palier doit-il être calculé sur la campagne seule ou sur le cumul mensuel du client — ce dernier étant plus avantageux mais plus difficile à expliquer avant envoi ? Faut-il autoriser la relance automatique des échecs, avec le coût supplémentaire que cela implique ? Qui peut suspendre une campagne en cours : Admin seulement, ou aussi le Campaign Manager ?</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 8 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 9 — OTP</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { view: 'list' };
+  }
+
+  get flow() {
+    return [
+      ['channel', 'Canal'],
+      ['audience', 'Audience'],
+      ['content', 'Contenu'],
+      ['estimate', 'Estimation'],
+      ['schedule', 'Planification'],
+      ['review', 'Revue'],
+      ['execute', 'Exécution'],
+      ['report', 'Rapport']
+    ];
+  }
+
+  renderVals() {
+    const v = this.state.view;
+    const flow = this.flow;
+    const idx = flow.findIndex(f => f[0] === v);
+    const inWizard = idx >= 0;
+    const stepNumber = inWizard ? Math.min(idx + 1, 7) : 1;
+    const go = key => () => this.setState({ view: key });
+
+    const tabStyle = on => ({
+      whiteSpace: 'nowrap',
+      color: on ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: on ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: on ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+
+    return {
+      tabs: [['list', 'Liste des campagnes']].concat(flow).map(([key, label]) => ({
+        label, onClick: go(key), style: tabStyle(key === v)
+      })),
+      chips: flow.slice(0, 7).map(([key, label], i) => ({
+        label: String(i + 1).padStart(2, '0') + ' · ' + label,
+        onClick: go(key),
+        style: {
+          cursor: 'pointer',
+          font: "400 12px 'Inter', system-ui, sans-serif",
+          padding: '4px 10px',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid ' + (key === v ? 'var(--color-accent)' : 'var(--color-divider)'),
+          background: key === v ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent',
+          color: key === v ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-text) 65%, transparent)'
+        }
+      })),
+
+      isList: v === 'list',
+      isWizard: inWizard,
+      isChannel: v === 'channel',
+      isAudience: v === 'audience',
+      isContent: v === 'content',
+      isEstimate: v === 'estimate',
+      isSchedule: v === 'schedule',
+      isReview: v === 'review',
+      isExecute: v === 'execute',
+      isReport: v === 'report',
+
+      stepNumber,
+      stepTitle: inWizard ? flow[idx][1] : 'Canal',
+      progressStyle: {
+        width: Math.round((stepNumber / 7) * 100) + '%',
+        height: '100%',
+        background: 'var(--color-accent)',
+        transition: 'width .2s ease'
+      },
+      nextLabel: v === 'report' ? 'Retour à la liste' : (v === 'review' ? 'Confirmer et planifier' : 'Continuer'),
+      next: () => {
+        if (v === 'report') return this.setState({ view: 'list' });
+        const n = flow[Math.min(idx + 1, flow.length - 1)];
+        this.setState({ view: n[0] });
+      },
+      prev: () => {
+        if (idx <= 0) return this.setState({ view: 'list' });
+        this.setState({ view: flow[idx - 1][0] });
+      },
+      goChannel: go('channel'),
+
+      channels: [
+        { name:'SMS', state:'Actif', desc:'Portée maximale, aucun prérequis de modèle. Idéal pour le transactionnel et les rappels.', price:'à partir de 6,80 FCFA / message',
+          style:{ boxShadow:'0 0 0 1.5px var(--color-accent)' } },
+        { name:'WhatsApp', state:'Actif', desc:'Modèle approuvé obligatoire, catégorie à déclarer. Riche mais plus contraint.', price:'à partir de 24 FCFA / conversation',
+          style:{ boxShadow:'var(--shadow-sm)' } },
+        { name:'Email', state:'Inactif', desc:'Domaine à authentifier avant le premier envoi de campagne.', price:'à partir de 3 FCFA / email',
+          style:{ boxShadow:'var(--shadow-sm)' } },
+        { name:'Multi-canal', state:'À venir', desc:'SMS en repli si le WhatsApp n\u2019est pas lu — prévu après la V1.', price:'tarif cumulé par canal',
+          style:{ boxShadow:'var(--shadow-sm)', opacity:'0.6' } }
+      ],
+
+      review: [
+        { label:'Campagne', value:'Rappel échéance — septembre' },
+        { label:'Canal', value:'SMS · transactionnel' },
+        { label:'Audience retenue', value:'50 872 destinataires' },
+        { label:'Nom d\u2019expéditeur', value:'MABANQUE (validé Togo)' },
+        { label:'Envoi', value:'14/09/2026 à 08:00 · Afrique/Lomé' },
+        { label:'Débit', value:'Maximum disponible · fenêtre 08:00–20:00' },
+        { label:'Suspension automatique', value:'Si échecs > 10 %' }
+      ],
+
+      campaigns: [
+        { name:'Rappel échéance — septembre', date:'14/09 · 08:00', channel:'SMS', audience:'50 872', cost:'399 003 FCFA', delivery:'—', status:'Fonds réservés' },
+        { name:'Promotion épargne', date:'18/09 · 12:30', channel:'SMS', audience:'12 400', cost:'estimé 97 400 FCFA', delivery:'—', status:'Planifiée' },
+        { name:'Relevé mensuel', date:'01/10 · 09:00', channel:'Email', audience:'48 900', cost:'estimé 173 100 FCFA', delivery:'—', status:'Récurrente' },
+        { name:'Rappel échéance — août', date:'02/09 · 08:00', channel:'SMS', audience:'49 310', cost:'381 440 FCFA', delivery:'98,3 %', status:'Terminée' },
+        { name:'Enquête satisfaction', date:'28/08 · 10:00', channel:'WhatsApp', audience:'8 200', cost:'236 160 FCFA', delivery:'94,1 %', status:'Terminée' },
+        { name:'Lancement carte', date:'—', channel:'SMS', audience:'—', cost:'—', delivery:'—', status:'Brouillon' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

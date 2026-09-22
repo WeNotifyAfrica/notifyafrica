@@ -1,0 +1,34 @@
+{
+  "name": "@notifyafrica/core-api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3010",
+    "build": "next build",
+    "start": "next start --port 3010",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@notifyafrica/auth": "workspace:*",
+    "@notifyafrica/config-seed": "workspace:*",
+    "@notifyafrica/observability": "workspace:*",
+    "@notifyafrica/types": "workspace:*",
+    "@notifyafrica/validation": "workspace:*",
+    "@prisma/client": "^5.22.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "prisma": "^5.22.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

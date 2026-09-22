@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+  pre { margin:0; overflow:auto; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 12 · Développeurs</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Application mobile · Live</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Espace développeurs</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Sept écrans pour l'intégration technique. Deux principes : la séparation stricte entre bac à sable et production — une clé ne franchit jamais la frontière —, et la traçabilité complète de chaque appel, prix figé inclus, pour qu'un développeur puisse expliquer une ligne de facture sans ouvrir un ticket.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isKeys }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">La valeur complète d'une clé n'est affichée qu'une seule fois, à la création. Ensuite, seuls les quatre derniers caractères restent visibles : une clé perdue se révoque, elle ne se retrouve pas.</p>
+      <button type="button" class="btn btn-primary">Créer une clé</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:940px">
+        <thead><tr><th>Nom</th><th>Clé</th><th>Environnement</th><th>Portée</th><th>Dernier usage</th><th>Statut</th><th></th></tr></thead>
+        <tbody>
+          <sc-for list="{{ keys }}" as="k" hint-placeholder-count="5">
+            <tr>
+              <td><strong>{{ k.name }}</strong><div class="text-muted" style="font-size:11.5px">{{ k.created }}</div></td>
+              <td class="mono text-muted">{{ k.masked }}</td>
+              <td>{{ k.env }}</td>
+              <td class="text-muted" style="font-size:12px">{{ k.scope }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ k.used }}</td>
+              <td>{{ k.status }}</td>
+              <td><button type="button" class="btn btn-ghost">Révoquer</button></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Clé créée</span><p class="card-body mono" style="margin:0; font-size:12px; word-break:break-all">na_live_8f21c4b9d7e05a3c61b2f4809ad3</p><p class="card-body" style="margin:0">Copiez-la maintenant : elle ne sera plus affichée. Stockez-la côté serveur, jamais dans une application mobile ou un front web.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Copier</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Restriction par IP</span><p class="card-body" style="margin:0">Chaque clé de production peut être limitée à une liste d'adresses IP. Un appel hors liste est refusé et journalisé, sans consommer de crédit.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Rotation</span><p class="card-body" style="margin:0">Deux clés actives sont autorisées par environnement pour permettre une rotation sans coupure : créez la nouvelle, déployez, puis révoquez l'ancienne.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isWebhooks }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+          <div><span class="card-kicker">Notifications de statut</span><div class="card-title" style="font-size:18px">Point de réception</div></div>
+          <span class="tag tag-accent">Actif</span>
+        </div>
+        <div class="field"><label>URL de réception (HTTPS obligatoire)</label><input class="input mono" type="text" value="https://api.mabanque.tg/notifyafrica/webhook"></div>
+        <div class="field"><label>Événements souscrits</label>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+            <sc-for list="{{ events }}" as="e" hint-placeholder-count="8">
+              <span class="{{ e.cls }}">{{ e.label }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div class="field"><label>Secret de signature</label><input class="input mono" type="text" value="whsec_••••••••••••••••3f9a" readonly></div>
+        <p class="text-muted" style="margin:0; font-size:12px">Chaque requête est signée. Vérifiez la signature avant de traiter le contenu : c'est la seule garantie que l'appel vient bien de NotifyAfrica.</p>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Enregistrer</button><button type="button" class="btn btn-secondary">Envoyer un événement de test</button></div>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+        <span class="card-kicker" style="padding:0 var(--space-2)">Dernières livraisons</span>
+        <table class="table" style="min-width:640px; margin-top:var(--space-3)">
+          <thead><tr><th>Heure</th><th>Événement</th><th>Réponse</th><th>Tentative</th><th>Durée</th></tr></thead>
+          <tbody>
+            <tr><td class="num text-muted">14:02:19</td><td class="mono">sms.delivered</td><td>200</td><td class="num">1</td><td class="num text-muted">124 ms</td></tr>
+            <tr><td class="num text-muted">14:02:14</td><td class="mono">sms.sent</td><td>200</td><td class="num">1</td><td class="num text-muted">98 ms</td></tr>
+            <tr><td class="num text-muted">13:58:02</td><td class="mono">sms.failed</td><td style="color:var(--color-accent-300)">503</td><td class="num">4</td><td class="num text-muted">délai dépassé</td></tr>
+            <tr><td class="num text-muted">13:40:55</td><td class="mono">balance.low</td><td>200</td><td class="num">1</td><td class="num text-muted">142 ms</td></tr>
+            <tr><td class="num text-muted">13:22:10</td><td class="mono">otp.verified</td><td>200</td><td class="num">2</td><td class="num text-muted">210 ms</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Exemple de charge utile</span>
+        <pre class="mono" style="font-size:11.5px; line-height:1.6; background:var(--color-neutral-900); padding:var(--space-4); border-radius:var(--radius-md); color:var(--color-text)">{
+  "event": "sms.delivered",
+  "message_id": "msg_8f21c4b9",
+  "to": "+22890123456",
+  "country": "TG",
+  "operator": "moov",
+  "status": "delivered",
+  "price": { "amount": 8.26,
+             "currency": "XOF",
+             "rule": "rule_sms_tg",
+             "version": 4 },
+  "occurred_at": "2026-09-13T14:02:19Z"
+}</pre>
+        <p class="text-muted" style="margin:0; font-size:11.5px">Le bloc <span class="mono">price</span> porte le prix figé et la règle appliquée : le rapprochement comptable se fait sans appel supplémentaire.</p>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Nouvelles tentatives</span><p class="card-body" style="margin:0">Une réponse hors 2xx déclenche jusqu'à 6 tentatives espacées progressivement sur 24 h. Au-delà, l'événement part en file d'attente morte, consultable et rejouable manuellement.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Suspension</span><p class="card-body" style="margin:0">Si le point de réception échoue plus de 90 % des appels pendant une heure, il est suspendu et l'organisation alertée — pour éviter de saturer un système déjà en panne.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLogs }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Environnement</label><select class="input"><option>Production</option><option>Bac à sable</option></select></div>
+        <div class="field"><label>Méthode</label><select class="input"><option>Toutes</option><option>POST</option><option>GET</option></select></div>
+        <div class="field"><label>Code de réponse</label><select class="input"><option>Tous</option><option>2xx</option><option>4xx</option><option>5xx</option></select></div>
+        <div class="field"><label>Clé API</label><select class="input"><option>Toutes</option><option>Backend production</option><option>Batch nocturne</option></select></div>
+        <div class="field"><label>Identifiant de requête</label><input class="input mono" type="text" placeholder="req_…"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">Production</span><span class="tag tag-neutral">Dernières 24 h</span><button type="button" class="btn btn-ghost">Réinitialiser</button><button type="button" class="btn btn-secondary" style="margin-left:auto">Exporter (JSON)</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:900px">
+        <thead><tr><th>Heure</th><th>Requête</th><th>Point d'entrée</th><th>Réponse</th><th>Durée</th><th>Coût</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ logs }}" as="l" hint-placeholder-count="8">
+            <tr>
+              <td class="num text-muted">{{ l.time }}</td>
+              <td class="mono" style="font-size:12px">{{ l.req }}</td>
+              <td class="mono" style="font-size:12px">{{ l.endpoint }}</td>
+              <td>{{ l.code }}</td>
+              <td class="num text-muted">{{ l.ms }}</td>
+              <td class="num">{{ l.cost }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Rétention</span><p class="card-body" style="margin:0">30 jours en consultation directe, 12 mois en export. Les corps de requête sont conservés sans les données sensibles : un code OTP n'apparaît jamais en clair dans un journal.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Erreur explicable</span><p class="card-body" style="margin:0">Un 402 signifie solde insuffisant : la réponse contient le coût estimé, le solde disponible et le montant manquant, pour que l'intégration puisse déclencher une recharge automatiquement.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isUsage }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ usageKpis }}" as="k" hint-placeholder-count="4">
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <span class="card-kicker">{{ k.label }}</span>
+          <span class="num" style="font-size:25px; line-height:1.1">{{ k.value }}</span>
+          <span class="text-muted" style="font-size:12px">{{ k.note }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Appels par point d'entrée</span><div class="card-title" style="font-size:17px">30 derniers jours</div></div>
+        <sc-for list="{{ endpoints }}" as="e" hint-placeholder-count="5">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:12.5px">{{ e.name }}</span><span class="num text-muted" style="font-size:12.5px">{{ e.calls }}</span></div>
+            <div style="height:6px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ e.barStyle }}"></div></div>
+            <span class="text-muted num" style="font-size:11.5px">{{ e.detail }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+          <span class="card-kicker">Limites de débit</span>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Production</span><span class="num" style="font-size:13px">600 req / min</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Pic observé</span><span class="num" style="font-size:13px">418 req / min</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Bac à sable</span><span class="num" style="font-size:13px">60 req / min</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Réponses 429</span><span class="num" style="font-size:13px">0 sur 30 j</span></div>
+          <p class="text-muted" style="margin:0; font-size:11.5px">Les limites sont relevables sur demande, avec justification de volume.</p>
+        </div>
+        <div class="card elev-sm"><span class="card-kicker">Rapprochement</span><p class="card-body" style="margin:0">Le coût affiché ici est la somme des prix figés des appels facturables. Il correspond au centime près à la ligne « API » de la facture du lot 15.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLibs }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); gap:var(--space-6); align-items:start">
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <p class="text-muted" style="margin:0; max-width:56ch; font-size:13.5px">Cinq bibliothèques officielles et une référence HTTP complète. Chaque exemple part d'un cas réel de la région : envoyer un SMS transactionnel avec repli, et lire le prix appliqué dans la réponse.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:var(--space-3)">
+          <sc-for list="{{ libs }}" as="l" hint-placeholder-count="6">
+            <div class="card elev-sm" style="gap:var(--space-2)">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-2)"><span class="card-title" style="font-size:14.5px">{{ l.name }}</span><span class="tag tag-neutral num">{{ l.version }}</span></div>
+              <span class="mono text-muted" style="font-size:11.5px">{{ l.install }}</span>
+              <span class="text-muted" style="font-size:11.5px">{{ l.note }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <sc-for list="{{ langTabs }}" as="t" hint-placeholder-count="4">
+            <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <pre class="mono" style="font-size:11.5px; line-height:1.7; background:var(--color-neutral-900); padding:var(--space-4); border-radius:var(--radius-md); color:var(--color-text)">{{ snippet }}</pre>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3); flex-wrap:wrap"><span class="text-muted" style="font-size:11.5px">Clé de bac à sable pré-remplie dans les exemples</span><button type="button" class="btn btn-secondary">Copier</button></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Idempotence</span><p class="card-body" style="margin:0">Chaque appel d'envoi accepte une clé d'idempotence : un même identifiant rejoué ne renvoie pas un second message et ne facture rien de plus. Indispensable sur des réseaux instables.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Repli entre canaux</span><p class="card-body" style="margin:0">Le paramètre de repli permet de demander WhatsApp puis SMS si le destinataire n'a pas de compte actif. Chaque tentative est facturée à son propre tarif, et détaillée dans la réponse.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Référence</span><p class="card-body" style="margin:0">Documentation complète, collection de tests importable, et journal des versions de l'API avec les dates de fin de support.</p><a href="#" style="font-size:13px">Ouvrir la documentation</a></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSandbox }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Bac à sable</span><div class="card-title" style="font-size:18px">Tester sans dépenser</div></div>
+        <span class="tag tag-outline">Aucune facturation</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Canal</label><select class="input"><option>SMS</option><option>OTP</option><option>WhatsApp</option><option>Email</option></select></div>
+        <div class="field"><label>Numéro de test</label><select class="input"><option>+22890000001 — livraison réussie</option><option>+22890000002 — échec opérateur</option><option>+22890000003 — numéro invalide</option><option>+22890000004 — livraison lente (30 s)</option></select></div>
+      </div>
+      <div class="field"><label>Message</label><textarea class="input" style="min-height:90px">Test d'intégration NotifyAfrica — environnement bac à sable.</textarea></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Exécuter l'appel</button><button type="button" class="btn btn-secondary">Simuler une notification de statut</button></div>
+      <hr class="hr" style="margin:0">
+      <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+        <span class="card-kicker">Réponse</span>
+        <pre class="mono" style="font-size:11.5px; line-height:1.6; background:var(--color-neutral-900); padding:var(--space-4); border-radius:var(--radius-md); color:var(--color-text)">201 Created · 142 ms
+
+{
+  "message_id": "msg_sbx_4c19a0",
+  "status": "queued",
+  "environment": "sandbox",
+  "price": { "amount": 7.00,
+             "currency": "XOF",
+             "billed": false,
+             "rule": "rule_sms_tg",
+             "version": 4 }
+}</pre>
+        <p class="text-muted" style="margin:0; font-size:11.5px">Le prix est calculé et renvoyé comme en production, mais <span class="mono">billed</span> reste à faux : l'intégration peut valider son affichage de coût avant la mise en ligne.</p>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <span class="card-kicker">Numéros de test</span>
+        <p class="card-body" style="margin:0">Chaque numéro déclenche un scénario déterministe, y compris les échecs. Un échec reproductible est la seule façon de tester correctement le repli et l'affichage d'erreur côté application.</p>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-2)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:12px">…0001</span><span class="text-muted" style="font-size:12px">Livré en 2 s</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:12px">…0002</span><span class="text-muted" style="font-size:12px">Échec opérateur</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:12px">…0003</span><span class="text-muted" style="font-size:12px">Numéro invalide (400)</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:12px">…0009</span><span class="text-muted" style="font-size:12px">Solde insuffisant (402)</span></div>
+        </div>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Étanchéité</span><p class="card-body" style="margin:0">Une clé de bac à sable appelée sur la production renvoie 401, et l'inverse aussi. Aucun message de test ne peut atteindre un vrai destinataire.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Passage en production</span><p class="card-body" style="margin:0">Une liste de vérification conditionne l'activation : clé stockée côté serveur, signature de webhook vérifiée, gestion du 402 et du 429 implémentée, nom d'expéditeur validé.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Voir la liste</button></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isEnvs }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">Chaque projet dispose de deux environnements séparés : clés, points de réception, limites, journaux et solde sont indépendants. Aucune configuration ne se propage de l'un à l'autre sans action explicite.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:17px">Production</span><span class="tag tag-accent">Live</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Clés actives</span><span class="num" style="font-size:13px">2</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Limite de débit</span><span class="num" style="font-size:13px">600 req / min</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Facturation</span><span style="font-size:13px">Réelle</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Solde</span><span class="num" style="font-size:13px">1 260 000 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Point de réception</span><span class="mono" style="font-size:12px">api.mabanque.tg</span></div>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:17px">Bac à sable</span><span class="tag tag-outline">Test</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Clés actives</span><span class="num" style="font-size:13px">1</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Limite de débit</span><span class="num" style="font-size:13px">60 req / min</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Facturation</span><span style="font-size:13px">Simulée</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Solde</span><span class="text-muted" style="font-size:13px">Sans objet</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Point de réception</span><span class="mono" style="font-size:12px">staging.mabanque.tg</span></div>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <span class="card-kicker" style="padding:0 var(--space-2)">Projets de l'organisation</span>
+      <table class="table" style="min-width:720px; margin-top:var(--space-3)">
+        <thead><tr><th>Projet</th><th>Environnements</th><th>Canaux activés</th><th>Volume / mois</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Application mobile</strong></td><td class="text-muted">Production, bac à sable</td><td class="text-muted">SMS, OTP, WhatsApp, Email</td><td class="num">412 800</td><td><span class="tag tag-accent">Actif</span></td></tr>
+          <tr><td><strong>Site web</strong></td><td class="text-muted">Production</td><td class="text-muted">Email</td><td class="num">88 400</td><td><span class="tag tag-accent">Actif</span></td></tr>
+          <tr><td><strong>Agence — pilote</strong></td><td class="text-muted">Bac à sable</td><td class="text-muted">SMS</td><td class="num">0</td><td><span class="tag tag-neutral">En intégration</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">La valeur d'une clé n'est affichée qu'à la création ; ensuite elle est masquée et seule la révocation est possible. Deux clés actives maximum par environnement, pour permettre la rotation. Les environnements sont étanches : une clé refusée hors de son environnement renvoie 401 sans consommer de crédit. Toute réponse d'envoi porte le prix figé et la règle appliquée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Clé active · révoquée · expirée · restreinte par IP. Point de réception actif · en échec · suspendu. Journal vide · en cours de chargement · rétention dépassée. Bac à sable non initialisé. Limite de débit atteinte (429). Solde insuffisant (402). Version d'API dépréciée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Révoquer la dernière clé active coupe l'intégration : la confirmation exige de taper le nom du projet. Un webhook qui répond 200 mais met 25 s est traité comme un échec. Une clé d'idempotence rejouée après 24 h est considérée comme un nouvel appel et facturée. Un appel pendant un incident opérateur est accepté, mis en file, et facturé seulement à la remise effective.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il proposer un troisième environnement (recette) pour les clients bancaires qui l'imposent dans leur chaîne de déploiement ? La rétention des journaux à 30 jours suffit-elle aux exigences de conformité locales, ou faut-il une option 12 mois payante ? Recommandation : recette optionnelle par organisation, rétention étendue en option.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 12 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 13 — Statistiques</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'keys', lang: 'curl' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['keys', 'Clés API'],
+      ['webhooks', 'Notifications de statut'],
+      ['logs', 'Journaux'],
+      ['usage', 'Consommation'],
+      ['libs', 'Bibliothèques'],
+      ['sandbox', 'Bac à sable'],
+      ['envs', 'Environnements']
+    ];
+    const t = this.state.tab;
+    const pill = active => ({
+      whiteSpace: 'nowrap',
+      color: active ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: active ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: active ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const bar = pct => ({
+      width: pct + '%', height: '100%',
+      background: 'var(--color-accent)', opacity: 0.75
+    });
+
+    const snippets = {
+      curl: `curl https://api.notifyafrica.com/v1/sms \\
+  -H "Authorization: Bearer $NA_API_KEY" \\
+  -H "Idempotency-Key: ech-2026-09-8f21" \\
+  -d to="+22890123456" \\
+  -d sender="MABANQUE" \\
+  -d body="Votre échéance arrive le 20/09." \\
+  -d fallback="none"`,
+      node: `import NotifyAfrica from "notifyafrica";
+
+const na = new NotifyAfrica(process.env.NA_API_KEY);
+
+const msg = await na.sms.send({
+  to: "+22890123456",
+  sender: "MABANQUE",
+  body: "Votre échéance arrive le 20/09.",
+  idempotencyKey: "ech-2026-09-8f21"
+});
+
+console.log(msg.price.amount, msg.price.currency);
+// 7 XOF`,
+      php: `<?php
+$na = new \\NotifyAfrica\\Client(getenv('NA_API_KEY'));
+
+$msg = $na->sms->send([
+  'to'      => '+22890123456',
+  'sender'  => 'MABANQUE',
+  'body'    => 'Votre échéance arrive le 20/09.',
+]);
+
+echo $msg->price->amount;  // 7`,
+      python: `from notifyafrica import Client
+
+na = Client(os.environ["NA_API_KEY"])
+
+msg = na.sms.send(
+    to="+22890123456",
+    sender="MABANQUE",
+    body="Votre échéance arrive le 20/09.",
+)
+
+print(msg.price.amount, msg.price.currency)
+# 7 XOF`
+    };
+
+    return {
+      tabs: tabs.map(([key, label]) => ({
+        label, onClick: () => this.setState({ tab: key }), style: pill(key === t)
+      })),
+      isKeys: t === 'keys',
+      isWebhooks: t === 'webhooks',
+      isLogs: t === 'logs',
+      isUsage: t === 'usage',
+      isLibs: t === 'libs',
+      isSandbox: t === 'sandbox',
+      isEnvs: t === 'envs',
+
+      keys: [
+        { name:'Backend production', created:'créée le 04/02/2026 par Kodjo A.', masked:'na_live_••••3f9a', env:'Production', scope:'Envoi, lecture, facturation', used:'il y a 2 min', status: React.createElement('span', {className:'tag tag-accent'}, 'Active') },
+        { name:'Batch nocturne', created:'créée le 12/03/2026 par Awa S.', masked:'na_live_••••7c21', env:'Production', scope:'Envoi en masse uniquement', used:'il y a 9 h', status: React.createElement('span', {className:'tag tag-accent'}, 'Active') },
+        { name:'Intégration mobile', created:'créée le 18/01/2026 par Kodjo A.', masked:'na_test_••••b840', env:'Bac à sable', scope:'Envoi, lecture', used:'hier', status: React.createElement('span', {className:'tag tag-outline'}, 'Active · test') },
+        { name:'Prestataire agence', created:'créée le 02/12/2025 par Awa S.', masked:'na_live_••••1d05', env:'Production', scope:'Envoi — IP restreintes', used:'il y a 3 mois', status: React.createElement('span', {className:'tag tag-neutral'}, 'Révoquée') },
+        { name:'Ancienne clé v1', created:'créée le 20/08/2025', masked:'na_live_••••9e77', env:'Production', scope:'Complète', used:'—', status: React.createElement('span', {className:'tag tag-neutral'}, 'Expirée') }
+      ],
+
+      events: [
+        { label:'sms.sent', cls:'tag tag-accent' },
+        { label:'sms.delivered', cls:'tag tag-accent' },
+        { label:'sms.failed', cls:'tag tag-accent' },
+        { label:'otp.verified', cls:'tag tag-accent' },
+        { label:'campaign.finished', cls:'tag tag-accent' },
+        { label:'balance.low', cls:'tag tag-accent' },
+        { label:'whatsapp.read', cls:'tag tag-neutral' },
+        { label:'invoice.issued', cls:'tag tag-neutral' }
+      ],
+
+      logs: [
+        { time:'14:02:11', req:'req_9a41c0', endpoint:'POST /v1/sms', code:'201', ms:'142 ms', cost:'8,26 FCFA' },
+        { time:'14:01:58', req:'req_9a41bf', endpoint:'POST /v1/sms/bulk', code:'202', ms:'1 204 ms', cost:'408 197 FCFA' },
+        { time:'13:59:40', req:'req_9a419e', endpoint:'GET /v1/messages', code:'200', ms:'88 ms', cost:'0 FCFA' },
+        { time:'13:58:02', req:'req_9a4180', endpoint:'POST /v1/sms', code:'402 · solde insuffisant', ms:'64 ms', cost:'0 FCFA' },
+        { time:'13:55:12', req:'req_9a4172', endpoint:'POST /v1/otp/verify', code:'200', ms:'96 ms', cost:'6,50 FCFA' },
+        { time:'13:52:44', req:'req_9a4150', endpoint:'POST /v1/otp/send', code:'201', ms:'118 ms', cost:'12,00 FCFA' },
+        { time:'13:40:55', req:'req_9a4102', endpoint:'POST /v1/pricing/estimate', code:'200', ms:'54 ms', cost:'0 FCFA' },
+        { time:'13:22:10', req:'req_9a40c8', endpoint:'POST /v1/sms', code:'400 · numéro invalide', ms:'41 ms', cost:'0 FCFA' }
+      ],
+
+      usageKpis: [
+        { label:'Appels API', value:'1,42 M', note:'30 derniers jours · +12 %' },
+        { label:'Taux de succès', value:'99,86 %', note:'hors erreurs client (4xx)' },
+        { label:'Latence médiane', value:'112 ms', note:'p95 à 340 ms' },
+        { label:'Coût facturé via API', value:'3,48 M FCFA', note:'92 % du volume total' }
+      ],
+
+      endpoints: [
+        { name:'POST /v1/sms', calls:'842 400', barStyle: bar(100), detail:'2,91 M FCFA · succès 99,9 %' },
+        { name:'POST /v1/otp/send', calls:'268 100', barStyle: bar(32), detail:'321 720 FCFA · succès 99,8 %' },
+        { name:'POST /v1/whatsapp', calls:'188 200', barStyle: bar(22), detail:'994 640 FCFA · succès 99,7 %' },
+        { name:'GET /v1/messages', calls:'96 400', barStyle: bar(11), detail:'non facturé' },
+        { name:'POST /v1/pricing/estimate', calls:'28 900', barStyle: bar(4), detail:'non facturé' }
+      ],
+
+      libs: [
+        { name:'Node.js', version:'v2.4.1', install:'npm i notifyafrica', note:'TypeScript inclus' },
+        { name:'PHP', version:'v2.3.0', install:'composer require notifyafrica/sdk', note:'Laravel 10+' },
+        { name:'Python', version:'v2.4.0', install:'pip install notifyafrica', note:'async pris en charge' },
+        { name:'Java', version:'v1.9.2', install:'maven · com.notifyafrica', note:'Spring Boot' },
+        { name:'Go', version:'v1.4.0', install:'go get notifyafrica/go', note:'client HTTP léger' },
+        { name:'API HTTP', version:'v1', install:'api.notifyafrica.com/v1', note:'référence complète' }
+      ],
+
+      langTabs: [
+        ['curl', 'cURL'], ['node', 'Node.js'], ['php', 'PHP'], ['python', 'Python']
+      ].map(([key, label]) => ({
+        label, onClick: () => this.setState({ lang: key }), style: pill(key === this.state.lang)
+      })),
+      snippet: snippets[this.state.lang]
+    };
+  }
+}
+</script>
+</body>
+</html>

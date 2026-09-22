@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 16 · Équipe &amp; rôles</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · 14 membres · 3 projets</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Équipe &amp; rôles</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Sept rôles, deux portées. Un membre a un rôle sur l'organisation entière ou sur un projet précis — c'est ce qui permet à une banque de donner accès à une agence sans lui ouvrir la facturation du groupe. Toute action sensible est journalisée et non modifiable.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isMembers }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Recherche</label><input class="input" type="text" placeholder="Nom ou email"></div>
+        <div class="field"><label>Rôle</label><select class="input"><option>Tous les rôles</option><option>Owner</option><option>Admin</option><option>Billing Manager</option><option>Developer</option><option>Campaign Manager</option><option>Support Agent</option><option>Viewer / Auditeur</option></select></div>
+        <div class="field"><label>Portée</label><select class="input"><option>Toutes</option><option>Organisation</option><option>Application mobile</option><option>Site web</option><option>Agence — pilote</option></select></div>
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Actif</option><option>Invité</option><option>Suspendu</option></select></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center">
+        <span class="tag tag-accent">14 membres actifs</span><span class="tag tag-neutral">2 invitations en attente</span>
+        <button type="button" class="btn btn-primary" onClick="{{ goInvites }}" style="margin-left:auto">Inviter un membre</button>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:940px">
+        <thead><tr><th>Membre</th><th>Rôle</th><th>Portée</th><th>Double authentification</th><th>Dernière activité</th><th>Statut</th><th></th></tr></thead>
+        <tbody>
+          <sc-for list="{{ members }}" as="m" hint-placeholder-count="8">
+            <tr>
+              <td><strong>{{ m.name }}</strong><div class="text-muted" style="font-size:11.5px">{{ m.email }}</div></td>
+              <td>{{ m.role }}</td>
+              <td class="text-muted" style="font-size:12.5px">{{ m.scope }}</td>
+              <td>{{ m.mfa }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ m.seen }}</td>
+              <td>{{ m.status }}</td>
+              <td>{{ m.action }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">À traiter</span><p class="card-body" style="margin:0">Trois membres n'ont pas activé la double authentification, dont un Billing Manager. Vous pouvez la rendre obligatoire au niveau de l'organisation.</p><button type="button" class="btn btn-primary" style="align-self:flex-start">Rendre obligatoire</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Comptes dormants</span><p class="card-body" style="margin:0">Un accès prestataire n'a pas été utilisé depuis 92 jours. Une suspension automatique après 90 jours d'inactivité est configurable.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Dernier Owner</span><p class="card-body" style="margin:0">Une organisation ne peut jamais se retrouver sans Owner : la suppression ou la rétrogradation du dernier est bloquée, avec explication.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRoles }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">Les sept rôles sont prédéfinis et non modifiables, pour garantir qu'un audit sait exactement ce que signifie chaque intitulé. Les rôles sur mesure sont une extension possible, à arbitrer.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ roles }}" as="r" hint-placeholder-count="7">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:15px">{{ r.name }}</span><span class="tag tag-neutral num">{{ r.count }}</span></div>
+          <p class="card-body" style="margin:0; font-size:13px">{{ r.desc }}</p>
+          <div style="display:flex; flex-direction:column; gap:4px">
+            <span class="text-muted" style="font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em">Peut</span>
+            <span style="font-size:12.5px">{{ r.can }}</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px">
+            <span class="text-muted" style="font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em">Ne peut pas</span>
+            <span class="text-muted" style="font-size:12.5px">{{ r.cannot }}</span>
+          </div>
+          <div class="card-meta">Portée : {{ r.scope }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isPerms }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">La matrice fait foi : c'est le document qu'un auditeur demande et celui que l'implémentation doit refléter exactement. Toute ambiguïté ici devient une faille en production.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1000px">
+        <thead>
+          <tr>
+            <th style="min-width:220px">Action</th>
+            <sc-for list="{{ roleCols }}" as="c" hint-placeholder-count="7">
+              <th style="text-align:center; font-size:11.5px">{{ c }}</th>
+            </sc-for>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ matrix }}" as="row" hint-placeholder-count="14">
+            <tr>
+              <td style="font-size:12.5px">{{ row.action }}</td>
+              <sc-for list="{{ row.cells }}" as="cell">
+                <td style="{{ cell.style }}">{{ cell.mark }}</td>
+              </sc-for>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex; gap:var(--space-4); flex-wrap:wrap; align-items:center">
+      <span style="display:flex; gap:6px; align-items:center; font-size:12px"><span style="color:var(--color-accent);font-size:14px">●</span> Autorisé</span>
+      <span style="display:flex; gap:6px; align-items:center; font-size:12px" class="text-muted"><span style="font-size:14px">○</span> Lecture seule</span>
+      <span style="display:flex; gap:6px; align-items:center; font-size:12px" class="text-muted"><span style="font-size:14px">—</span> Interdit</span>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Règle non négociable</span><p class="card-body" style="margin:0">Aucun rôle autre qu'Owner et Billing Manager ne peut engager une dépense : accepter un devis, recharger, ou lancer une campagne dont le coût dépasse un plafond configuré. Un Campaign Manager peut préparer un envoi coûteux mais son exécution demande une validation.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isInvites }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Nouvelle invitation</span><div class="card-title" style="font-size:18px">Inviter un membre</div></div>
+      <div class="field"><label>Adresses email</label><textarea class="input" style="min-height:70px" placeholder="une adresse par ligne">awa.mensah@mabanque.tg</textarea></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Rôle attribué</label><select class="input" onChange="{{ onRole }}"><option>Campaign Manager</option><option>Admin</option><option>Billing Manager</option><option>Developer</option><option>Support Agent</option><option>Viewer / Auditeur</option><option>Owner</option></select></div>
+        <div class="field"><label>Portée</label><select class="input"><option>Projet — Application mobile</option><option>Organisation entière</option><option>Projet — Site web</option><option>Projet — Agence pilote</option></select></div>
+      </div>
+      <div class="field"><label>Expiration de l'accès</label>
+        <div class="seg" style="max-width:380px">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="exp" checked><span>Permanent</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="exp"><span>90 jours</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="exp"><span>Date précise</span></label>
+        </div>
+      </div>
+      <div class="field"><label>Message d'accompagnement</label><textarea class="input" style="min-height:70px">Bienvenue dans l'espace NotifyAfrica de MaBanque. Tu auras accès aux campagnes du projet Application mobile.</textarea></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Envoyer l'invitation</button><button type="button" class="btn btn-secondary">Aperçu de l'email</button></div>
+      <p class="text-muted" style="margin:0; font-size:11.5px">L'invitation est valable 7 jours. Le membre choisit son mot de passe et configure sa double authentification à la première connexion.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Ce que ce rôle donnera</span>
+        <p class="card-body" style="margin:0">{{ rolePreview }}</p>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+          <sc-for list="{{ roleTags }}" as="g" hint-placeholder-count="4">
+            <span class="{{ g.cls }}">{{ g.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Invitations en attente</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">yao.doe@mabanque.tg</span><span class="text-muted num" style="font-size:11.5px">Developer · Application mobile · expire dans 4 j</span></div><a href="#" style="font-size:12px">Relancer</a></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">audit@cabinet-kb.tg</span><span class="text-muted num" style="font-size:11.5px">Viewer · organisation · expire dans 6 j</span></div><a href="#" style="font-size:12px">Annuler</a></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:13px">ext@agence-lome.tg</span><span class="text-muted num" style="font-size:11.5px">Expirée le 06/09 · jamais acceptée</span></div><a href="#" style="font-size:12px">Réinviter</a></div>
+        </div>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Domaine de confiance</span><p class="card-body" style="margin:0">Restreindre les invitations au domaine mabanque.tg empêche l'ajout accidentel d'une adresse personnelle. Les prestataires externes passent alors par une dérogation explicite.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLog }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Période</label><select class="input"><option>30 derniers jours</option><option>7 derniers jours</option><option>12 derniers mois</option></select></div>
+        <div class="field"><label>Membre</label><select class="input"><option>Tous</option><option>Kodjo Amegan</option><option>Awa Sow</option></select></div>
+        <div class="field"><label>Catégorie</label><select class="input"><option>Toutes</option><option>Sécurité</option><option>Facturation</option><option>Envois</option><option>Équipe</option><option>Configuration</option></select></div>
+        <div class="field"><label>Recherche</label><input class="input" type="text" placeholder="Action, cible, adresse IP"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">30 j</span><span class="tag tag-neutral">Toutes catégories</span><button type="button" class="btn btn-secondary" style="margin-left:auto">Exporter pour audit</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:960px">
+        <thead><tr><th>Horodatage</th><th>Membre</th><th>Action</th><th>Cible</th><th>Origine</th><th>Résultat</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ log }}" as="l" hint-placeholder-count="10">
+            <tr>
+              <td class="num text-muted" style="font-size:12px">{{ l.at }}</td>
+              <td style="font-size:12.5px">{{ l.who }}</td>
+              <td style="font-size:12.5px">{{ l.what }}</td>
+              <td class="text-muted" style="font-size:12px">{{ l.target }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ l.ip }}</td>
+              <td>{{ l.result }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Immuabilité</span><p class="card-body" style="margin:0">Le journal est en écriture seule : personne, y compris un Owner, ne peut supprimer une entrée. Rétention de 24 mois, export signé disponible pour un contrôle externe.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Tentatives refusées</span><p class="card-body" style="margin:0">Les actions refusées faute de droits sont journalisées aussi. C'est souvent le premier signal d'un rôle mal attribué — ou d'un accès compromis.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Alerte</span><p class="card-body" style="margin:0">Une connexion depuis une adresse inhabituelle (Nigeria, 11/09) a été enregistrée pour un compte Developer. Vérification recommandée.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Sept rôles prédéfinis, deux portées : organisation ou projet. Un membre peut cumuler des rôles sur des projets différents ; la permission la plus large de la portée concernée s'applique. Une organisation conserve toujours au moins un Owner. Seuls Owner et Billing Manager engagent une dépense. Toute action, y compris refusée, est journalisée de façon immuable.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Membre actif · invité · invitation expirée · suspendu · accès arrivé à expiration · sans double authentification alors qu'elle est obligatoire. Invitation envoyée · acceptée · expirée · annulée · adresse déjà membre · domaine non autorisé. Journal : chargement, période sans activité, export en préparation.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Retirer un membre qui possède des campagnes planifiées : les campagnes survivent et sont réattribuées à l'Owner, jamais annulées silencieusement. Rétrograder quelqu'un pendant qu'il travaille : la session est réévaluée au prochain appel, avec message explicite. Un prestataire invité sur deux projets concurrents ne doit voir ni les statistiques ni les tarifs de l'autre — la portée projet est étanche.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il des rôles sur mesure (permissions à la carte), ou les sept rôles suffisent-ils ? Le sur-mesure complique l'audit et la matrice. Faut-il une validation à deux personnes pour les dépenses au-delà d'un plafond, attendue par les clients bancaires ? Recommandation : garder les sept rôles, ajouter la double validation par plafond configurable.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 16 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 17 — Paramètres</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'members', inviteRole: 'Campaign Manager' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['members', 'Membres'],
+      ['roles', 'Rôles'],
+      ['perms', 'Permissions'],
+      ['invites', 'Invitations'],
+      ['log', 'Journal des actions']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const link = txt => React.createElement('a', { href: '#', style: { fontSize: '12px' } }, txt);
+    const muted = txt => React.createElement('span', { className: 'text-muted', style: { fontSize: '12px' } }, txt);
+
+    const roleCols = ['Owner', 'Admin', 'Billing', 'Dev', 'Campagnes', 'Support', 'Viewer'];
+    const cellStyles = {
+      y: { textAlign: 'center', color: 'var(--color-accent)' },
+      r: { textAlign: 'center', color: 'var(--color-neutral-400)' },
+      n: { textAlign: 'center', color: 'var(--color-neutral-600)' }
+    };
+    const marks = { y: '●', r: '○', n: '—' };
+    const row = (action, codes) => ({
+      action,
+      cells: codes.split('').map(c => ({ mark: marks[c], style: cellStyles[c] }))
+    });
+
+    const rolePreviews = {
+      'Owner': { text: "Contrôle total, y compris la suppression de l'organisation et le transfert de propriété. À réserver à deux personnes au maximum.", tags: ['Tout autoriser', 'Facturation', 'Suppression'] },
+      'Admin': { text: "Gère projets, membres, configuration et envois, mais n'engage aucune dépense et ne touche pas aux moyens de paiement.", tags: ['Projets', 'Membres', 'Envois', 'Sans dépense'] },
+      'Billing Manager': { text: "Recharge, accepte les devis, gère les moyens de paiement et les factures. Aucun accès aux envois ni aux clés API.", tags: ['Facturation', 'Devis', 'Sans envoi'] },
+      'Developer': { text: "Clés API, webhooks, journaux techniques et bac à sable. Voit les coûts mais ne peut ni recharger ni gérer l'équipe.", tags: ['Clés API', 'Webhooks', 'Bac à sable'] },
+      'Campaign Manager': { text: "Crée et lance campagnes, modèles et listes de contacts sur les projets autorisés. Les envois au-delà du plafond demandent une validation.", tags: ['Campagnes', 'Modèles', 'Contacts', 'Plafond'] },
+      'Support Agent': { text: "Consulte l'historique des messages et l'état des envois pour répondre aux clients finaux. Aucune création, aucune donnée de facturation.", tags: ['Lecture messages', 'Renvoi unitaire'] },
+      'Viewer / Auditeur': { text: "Lecture seule sur statistiques, factures et journal des actions. Peut exporter, ne peut rien modifier — profil conçu pour un audit externe.", tags: ['Lecture seule', 'Export', 'Journal'] }
+    };
+    const rp = rolePreviews[this.state.inviteRole] || rolePreviews['Campaign Manager'];
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isMembers: t === 'members',
+      isRoles: t === 'roles',
+      isPerms: t === 'perms',
+      isInvites: t === 'invites',
+      isLog: t === 'log',
+      goInvites: () => this.setState({ tab: 'invites' }),
+
+      members: [
+        { name:'Kodjo Amegan', email:'kodjo.a@mabanque.tg', role:'Owner', scope:'Organisation', mfa: tag('tag-accent','Active'), seen:'il y a 4 min', status: tag('tag-accent','Actif'), action: link('Gérer') },
+        { name:'Awa Sow', email:'awa.s@mabanque.tg', role:'Admin', scope:'Organisation', mfa: tag('tag-accent','Active'), seen:'il y a 2 h', status: tag('tag-accent','Actif'), action: link('Gérer') },
+        { name:'Fatou Diallo', email:'fatou.d@mabanque.tg', role:'Billing Manager', scope:'Organisation', mfa: tag('tag-neutral','Inactive'), seen:'hier', status: tag('tag-accent','Actif'), action: link('Gérer') },
+        { name:'Yao Mensah', email:'yao.m@mabanque.tg', role:'Developer', scope:'Application mobile', mfa: tag('tag-accent','Active'), seen:'il y a 30 min', status: tag('tag-accent','Actif'), action: link('Gérer') },
+        { name:'Sarah Koffi', email:'sarah.k@mabanque.tg', role:'Campaign Manager', scope:'Application mobile, Site web', mfa: tag('tag-accent','Active'), seen:'il y a 1 h', status: tag('tag-accent','Actif'), action: link('Gérer') },
+        { name:'Ibrahim Traoré', email:'ibrahim.t@mabanque.tg', role:'Support Agent', scope:'Application mobile', mfa: tag('tag-neutral','Inactive'), seen:'il y a 3 h', status: tag('tag-accent','Actif'), action: link('Gérer') },
+        { name:'Cabinet K&B', email:'audit@cabinet-kb.tg', role:'Viewer / Auditeur', scope:'Organisation · lecture seule', mfa: tag('tag-accent','Active'), seen:'il y a 8 j', status: tag('tag-outline','Accès expire le 31/12'), action: link('Gérer') },
+        { name:'Agence Lomé', email:'ext@agence-lome.tg', role:'Campaign Manager', scope:'Agence — pilote', mfa: tag('tag-neutral','Inactive'), seen:'il y a 92 j', status: tag('tag-neutral','Dormant'), action: link('Suspendre') }
+      ],
+
+      roles: [
+        { name:'Owner', count:'1', desc:"Propriétaire de l'organisation. Seul rôle pouvant transférer la propriété ou supprimer l'organisation.", can:'Tout, y compris facturation, suppression et transfert', cannot:'Rien — mais ne peut pas être le dernier à se retirer', scope:'Organisation uniquement' },
+        { name:'Admin', count:'1', desc:'Administre la plateforme au quotidien sans pouvoir engager de dépense.', can:'Projets, membres, configuration, envois, clés API', cannot:'Recharger, accepter un devis, gérer les moyens de paiement', scope:'Organisation ou projet' },
+        { name:'Billing Manager', count:'1', desc:'Responsable financier. Le seul rôle non-Owner à pouvoir engager une dépense.', can:'Recharges, devis, factures, moyens de paiement, export comptable', cannot:'Envoyer un message, créer une clé API, gérer l\u2019équipe', scope:'Organisation uniquement' },
+        { name:'Developer', count:'3', desc:"Intègre l'API et surveille la santé technique de l'intégration.", can:'Clés API, webhooks, journaux, bac à sable, consultation des coûts', cannot:'Recharger, gérer l\u2019équipe, accepter un devis', scope:'Organisation ou projet' },
+        { name:'Campaign Manager', count:'4', desc:'Conçoit et exécute les envois et campagnes sur son périmètre.', can:'Campagnes, modèles, listes de contacts, envois sous plafond', cannot:'Dépasser le plafond sans validation, voir la facturation globale', scope:'Projet recommandé' },
+        { name:'Support Agent', count:'3', desc:'Répond aux clients finaux à partir de l\u2019historique des messages.', can:'Consulter messages et statuts, renvoyer un message unitaire', cannot:'Envoi en masse, accès aux tarifs et aux factures', scope:'Projet' },
+        { name:'Viewer / Auditeur', count:'1', desc:'Lecture seule totale, conçue pour un contrôle interne ou externe.', can:'Statistiques, factures, journal des actions, exports', cannot:'Toute modification, tout envoi, toute création', scope:'Organisation ou projet' }
+      ],
+
+      roleCols,
+      matrix: [
+        row("Voir les statistiques", 'yyyyyry'),
+        row("Envoyer un message unitaire", 'yynyyyn'),
+        row("Lancer un envoi en masse", 'yynyynn'),
+        row("Dépasser le plafond de dépense", 'yynnnnn'),
+        row("Créer et gérer les modèles", 'yynyynn'),
+        row("Gérer les listes de contacts", 'yynyynn'),
+        row("Créer une clé API", 'yynynnn'),
+        row("Configurer les webhooks", 'yynynnn'),
+        row("Voir les journaux techniques", 'yyryyrr'),
+        row("Voir les tarifs applicables", 'yyyyrnr'),
+        row("Demander un devis", 'yyynynn'),
+        row("Accepter un devis", 'yynnnnn'),
+        row("Recharger le compte", 'yynnnnn'),
+        row("Gérer les moyens de paiement", 'yynnnnn'),
+        row("Télécharger les factures", 'yyynnnr'),
+        row("Inviter ou retirer un membre", 'yynnnnn'),
+        row("Modifier les rôles", 'ynnnnnn'),
+        row("Créer ou supprimer un projet", 'yynnnnn'),
+        row("Consulter le journal des actions", 'yyrrnnr'),
+        row("Supprimer l\u2019organisation", 'ynnnnnn')
+      ],
+
+      onRole: e => this.setState({ inviteRole: e.target.value }),
+      rolePreview: rp.text,
+      roleTags: rp.tags.map((label, i) => ({ label, cls: i === 0 ? 'tag tag-accent' : 'tag tag-neutral' })),
+
+      log: [
+        { at:'13/09 14:02:11', who:'Kodjo Amegan', what:'Envoi en masse lancé', target:'Campagne « Rappel échéance »', ip:'41.207.x.x · Lomé', result: tag('tag-accent','Réussi') },
+        { at:'13/09 11:40:02', who:'Fatou Diallo', what:'Recharge du compte', target:'2 000 000 FCFA · MTN MoMo', ip:'41.207.x.x · Lomé', result: tag('tag-accent','Réussi') },
+        { at:'13/09 09:14:55', who:'Sarah Koffi', what:'Tentative de recharge', target:'500 000 FCFA', ip:'41.207.x.x · Lomé', result: tag('tag-neutral','Refusé · droits') },
+        { at:'12/09 17:22:08', who:'Yao Mensah', what:'Clé API créée', target:'Batch nocturne · production', ip:'196.44.x.x · Lomé', result: tag('tag-accent','Réussi') },
+        { at:'12/09 16:40:31', who:'Kodjo Amegan', what:'Invitation envoyée', target:'audit@cabinet-kb.tg · Viewer', ip:'41.207.x.x · Lomé', result: tag('tag-accent','Réussi') },
+        { at:'11/09 22:05:12', who:'Yao Mensah', what:'Connexion', target:'Session web', ip:'105.112.x.x · Lagos', result: tag('tag-outline','Réussi · lieu inhabituel') },
+        { at:'11/09 10:02:44', who:'Awa Sow', what:'Rôle modifié', target:'Ibrahim Traoré → Support Agent', ip:'41.207.x.x · Lomé', result: tag('tag-accent','Réussi') },
+        { at:'10/09 15:31:09', who:'Cabinet K&B', what:'Export du journal', target:'12 derniers mois', ip:'41.207.x.x · Lomé', result: tag('tag-accent','Réussi') },
+        { at:'09/09 08:12:50', who:'Agence Lomé', what:'Tentative de consultation', target:'Factures de l\u2019organisation', ip:'41.207.x.x · Lomé', result: tag('tag-neutral','Refusé · portée') },
+        { at:'08/09 14:55:03', who:'Système', what:'Bascule de route', target:'Yas Togo → route de secours', ip:'—', result: tag('tag-accent','Automatique') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

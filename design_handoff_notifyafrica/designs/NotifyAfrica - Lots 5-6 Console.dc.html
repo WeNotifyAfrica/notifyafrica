@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="display:flex; flex-direction:column; gap:var(--space-6); padding:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lots 5 &amp; 6 · Console — shell &amp; tableau de bord</h6>
+    <span class="tag tag-outline" style="margin-left:auto">Maquette interactive · données d'exemple</span>
+  </div>
+
+  <div style="display:grid; grid-template-columns:minmax(0,232px) minmax(0,1fr); gap:0; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg); background:var(--color-bg)">
+
+    <aside style="display:flex; flex-direction:column; gap:var(--space-4); padding:var(--space-6) var(--space-4); background:var(--color-surface)">
+      <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+        <span class="text-muted" style="font-size:10px; letter-spacing:.12em; text-transform:uppercase">Organisation</span>
+        <button type="button" onClick="{{ noop }}" style="{{ switcherStyle }}">
+          <span style="display:flex; flex-direction:column; align-items:flex-start"><span style="font-size:13.5px">MaBanque SA</span><span class="text-muted" style="font-size:11px">Togo · XOF</span></span>
+          <span class="text-muted" style="margin-left:auto">▾</span>
+        </button>
+        <button type="button" onClick="{{ noop }}" style="{{ switcherStyle }}">
+          <span style="display:flex; flex-direction:column; align-items:flex-start"><span style="font-size:13.5px">Application mobile</span><span class="text-muted" style="font-size:11px">Projet</span></span>
+          <span class="text-muted" style="margin-left:auto">▾</span>
+        </button>
+        <div class="seg" style="width:100%">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="env" checked><span>Live</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="env"><span>Test</span></label>
+        </div>
+      </div>
+
+      <nav style="display:flex; flex-direction:column; gap:2px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="13">
+          <button type="button" onClick="{{ n.onClick }}" style="{{ n.style }}">
+            <span>{{ n.label }}</span>
+            <sc-if value="{{ n.badge }}"><span class="tag tag-accent" style="margin-left:auto; font-size:10px">{{ n.badge }}</span></sc-if>
+          </button>
+        </sc-for>
+      </nav>
+
+      <div class="card" style="margin-top:auto; background:var(--color-neutral-900); gap:var(--space-2)">
+        <span class="card-kicker">Solde disponible</span>
+        <span class="num" style="font-size:19px; color:var(--color-accent-300)">1 260 000 FCFA</span>
+        <span class="text-muted" style="font-size:11px">≈ 185 000 SMS au palier actuel</span>
+        <button type="button" class="btn btn-primary btn-block">Recharger</button>
+      </div>
+    </aside>
+
+    <main style="display:flex; flex-direction:column; min-width:0">
+
+      <div style="display:flex; align-items:center; gap:var(--space-4); padding:var(--space-4) var(--space-6); background:var(--color-surface); flex-wrap:wrap">
+        <div style="display:flex; flex-direction:column">
+          <span class="text-muted" style="font-size:11px">Console</span>
+          <span style="font-size:15px">{{ pageTitle }}</span>
+        </div>
+        <input class="input" type="text" placeholder="Rechercher un message, un numéro, une facture…" style="max-width:320px; margin-left:var(--space-6)">
+        <div style="display:flex; align-items:center; gap:var(--space-2); margin-left:auto">
+          <button type="button" class="btn btn-secondary">Aide</button>
+          <button type="button" class="btn btn-secondary">Notifications · 3</button>
+          <button type="button" onClick="{{ noop }}" style="{{ avatarStyle }}">AK</button>
+        </div>
+      </div>
+
+      <div style="padding:var(--space-8) var(--space-6) calc(var(--space-8) * 2); display:flex; flex-direction:column; gap:var(--space-8); min-width:0">
+
+        <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; gap:var(--space-8)">
+
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+            <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+              <h3 style="margin:0">Bonjour Awa</h3>
+              <p class="text-muted" style="margin:0; font-size:13.5px">Voici l'activité de <strong style="color:var(--color-text)">Application mobile</strong> sur les 30 derniers jours.</p>
+            </div>
+            <div class="seg">
+              <label class="seg-opt"><input type="radio" name="range"><span>7 j</span></label>
+              <label class="seg-opt"><input type="radio" name="range" checked><span>30 j</span></label>
+              <label class="seg-opt"><input type="radio" name="range"><span>90 j</span></label>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:var(--space-4)">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+              <div class="card elev-sm" style="gap:var(--space-2)">
+                <span class="card-kicker">{{ k.label }}</span>
+                <span class="num" style="font-size:25px; line-height:1.1">{{ k.value }}</span>
+                <span style="{{ k.deltaStyle }}">{{ k.delta }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+            <div class="card elev-md" style="gap:var(--space-6); padding:var(--space-8)">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap">
+                <div><span class="card-kicker">Volume envoyé</span><div class="card-title" style="font-size:17px">Par jour, tous canaux</div></div>
+                <span class="text-muted num" style="font-size:12px">total 412 800 messages</span>
+              </div>
+              <div style="display:flex; align-items:flex-end; gap:6px; height:150px">
+                <sc-for list="{{ bars }}" as="b" hint-placeholder-count="14">
+                  <div style="{{ b.style }}"></div>
+                </sc-for>
+              </div>
+              <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:11px">15 août</span><span class="text-muted" style="font-size:11px">13 septembre</span></div>
+            </div>
+
+            <div class="card elev-md" style="gap:var(--space-4); padding:var(--space-8)">
+              <div><span class="card-kicker">Consommation</span><div class="card-title" style="font-size:17px">Par service</div></div>
+              <sc-for list="{{ usage }}" as="u" hint-placeholder-count="4">
+                <div style="display:flex; flex-direction:column; gap:6px">
+                  <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13.5px">{{ u.name }}</span><span class="num text-muted" style="font-size:13px">{{ u.amount }}</span></div>
+                  <div style="height:5px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ u.barStyle }}"></div></div>
+                </div>
+              </sc-for>
+              <hr class="hr" style="margin:var(--space-2) 0">
+              <div style="display:flex; justify-content:space-between; align-items:baseline"><span style="font-size:14px">Dépense du mois</span><span class="num" style="font-size:19px; color:var(--color-accent-300)">2 846 000 FCFA</span></div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+            <div class="card elev-md" style="gap:var(--space-4); padding:var(--space-8); min-width:0">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4)">
+                <div><span class="card-kicker">Journal</span><div class="card-title" style="font-size:17px">Activité récente</div></div>
+                <a href="#" style="font-size:13px">Tout voir</a>
+              </div>
+              <div style="overflow:auto">
+                <table class="table" style="min-width:520px">
+                  <thead><tr><th>Heure</th><th>Événement</th><th>Canal</th><th>Statut</th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ activity }}" as="a" hint-placeholder-count="6">
+                      <tr>
+                        <td class="num text-muted">{{ a.time }}</td>
+                        <td>{{ a.label }}</td>
+                        <td class="text-muted">{{ a.channel }}</td>
+                        <td>{{ a.status }}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+              <div class="card elev-sm" style="border-left:2px solid var(--color-accent)">
+                <span class="card-kicker">Devis en cours</span>
+                <div class="card-title" style="font-size:15px">300 000 SMS · Bénin</div>
+                <p class="card-body" style="margin:0">Offre reçue : 6,10 FCFA / message, valable jusqu'au 20 septembre.</p>
+                <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Voir l'offre</button><button type="button" class="btn btn-ghost">Historique</button></div>
+              </div>
+              <div class="card elev-sm">
+                <span class="card-kicker">Incident opérateur</span>
+                <div class="card-title" style="font-size:15px">Livraison dégradée · Yas Togo</div>
+                <p class="card-body" style="margin:0">Depuis 11 h 20. Les envois basculent automatiquement sur la route de repli.</p>
+                <a href="#" style="font-size:13px">Page de statut</a>
+              </div>
+              <div class="card elev-sm">
+                <span class="card-kicker">Alerte de solde</span>
+                <p class="card-body" style="margin:0">Au rythme actuel, votre solde couvre encore <strong style="color:var(--color-text)">18 jours</strong>. Seuil d'alerte fixé à 200 000 FCFA.</p>
+                <button type="button" class="btn btn-secondary" style="align-self:flex-start">Configurer l'alerte</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:var(--space-4)">
+            <div class="card" style="gap:var(--space-2)"><span class="card-title" style="font-size:15px">Envoyer un SMS</span><p class="card-body">Un message, une liste ou un fichier importé.</p><button type="button" class="btn btn-primary" style="align-self:flex-start">Ouvrir</button></div>
+            <div class="card" style="gap:var(--space-2)"><span class="card-title" style="font-size:15px">Créer une campagne</span><p class="card-body">Audience, contenu, coût estimé, planification.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Ouvrir</button></div>
+            <div class="card" style="gap:var(--space-2)"><span class="card-title" style="font-size:15px">Inviter un collègue</span><p class="card-body">Attribuez un rôle et un périmètre.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Ouvrir</button></div>
+            <div class="card" style="gap:var(--space-2)"><span class="card-title" style="font-size:15px">Passer en production</span><p class="card-body">Générer la clé live et vérifier le nom d'expéditeur.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Ouvrir</button></div>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isOther }}">
+        <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+          <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+            <h3 style="margin:0">{{ pageTitle }}</h3>
+            <p class="text-muted" style="margin:0; max-width:60ch; font-size:14px">{{ pageIntro }}</p>
+          </div>
+          <div class="card elev-sm" style="border-left:2px solid var(--color-accent)">
+            <span class="card-kicker">Prévu dans un lot dédié</span>
+            <p class="card-body" style="margin:0">{{ pageLot }}</p>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:var(--space-3)">
+            <sc-for list="{{ pageScreens }}" as="s" hint-placeholder-count="5">
+              <div class="card" style="gap:var(--space-1)"><span class="card-title" style="font-size:14px">{{ s }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+    <div class="card elev-sm"><div class="card-kicker">Lot 5 · Shell</div><p class="card-body">Trois niveaux de contexte permanents : organisation (porte le solde et la facturation), projet (porte les clés et les journaux), environnement (live / test). Le solde reste visible en bas de la navigation — c'est l'information qui bloque le plus d'actions. Le bandeau supérieur porte la recherche globale, les notifications, l'aide et le profil.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">Lot 6 · Overview</div><p class="card-body">Le tableau de bord répond à quatre questions dans cet ordre : combien me reste-t-il, combien j'ai dépensé, est-ce que ça part bien, et qu'est-ce qui demande mon attention. Les alertes actionnables (devis, incident, solde) sont à droite, jamais noyées dans les statistiques.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Chargement par squelettes carte par carte. Organisation sans projet. Projet sans aucun envoi (tableau de bord vide avec 3 amorces). Statistiques indisponibles. Solde à zéro (bandeau bloquant + CTA recharge). Environnement test (bandeau permanent, aucun coût). Rôle en lecture seule : actions masquées, pas grisées.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">K · Responsive &amp; N · À valider</div><p class="card-body">Navigation repliée en icônes sous 1100 px, tiroir latéral sous 768 px ; les tableaux deviennent des listes de cards. À valider : le sélecteur de projet doit-il filtrer tout le tableau de bord ou proposer une vue consolidée « toute l'organisation » par défaut ?</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lots 5 &amp; 6 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 7 — SMS (envoi &amp; estimation)</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { page: 'overview' };
+  }
+
+  get pages() {
+    return [
+      { key:'overview', label:"Vue d'ensemble" },
+      { key:'messages', label:'Messages', badge:'SMS',
+        intro:"Envoi unitaire, envoi en masse, historique, détail d'un message, noms d'expéditeur, modèles et envois planifiés.",
+        lot:'Lot 7 — avec l\u2019estimation de coût avant envoi : destinataires, prix unitaire, remise, taxes, total, solde avant et après.',
+        screens:['Envoyer un SMS','Envoi en masse','Historique','Détail du message','Noms d\u2019expéditeur','Modèles','Envois planifiés'] },
+      { key:'campaigns', label:'Campagnes',
+        intro:"Création guidée d'une campagne : canal, audience, contenu, estimation, planification, revue, exécution et rapport.",
+        lot:'Lot 8 — avec réservation de fonds avant exécution et libération du solde non consommé.',
+        screens:['Liste des campagnes','Création guidée','Audience','Contenu','Estimation','Rapport'] },
+      { key:'otp', label:'OTP',
+        intro:"Applications OTP, paramètres de durée et de tentatives, modèles, journaux et taux de vérification.",
+        lot:'Lot 9 — le tarif OTP provient du même moteur de prix que les autres canaux.',
+        screens:['Vue d\u2019ensemble','Applications','Paramètres','Modèles','Journaux','Statistiques'] },
+      { key:'whatsapp', label:'WhatsApp',
+        intro:"Numéros professionnels, modèles approuvés, conversations entrantes, journaux et tarifs par catégorie.",
+        lot:'Lot 10 — le prix dépend du pays, de la catégorie et de la marge configurée.',
+        screens:['Vue d\u2019ensemble','Envoyer','Modèles','Numéros','Conversations','Journaux','Tarifs'] },
+      { key:'email', label:'Email',
+        intro:"Domaines authentifiés, adresses d'expédition, désinscriptions, journaux et délivrabilité.",
+        lot:'Lot 11.',
+        screens:['Envoyer','Modèles','Domaines','Identités','Journaux','Désinscriptions','Statistiques'] },
+      { key:'dev', label:'Développeurs',
+        intro:"Clés API par environnement, notifications de statut, journaux techniques, consommation, bibliothèques et bac à sable.",
+        lot:'Lot 12.',
+        screens:['Clés API','Notifications de statut','Journaux','Consommation','Bibliothèques','Bac à sable','Environnements'] },
+      { key:'analytics', label:'Statistiques',
+        intro:"Analyse filtrable par date, projet, produit, canal, pays, opérateur et statut.",
+        lot:'Lot 13.',
+        screens:['Vue générale','Par canal','Par pays','Par opérateur','Délivrabilité','Export'] },
+      { key:'pricing', label:'Tarifs & devis', badge:'1',
+        intro:"Vos tarifs applicables, le simulateur, vos demandes de devis et vos offres négociées.",
+        lot:'Lot 14 — lecture directe du moteur de prix, avec vos règles spécifiques.',
+        screens:['Mes tarifs','Simulateur','Nouvelle demande','Mes devis','Offre reçue','Tarifs négociés'] },
+      { key:'billing', label:'Facturation',
+        intro:"Solde, recharges, transactions, consommation, factures et moyens de paiement.",
+        lot:'Lot 15 — solde disponible, réservé et en attente ; plusieurs moyens de paiement par pays.',
+        screens:['Vue d\u2019ensemble','Solde','Recharger','Transactions','Consommation','Factures','Moyens de paiement'] },
+      { key:'team', label:'Équipe',
+        intro:"Membres, rôles, permissions, invitations et journal des actions.",
+        lot:'Lot 16 — sept rôles, portée organisation ou projet.',
+        screens:['Membres','Rôles','Permissions','Invitations','Journal'] },
+      { key:'settings', label:'Paramètres',
+        intro:"Organisation, projets, sécurité, sessions et notifications.",
+        lot:'Lot 17.',
+        screens:['Organisation','Projets','Limites','Sécurité','Sessions','Notifications'] },
+      { key:'support', label:'Support',
+        intro:"Centre d'aide, création de ticket, suivi, état du service et incidents.",
+        lot:'Lot 18.',
+        screens:['Centre d\u2019aide','Nouveau ticket','Mes tickets','État du service','Incidents'] }
+    ];
+  }
+
+  renderVals() {
+    const cur = this.pages.find(p => p.key === this.state.page) || this.pages[0];
+    const barHeights = [42,58,51,70,64,88,76,54,61,95,82,68,74,86];
+    const bars = barHeights.map((h, i) => ({
+      style: {
+        flex: '1',
+        height: h + '%',
+        borderRadius: '3px 3px 0 0',
+        background: i >= barHeights.length - 3 ? 'var(--color-accent)' : 'var(--color-accent-700)'
+      }
+    }));
+
+    const usage = [
+      { name:'SMS', amount:'2 104 000 FCFA', pct:74 },
+      { name:'Codes OTP', amount:'498 000 FCFA', pct:18 },
+      { name:'WhatsApp', amount:'196 000 FCFA', pct:7 },
+      { name:'Email', amount:'48 000 FCFA', pct:2 }
+    ].map(u => ({
+      name: u.name, amount: u.amount,
+      barStyle: { width: u.pct + '%', height: '100%', background: 'var(--color-accent)' }
+    }));
+
+    const good = { fontSize:'12px', color:'var(--color-accent-300)' };
+    const flat = { fontSize:'12px', color:'color-mix(in srgb, var(--color-text) 55%, transparent)' };
+
+    return {
+      noop: () => {},
+      nav: this.pages.map(p => ({
+        label: p.label,
+        badge: p.badge || '',
+        onClick: () => this.setState({ page: p.key }),
+        style: {
+          display:'flex', alignItems:'center', gap:'var(--space-2)',
+          width:'100%', textAlign:'left', cursor:'pointer',
+          font:"400 13.5px 'Inter', system-ui, sans-serif",
+          padding:'7px var(--space-3)', borderRadius:'var(--radius-md)',
+          border:'1px solid ' + (p.key === this.state.page ? 'var(--color-accent)' : 'transparent'),
+          background: p.key === this.state.page ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent',
+          color: p.key === this.state.page ? 'var(--color-accent)' : 'var(--color-text)'
+        }
+      })),
+      switcherStyle: {
+        display:'flex', alignItems:'center', gap:'var(--space-2)', width:'100%', cursor:'pointer',
+        padding:'var(--space-2) var(--space-3)', borderRadius:'var(--radius-md)',
+        border:'1px solid var(--color-divider)', background:'transparent',
+        color:'var(--color-text)', textAlign:'left', font:"400 13.5px 'Inter', system-ui, sans-serif"
+      },
+      avatarStyle: {
+        width:'34px', height:'34px', borderRadius:'50%', cursor:'pointer',
+        border:'1px solid var(--color-accent)', background:'color-mix(in srgb, var(--color-accent) 16%, transparent)',
+        color:'var(--color-accent)', font:"500 12px 'Inter', system-ui, sans-serif"
+      },
+
+      isOverview: this.state.page === 'overview',
+      isOther: this.state.page !== 'overview',
+      pageTitle: cur.label,
+      pageIntro: cur.intro || '',
+      pageLot: cur.lot || '',
+      pageScreens: cur.screens || [],
+
+      kpis: [
+        { label:'Solde disponible', value:'1 260 000', delta:'FCFA · 18 jours de consommation', deltaStyle: flat },
+        { label:'Dépense du mois', value:'2 846 000', delta:'FCFA · +12 % vs mois dernier', deltaStyle: flat },
+        { label:'Messages envoyés', value:'412 800', delta:'sur 30 jours', deltaStyle: flat },
+        { label:'Taux de livraison', value:'98,4 %', delta:'+0,6 pt', deltaStyle: good },
+        { label:'Échecs', value:'6 605', delta:'1,6 % des envois', deltaStyle: flat },
+        { label:'Fonds réservés', value:'340 000', delta:'FCFA · 1 campagne en cours', deltaStyle: flat }
+      ],
+      bars,
+      usage,
+      activity: [
+        { time:'14:02', label:'Campagne « Rappel échéance » terminée', channel:'SMS', status:'Livrée' },
+        { time:'13:47', label:'Recharge Mobile Money — 500 000 FCFA', channel:'Facturation', status:'Créditée' },
+        { time:'11:20', label:'Route Yas Togo dégradée — bascule sur repli', channel:'Système', status:'Incident' },
+        { time:'10:05', label:'Offre reçue pour le devis 300 000 SMS Bénin', channel:'Devis', status:'À valider' },
+        { time:'09:31', label:'Nouvelle clé de production générée', channel:'Développeurs', status:'Active' },
+        { time:'08:12', label:'Modèle WhatsApp « Confirmation » approuvé', channel:'WhatsApp', status:'Approuvé' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

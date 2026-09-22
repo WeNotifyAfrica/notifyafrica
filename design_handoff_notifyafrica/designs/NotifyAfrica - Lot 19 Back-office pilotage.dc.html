@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 19 · Back-office — pilotage</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Aïcha B. · Ops</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Back-office — pilotage</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Premier lot du périmètre interne. Ici, et seulement ici, apparaissent les coûts fournisseurs et les marges. Cinq écrans : le pilotage de l'activité, le portefeuille clients, la fiche d'une organisation, la surveillance des marges, et le journal des actions internes.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <span class="card-kicker">{{ k.label }}</span>
+          <span class="num" style="font-size:25px; line-height:1.1">{{ k.value }}</span>
+          <span class="text-muted" style="font-size:12px">{{ k.note }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+          <div><span class="card-kicker">Revenu, coût fournisseur et marge</span><div class="card-title" style="font-size:17px">6 derniers mois · XOF</div></div>
+          <span class="tag tag-outline">Donnée interne</span>
+        </div>
+        <div style="display:flex; align-items:flex-end; gap:var(--space-3); height:190px">
+          <sc-for list="{{ months }}" as="m" hint-placeholder-count="6">
+            <div style="flex:1; display:flex; flex-direction:column; gap:6px; align-items:center; height:100%; justify-content:flex-end">
+              <div style="display:flex; align-items:flex-end; gap:3px; width:100%; height:100%">
+                <div title="{{ m.revTitle }}" style="{{ m.revStyle }}"></div>
+                <div title="{{ m.costTitle }}" style="{{ m.costStyle }}"></div>
+              </div>
+              <span class="text-muted num" style="font-size:11px">{{ m.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:var(--space-4); flex-wrap:wrap">
+          <span style="display:flex; gap:6px; align-items:center; font-size:11.5px" class="text-muted"><span style="width:8px;height:8px;background:var(--color-accent);display:inline-block;border-radius:2px"></span> Revenu facturé</span>
+          <span style="display:flex; gap:6px; align-items:center; font-size:11.5px" class="text-muted"><span style="width:8px;height:8px;background:var(--color-accent-700);display:inline-block;border-radius:2px"></span> Coût fournisseur</span>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12px">Marge brute moyenne sur la période : 31,4 %. La compression de juillet vient de la hausse de la grille Meta répercutée avec un mois de décalage sur les clients sous tarif ferme.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">À traiter aujourd'hui</span><div style="display:flex; flex-direction:column; gap:var(--space-2)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Devis en attente de réponse</span><span class="num" style="font-size:13px">7</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Noms d'expéditeur à valider</span><span class="num" style="font-size:13px">12</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Virements à rapprocher</span><span class="num" style="font-size:13px">4</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Marges sous le seuil</span><span class="num" style="font-size:13px; color:var(--color-accent-300)">3 routes</span></div>
+        </div></div>
+        <div class="card elev-sm"><span class="card-kicker">Incident en cours</span><p class="card-body" style="margin:0">INC-2026-041 · Yas Togo dégradé depuis 2 jours. 34 organisations affectées, surcoût de route de secours absorbé : 1,84 M FCFA à ce jour.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Concentration</span><p class="card-body" style="margin:0">Les 5 premiers clients représentent 48 % du revenu. Un départ ferait plus mal qu'une panne — argument pour les contrats fermes.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAccounts }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Recherche</label><input class="input" type="text" placeholder="Nom, identifiant, email"></div>
+        <div class="field"><label>Segment</label><select class="input"><option>Tous</option><option>Grand compte</option><option>PME</option><option>Agence / revendeur</option><option>Auto-inscrit</option></select></div>
+        <div class="field"><label>Pays</label><select class="input"><option>Tous</option><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option></select></div>
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Actif</option><option>En vérification</option><option>Suspendu</option><option>Inactif</option></select></div>
+        <div class="field"><label>Régime</label><select class="input"><option>Tous</option><option>Prépayé</option><option>Postpayé</option></select></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center">
+        <span class="tag tag-accent num">248 organisations</span><span class="tag tag-neutral">14 en vérification</span><span class="tag tag-neutral">3 suspendues</span>
+        <button type="button" class="btn btn-secondary" style="margin-left:auto">Exporter le portefeuille</button>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1040px">
+        <thead><tr><th>Organisation</th><th>Segment</th><th>Pays</th><th>Volume / mois</th><th>Revenu / mois</th><th>Marge</th><th>Solde</th><th>Statut</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="8">
+            <tr>
+              <td><strong>{{ a.name }}</strong><div class="text-muted" style="font-size:11px">{{ a.id }}</div></td>
+              <td class="text-muted" style="font-size:12px">{{ a.segment }}</td>
+              <td class="text-muted" style="font-size:12px">{{ a.country }}</td>
+              <td class="num">{{ a.volume }}</td>
+              <td class="num">{{ a.revenue }}</td>
+              <td class="num" style="{{ a.marginStyle }}">{{ a.margin }}</td>
+              <td class="num text-muted">{{ a.balance }}</td>
+              <td>{{ a.status }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Marge négative</span><p class="card-body" style="margin:0">Agence Digitale Lomé est à − 2,1 % : un tarif négocié accordé avant la hausse fournisseur. À renégocier ou à laisser expirer le 31/10.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Vérification en attente</span><p class="card-body" style="margin:0">14 organisations auto-inscrites attendent la validation de leurs documents. Au-delà de 5 000 messages par mois, la vérification devient obligatoire.</p><button type="button" class="btn btn-primary" style="align-self:flex-start">Traiter la file</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Prise en main</span><p class="card-body" style="margin:0">Un opérateur peut ouvrir une session en lecture seule dans la console d'un client pour diagnostiquer. L'action est journalisée et notifiée au client.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAccount }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+          <span class="card-kicker">Organisation · org_4410 · cliente depuis février 2025</span>
+          <h4 style="margin:0">MaBanque SA</h4>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">Grand compte</span><span class="tag tag-neutral">Togo · XOF</span><span class="tag tag-neutral">Prépayé</span><span class="tag tag-neutral">Support prioritaire</span></div>
+        </div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <button type="button" class="btn btn-secondary">Ouvrir la console client</button>
+          <button type="button" class="btn btn-ghost">Suspendre</button>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+        <sc-for list="{{ accountKpis }}" as="k" hint-placeholder-count="6">
+          <div style="display:flex; flex-direction:column; gap:2px"><span class="text-muted" style="font-size:12px">{{ k.label }}</span><span class="num" style="font-size:19px">{{ k.value }}</span><span class="text-muted" style="font-size:11px">{{ k.note }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+        <span class="card-kicker" style="padding:0 var(--space-2)">Économie du compte par canal</span>
+        <table class="table" style="min-width:560px; margin-top:var(--space-3)">
+          <thead><tr><th>Canal · pays</th><th>Volume</th><th>Prix client</th><th>Coût fournisseur</th><th>Marge</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ economics }}" as="e" hint-placeholder-count="5">
+              <tr>
+                <td style="font-size:12.5px">{{ e.scope }}</td>
+                <td class="num">{{ e.volume }}</td>
+                <td class="num">{{ e.price }}</td>
+                <td class="num text-muted">{{ e.cost }}</td>
+                <td class="num" style="{{ e.marginStyle }}">{{ e.margin }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+          <span class="card-kicker">Contrat et tarifs</span>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Offre active</span><span class="num" style="font-size:13px">NA-2026-014</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise moyenne</span><span class="num" style="font-size:13px">6,4 %</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Devis en cours</span><span class="num" style="font-size:13px">NA-2026-031</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Engagement</span><span style="font-size:13px">Aucun (tacite)</span></div>
+          <button type="button" class="btn btn-secondary" style="align-self:flex-start">Construire une offre</button>
+        </div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Signal commercial</span><p class="card-body" style="margin:0">Volume doublé en 6 mois, aucune remise renégociée depuis mars, et un devis à 750 000 messages en attente de leur réponse depuis 8 jours. Relance recommandée avant expiration le 19/09.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Historique relationnel</span><p class="card-body" style="margin:0">6 tickets sur 12 mois, dont 1 critique résolu en 22 minutes. Aucun impayé. Rapprochement comptable toujours à l'heure.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isMargins }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">La marge se surveille par route, pas par client : un coût fournisseur qui augmente affecte d'un coup tous les clients qui passent par cette route, y compris ceux sous tarif ferme.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1000px">
+        <thead><tr><th>Route</th><th>Fournisseur</th><th>Volume / mois</th><th>Coût d'achat</th><th>Prix de vente moyen</th><th>Marge</th><th>Tendance</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ routes }}" as="r" hint-placeholder-count="8">
+            <tr>
+              <td><strong>{{ r.route }}</strong></td>
+              <td class="text-muted" style="font-size:12px">{{ r.provider }}</td>
+              <td class="num">{{ r.volume }}</td>
+              <td class="num text-muted">{{ r.cost }}</td>
+              <td class="num">{{ r.price }}</td>
+              <td class="num" style="{{ r.marginStyle }}">{{ r.margin }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ r.trend }}</td>
+              <td>{{ r.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Alerte marge</span><p class="card-body" style="margin:0">Trois routes sont sous le seuil de 15 % : Yas Togo secours (surcoût d'incident), WhatsApp Marketing Bénin (hausse Meta non répercutée) et SMS Nigeria (coût fournisseur volatil). Décision attendue cette semaine.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Seuil configurable</span><p class="card-body" style="margin:0">Le seuil d'alerte de marge est un paramètre du moteur de prix, par canal et par pays. Sous le seuil, toute nouvelle offre commerciale demande une validation de direction.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Répercussion</span><p class="card-body" style="margin:0">Répercuter une hausse fournisseur exige un préavis de 30 jours aux clients. Les contrats fermes sont protégés jusqu'à leur échéance : le manque à gagner est isolé ici.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAudit }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Période</label><select class="input"><option>7 derniers jours</option><option>30 derniers jours</option><option>12 derniers mois</option></select></div>
+        <div class="field"><label>Opérateur interne</label><select class="input"><option>Tous</option><option>Aïcha B.</option><option>Serge K.</option><option>Direction</option></select></div>
+        <div class="field"><label>Catégorie</label><select class="input"><option>Toutes</option><option>Tarifs</option><option>Comptes clients</option><option>Providers</option><option>Accès console client</option></select></div>
+        <div class="field"><label>Client concerné</label><input class="input" type="text" placeholder="Organisation"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">7 j</span><button type="button" class="btn btn-secondary" style="margin-left:auto">Export signé</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1000px">
+        <thead><tr><th>Horodatage</th><th>Opérateur</th><th>Action</th><th>Client concerné</th><th>Avant → après</th><th>Motif</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ audit }}" as="a" hint-placeholder-count="8">
+            <tr>
+              <td class="num text-muted" style="font-size:12px">{{ a.at }}</td>
+              <td style="font-size:12.5px">{{ a.who }}</td>
+              <td style="font-size:12.5px">{{ a.what }}</td>
+              <td class="text-muted" style="font-size:12px">{{ a.client }}</td>
+              <td class="num" style="font-size:12px">{{ a.diff }}</td>
+              <td class="text-muted" style="font-size:11.5px">{{ a.reason }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Motif obligatoire</span><p class="card-body" style="margin:0">Toute modification de tarif, de remise ou de statut de compte exige un motif écrit. Sans motif, l'enregistrement est refusé — c'est la contrainte qui rend le journal exploitable un an plus tard.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Accès console client</span><p class="card-body" style="margin:0">Chaque ouverture de session dans la console d'un client est journalisée, limitée à la lecture, expirée au bout de 2 heures et notifiée à l'Owner du client.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Immuabilité</span><p class="card-body" style="margin:0">Journal en écriture seule, rétention 5 ans, export signé pour un audit externe ou un contrôle réglementaire. Aucun rôle interne ne peut supprimer une entrée.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Les coûts fournisseurs et les marges n'existent que dans le back-office et ne transitent jamais vers une interface client ni une réponse d'API publique. Toute modification de tarif, de remise ou de statut exige un motif écrit et devient une règle datée. Sous le seuil de marge configuré, une nouvelle offre demande une validation de direction. Une hausse fournisseur ne se répercute qu'avec 30 jours de préavis, et jamais sur un contrat ferme en cours.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Organisation active · en vérification · suspendue · inactive · en recouvrement. Marge nominale · sous seuil · négative. Route active · en secours · fermée. Session d'assistance dans la console client : demandée · active · expirée · révoquée par le client. Journal : export en préparation, période sans activité.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Suspendre un compte avec des envois planifiés et des fonds réservés : les envois sont suspendus, les fonds restent réservés jusqu'à décision explicite, jamais confisqués. Un client qui passe sous une marge négative à cause d'un incident ne doit pas déclencher d'alerte commerciale — l'origine de l'écart est distinguée. Une organisation supprimée conserve ses factures et son journal jusqu'à la fin de la période de conservation légale.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Les rôles internes doivent-ils être distincts des sept rôles clients ? Un opérateur support n'a pas à voir les marges, un commercial n'a pas à modifier une route. Faut-il une double validation pour toute remise au-delà d'un seuil ? Recommandation : quatre rôles internes (Ops, Commercial, Finance, Direction) et double validation au-delà de 10 % de remise.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 19 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 20 — Providers &amp; opérateurs</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'dash' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['dash', 'Pilotage'],
+      ['accounts', 'Portefeuille clients'],
+      ['account', 'Fiche organisation'],
+      ['margins', 'Marges par route'],
+      ['audit', 'Journal interne']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const warn = { color: 'var(--color-accent-300)' };
+    const bad = { color: 'var(--color-accent-300)', fontWeight: 500 };
+
+    const mData = [
+      { label:'avr', rev: 62, cost: 43 },
+      { label:'mai', rev: 68, cost: 47 },
+      { label:'juin', rev: 74, cost: 50 },
+      { label:'juil', rev: 79, cost: 60 },
+      { label:'août', rev: 92, cost: 62 },
+      { label:'sept', rev: 100, cost: 67 }
+    ];
+    const barStyle = (h, dim) => ({
+      flex: 1,
+      height: h + '%',
+      borderRadius: '2px 2px 0 0',
+      background: dim ? 'var(--color-accent-700)' : 'var(--color-accent)',
+      opacity: dim ? 0.95 : 0.85
+    });
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isDash: t === 'dash',
+      isAccounts: t === 'accounts',
+      isAccount: t === 'account',
+      isMargins: t === 'margins',
+      isAudit: t === 'audit',
+
+      kpis: [
+        { label:'Revenu du mois', value:'184,2 M', note:'FCFA · au 13 septembre · + 9 %' },
+        { label:'Coût fournisseur', value:'126,4 M', note:'FCFA · 68,6 % du revenu' },
+        { label:'Marge brute', value:'31,4 %', note:'objectif 32 % · − 0,6 pt' },
+        { label:'Volume traité', value:'38,4 M', note:'messages tous canaux' },
+        { label:'Organisations actives', value:'248', note:'+ 11 ce mois · 3 suspendues' },
+        { label:'Impayés', value:'2,1 M', note:'FCFA · 4 comptes postpayés' }
+      ],
+
+      months: mData.map(m => ({
+        label: m.label,
+        revStyle: barStyle(m.rev, false),
+        costStyle: barStyle(m.cost, true),
+        revTitle: 'Revenu · indice ' + m.rev,
+        costTitle: 'Coût fournisseur · indice ' + m.cost
+      })),
+
+      accounts: [
+        { name:'MaBanque SA', id:'org_4410', segment:'Grand compte', country:'Togo', volume:'412 800', revenue:'12,8 M', margin:'28,4 %', balance:'1,26 M', marginStyle:{}, status: tag('tag-accent','Actif') },
+        { name:'Assur Ouest', id:'org_4188', segment:'Grand compte', country:'Côte d\u2019Ivoire', volume:'308 200', revenue:'11,2 M', margin:'33,1 %', balance:'4,80 M', marginStyle:{}, status: tag('tag-accent','Actif') },
+        { name:'PayFlow Bénin', id:'org_4402', segment:'PME', country:'Bénin', volume:'188 400', revenue:'6,4 M', margin:'36,8 %', balance:'820 K', marginStyle:{}, status: tag('tag-accent','Actif') },
+        { name:'Agence Digitale Lomé', id:'org_4291', segment:'Agence / revendeur', country:'Togo', volume:'242 100', revenue:'7,1 M', margin:'− 2,1 %', balance:'140 K', marginStyle: bad, status: tag('tag-outline','À renégocier') },
+        { name:'MicroCrédit Kara', id:'org_4508', segment:'PME', country:'Togo', volume:'62 400', revenue:'2,2 M', margin:'38,2 %', balance:'0', marginStyle:{}, status: tag('tag-outline','Solde épuisé') },
+        { name:'Santé Plus', id:'org_4611', segment:'PME', country:'Sénégal', volume:'28 800', revenue:'1,1 M', margin:'34,0 %', balance:'610 K', marginStyle:{}, status: tag('tag-accent','Actif') },
+        { name:'Boutique Wema', id:'org_4702', segment:'Auto-inscrit', country:'Nigeria', volume:'8 200', revenue:'340 K', margin:'12,4 %', balance:'44 K', marginStyle: warn, status: tag('tag-neutral','En vérification') },
+        { name:'TransLog SARL', id:'org_4104', segment:'PME', country:'Bénin', volume:'0', revenue:'0', margin:'—', balance:'1,20 M', marginStyle:{}, status: tag('tag-neutral','Inactif · 92 j') }
+      ],
+
+      accountKpis: [
+        { label:'Volume ce mois', value:'412 800', note:'messages · + 14 %' },
+        { label:'Revenu ce mois', value:'12,80 M', note:'FCFA · provisoire' },
+        { label:'Coût fournisseur', value:'9,16 M', note:'FCFA · 71,6 %' },
+        { label:'Marge', value:'28,4 %', note:'sous l\u2019objectif de 32 %' },
+        { label:'Solde disponible', value:'1,26 M', note:'FCFA · 11 jours d\u2019autonomie' },
+        { label:'Revenu cumulé', value:'168,4 M', note:'FCFA depuis février 2025' }
+      ],
+
+      economics: [
+        { scope:'SMS · Togo', volume:'612 400', price:'6,55', cost:'4,80', margin:'26,7 %', marginStyle:{} },
+        { scope:'SMS · Bénin', volume:'148 600', price:'7,80', cost:'5,40', margin:'30,8 %', marginStyle:{} },
+        { scope:'OTP · Togo', volume:'268 100', price:'6,00', cost:'4,10', margin:'31,7 %', marginStyle:{} },
+        { scope:'WhatsApp Utility · Togo', volume:'26 600', price:'24,00', cost:'18,40', margin:'23,3 %', marginStyle:{} },
+        { scope:'WhatsApp Utility · Bénin', volume:'2 240', price:'26,00', cost:'24,10', margin:'7,3 %', marginStyle: bad }
+      ],
+
+      routes: [
+        { route:'SMS · Togo — Moov', provider:'Direct opérateur', volume:'8,42 M', cost:'4,80', price:'6,72', margin:'28,6 %', trend:'+ 0,4 pt', state: tag('tag-accent','Nominale') },
+        { route:'SMS · Togo — Yas (principale)', provider:'Direct opérateur', volume:'5,10 M', cost:'4,95', price:'6,70', margin:'26,1 %', trend:'− 0,2 pt', state: tag('tag-accent','Nominale') },
+        { route:'SMS · Togo — Yas (secours)', provider:'Agrégateur Panafric', volume:'1,84 M', cost:'6,40', price:'6,70', margin:'4,5 %', trend:'− 21 pt', state: tag('tag-outline','Sous seuil · incident') },
+        { route:'SMS · Bénin — MTN', provider:'Direct opérateur', volume:'3,20 M', cost:'5,40', price:'7,90', margin:'31,6 %', trend:'stable', state: tag('tag-accent','Nominale') },
+        { route:'SMS · Nigeria — multi', provider:'Agrégateur Lagos Net', volume:'0,62 M', cost:'13,80', price:'15,20', margin:'9,2 %', trend:'− 4 pt', state: tag('tag-outline','Sous seuil') },
+        { route:'OTP · Togo', provider:'Direct opérateur', volume:'4,80 M', cost:'4,10', price:'6,10', margin:'32,8 %', trend:'+ 0,1 pt', state: tag('tag-accent','Nominale') },
+        { route:'WhatsApp Utility · Togo', provider:'Meta Cloud API', volume:'0,48 M', cost:'18,40', price:'24,00', margin:'23,3 %', trend:'stable', state: tag('tag-accent','Nominale') },
+        { route:'WhatsApp Marketing · Bénin', provider:'Meta Cloud API', volume:'0,12 M', cost:'44,20', price:'48,00', margin:'7,9 %', trend:'− 9 pt', state: tag('tag-outline','Sous seuil · hausse Meta') }
+      ],
+
+      audit: [
+        { at:'13/09 11:42', who:'Serge K. · Commercial', what:'Offre construite', client:'MaBanque SA', diff:'NA-2026-031 · − 9,9 %', reason:'Volume doublé, devis à 750 000 msg/mois' },
+        { at:'13/09 09:15', who:'Aïcha B. · Ops', what:'Bascule de route validée', client:'34 organisations', diff:'Yas principale → secours', reason:'Incident INC-2026-041, latence > 45 s' },
+        { at:'12/09 17:02', who:'Direction', what:'Seuil de marge modifié', client:'—', diff:'12 % → 15 %', reason:'Hausse générale des coûts fournisseurs' },
+        { at:'12/09 14:30', who:'Aïcha B. · Ops', what:'Session console client ouverte', client:'PayFlow Bénin', diff:'lecture seule · 42 min', reason:'Diagnostic ticket SUP-2026-0911' },
+        { at:'11/09 16:20', who:'Fatima N. · Finance', what:'Virement rapproché', client:'Assur Ouest', diff:'+ 12 000 000 FCFA', reason:'Réception Ecobank confirmée' },
+        { at:'11/09 10:08', who:'Serge K. · Commercial', what:'Compte suspendu', client:'Boutique Wema', diff:'actif → en vérification', reason:'Dépassement du seuil sans documents' },
+        { at:'10/09 15:44', who:'Aïcha B. · Ops', what:'Nom d\u2019expéditeur validé', client:'MicroCrédit Kara', diff:'MCKARA · Togo', reason:'Accord opérateur Moov reçu' },
+        { at:'09/09 08:30', who:'Direction', what:'Tarif fournisseur mis à jour', client:'—', diff:'Meta Marketing BJ : 42,0 → 44,2', reason:'Nouvelle grille Meta au 01/09' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

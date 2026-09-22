@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 13 · Statistiques</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Tous projets · Live</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Statistiques</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Six écrans sur un même socle : un jeu de filtres unique — date, projet, produit, canal, pays, opérateur, statut — appliqué partout. Chaque vue affiche le volume et le coût côte à côte, parce qu'une baisse de délivrabilité qui coûte cher n'est pas le même problème qu'une baisse gratuite.</p>
+  </div>
+
+  <div class="card elev-sm" style="gap:var(--space-4)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:var(--space-3)">
+      <div class="field"><label>Période</label><select class="input"><option>30 derniers jours</option><option>7 derniers jours</option><option>Ce mois</option><option>Personnalisée</option></select></div>
+      <div class="field"><label>Projet</label><select class="input"><option>Tous les projets</option><option>Application mobile</option><option>Site web</option></select></div>
+      <div class="field"><label>Canal</label><select class="input"><option>Tous</option><option>SMS</option><option>OTP</option><option>WhatsApp</option><option>Email</option></select></div>
+      <div class="field"><label>Pays</label><select class="input"><option>Tous</option><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option></select></div>
+      <div class="field"><label>Opérateur</label><select class="input"><option>Tous</option><option>Moov</option><option>Yas</option><option>MTN</option><option>Orange</option></select></div>
+      <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Livré</option><option>Échec</option><option>En file</option></select></div>
+    </div>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center">
+      <span class="tag tag-accent">30 j</span><span class="tag tag-accent">Tous projets</span><span class="tag tag-neutral">Tous canaux</span>
+      <button type="button" class="btn btn-ghost">Réinitialiser</button>
+      <span class="text-muted num" style="font-size:12px; margin-left:auto">Données à jour · 13/09 14:05 · fuseau Afrique/Lomé</span>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+      <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <span class="card-kicker">{{ k.label }}</span>
+          <span class="num" style="font-size:25px; line-height:1.1">{{ k.value }}</span>
+          <span class="text-muted" style="font-size:12px">{{ k.note }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Volume et coût par jour</span><div class="card-title" style="font-size:17px">30 derniers jours</div></div>
+        <div class="seg">
+          <label class="seg-opt"><input type="radio" name="metric" checked><span>Volume</span></label>
+          <label class="seg-opt"><input type="radio" name="metric"><span>Coût</span></label>
+        </div>
+      </div>
+      <div style="display:flex; align-items:flex-end; gap:3px; height:180px">
+        <sc-for list="{{ series }}" as="d" hint-placeholder-count="30">
+          <div title="{{ d.title }}" style="{{ d.style }}"></div>
+        </sc-for>
+      </div>
+      <div style="display:flex; justify-content:space-between"><span class="text-muted num" style="font-size:11.5px">15 août</span><span class="text-muted num" style="font-size:11.5px">13 sept</span></div>
+      <p class="text-muted" style="margin:0; font-size:12px">Les deux pics correspondent aux campagnes de rappel d'échéance des 2 et 14 septembre. Le creux du 8 septembre est un incident opérateur documenté dans la vue Délivrabilité.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Lecture immédiate</span><p class="card-body" style="margin:0">Le coût par message livré est passé de 8,90 à 8,42 FCFA : effet du palier volume franchi le 2 septembre, pas d'une renégociation.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Point d'attention</span><p class="card-body" style="margin:0">Le taux d'échec sur Yas Togo est deux fois la moyenne. 18 400 messages concernés sur la période, dont 4 200 non livrés et non facturés.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Comparaison</span><p class="card-body" style="margin:0">Comparer deux périodes ou deux projets dans le même graphique, pour isoler l'effet d'un changement de campagne.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Ajouter une comparaison</button></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isChannels }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:900px">
+        <thead><tr><th>Canal</th><th>Envoyés</th><th>Livrés</th><th>Délivrabilité</th><th>Coût</th><th>Coût / livré</th><th>Part du coût</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ channels }}" as="c" hint-placeholder-count="4">
+            <tr>
+              <td><strong>{{ c.name }}</strong></td>
+              <td class="num">{{ c.sent }}</td>
+              <td class="num">{{ c.delivered }}</td>
+              <td class="num">{{ c.rate }}</td>
+              <td class="num">{{ c.cost }}</td>
+              <td class="num">{{ c.unit }}</td>
+              <td class="num text-muted">{{ c.share }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Répartition du coût</span><div class="card-title" style="font-size:17px">Par canal</div></div>
+        <sc-for list="{{ channelBars }}" as="b" hint-placeholder-count="4">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13.5px">{{ b.name }}</span><span class="num text-muted" style="font-size:13px">{{ b.value }}</span></div>
+            <div style="height:6px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ b.barStyle }}"></div></div>
+          </div>
+        </sc-for>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Arbitrage</span><p class="card-body" style="margin:0">WhatsApp représente 11 % du volume et 26 % du coût, mais 82 % de taux de lecture contre aucune mesure possible en SMS. La question n'est pas le prix unitaire mais le coût par message effectivement lu.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Email</span><p class="card-body" style="margin:0">Coût marginal négligeable et volume élevé : à privilégier pour tout ce qui n'est pas urgent ni sensible au taux de lecture immédiat.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isCountries }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:920px">
+        <thead><tr><th>Pays</th><th>Volume</th><th>Délivrabilité</th><th>Délai médian</th><th>Prix moyen</th><th>Coût</th><th>Opérateurs couverts</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ countries }}" as="c" hint-placeholder-count="6">
+            <tr>
+              <td><strong>{{ c.name }}</strong></td>
+              <td class="num">{{ c.volume }}</td>
+              <td class="num">{{ c.rate }}</td>
+              <td class="num text-muted">{{ c.delay }}</td>
+              <td class="num">{{ c.price }}</td>
+              <td class="num">{{ c.cost }}</td>
+              <td class="text-muted" style="font-size:12px">{{ c.ops }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Couverture partielle</span><p class="card-body" style="margin:0">Au Ghana, un opérateur sur trois est desservi par une route de secours : délai médian à 14 s et prix supérieur de 18 %. Une route principale est en cours d'ouverture.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Devises</span><p class="card-body" style="margin:0">Les coûts sont convertis dans la devise de facturation de l'organisation (FCFA) au taux du jour de l'envoi, jamais au taux courant — pour rester cohérent avec les factures émises.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Carte</span><p class="card-body" style="margin:0">Une vue cartographique de la couverture et de la délivrabilité par pays est prévue. Elle réutilisera les mêmes filtres que les tableaux.</p><span class="tag tag-neutral" style="align-self:flex-start">À cadrer</span></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isOperators }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:960px">
+        <thead><tr><th>Opérateur</th><th>Pays</th><th>Volume</th><th>Délivrabilité</th><th>Échecs</th><th>Délai médian</th><th>Route</th><th>Santé</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ operators }}" as="o" hint-placeholder-count="7">
+            <tr>
+              <td><strong>{{ o.name }}</strong></td>
+              <td class="text-muted">{{ o.country }}</td>
+              <td class="num">{{ o.volume }}</td>
+              <td class="num">{{ o.rate }}</td>
+              <td class="num text-muted">{{ o.fails }}</td>
+              <td class="num text-muted">{{ o.delay }}</td>
+              <td class="text-muted" style="font-size:12px">{{ o.route }}</td>
+              <td>{{ o.health }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Pourquoi cette vue</span><p class="card-body" style="margin:0">Un problème de délivrabilité est presque toujours un problème d'opérateur, pas de plateforme. Exposer la santé par opérateur permet au client de le constater lui-même, sans passer par le support.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Dégradation en cours</span><p class="card-body" style="margin:0">Yas Togo : délai médian passé de 6 à 22 s depuis le 11 septembre. Bascule automatique sur la route de secours activée, différence de prix absorbée par NotifyAfrica.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Nouveaux opérateurs</span><p class="card-body" style="margin:0">Les opérateurs et fournisseurs sont déclarés en back-office sans développement : cette vue se remplit automatiquement à l'ajout d'une nouvelle route.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isDeliverability }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Entonnoir de délivrabilité</span><div class="card-title" style="font-size:17px">Tous canaux · 30 jours</div></div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="5">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3); flex-wrap:wrap">
+              <span style="font-size:13.5px">{{ f.label }}</span>
+              <span class="num text-muted" style="font-size:13px">{{ f.value }}</span>
+            </div>
+            <div style="height:22px; border-radius:var(--radius-sm); background:var(--color-neutral-800); overflow:hidden"><div style="{{ f.barStyle }}"></div></div>
+            <span class="text-muted" style="font-size:11.5px">{{ f.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+        <span class="card-kicker" style="padding:0 var(--space-2)">Motifs d'échec</span>
+        <table class="table" style="min-width:420px; margin-top:var(--space-3)">
+          <thead><tr><th>Motif</th><th>Messages</th><th>Facturé</th></tr></thead>
+          <tbody>
+            <tr><td>Numéro inexistant</td><td class="num">4 820</td><td class="text-muted">Non</td></tr>
+            <tr><td>Opérateur indisponible</td><td class="num">3 140</td><td class="text-muted">Non</td></tr>
+            <tr><td>Téléphone éteint (délai dépassé)</td><td class="num">2 610</td><td>Oui</td></tr>
+            <tr><td>Destinataire désinscrit</td><td class="num">1 208</td><td class="text-muted">Non</td></tr>
+            <tr><td>Contenu refusé par l'opérateur</td><td class="num">402</td><td class="text-muted">Non</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Règle de facturation</span><p class="card-body" style="margin:0">Un échec imputable au réseau ou à un numéro invalide n'est jamais facturé. Un message remis au réseau mais non reçu (téléphone éteint pendant toute la fenêtre de validité) l'est — c'est la règle des opérateurs, et elle est affichée ici pour être explicable.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Incident du 8 septembre</span><p class="card-body" style="margin:0">Interruption de 42 minutes chez un fournisseur. 2 840 messages repris automatiquement, 118 définitivement perdus et recrédités. Rapport d'incident disponible.</p><a href="#" style="font-size:13px">Lire le rapport</a></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isExport }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Export</span><div class="card-title" style="font-size:18px">Extraire les données filtrées</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Format</label><select class="input"><option>CSV</option><option>Excel (XLSX)</option><option>JSON</option></select></div>
+        <div class="field"><label>Granularité</label><select class="input"><option>Par jour</option><option>Par heure</option><option>Par message (détaillé)</option></select></div>
+      </div>
+      <div class="field"><label>Colonnes incluses</label>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <span class="tag tag-accent">Date</span><span class="tag tag-accent">Projet</span><span class="tag tag-accent">Canal</span><span class="tag tag-accent">Pays</span><span class="tag tag-accent">Opérateur</span><span class="tag tag-accent">Statut</span><span class="tag tag-accent">Volume</span><span class="tag tag-accent">Coût</span><span class="tag tag-accent">Prix unitaire</span><span class="tag tag-neutral">Règle de prix appliquée</span><span class="tag tag-neutral">Identifiant de message</span>
+        </div>
+      </div>
+      <div class="field"><label>Envoi récurrent</label>
+        <div class="seg" style="max-width:340px">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="freq" checked><span>Ponctuel</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="freq"><span>Hebdomadaire</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="freq"><span>Mensuel</span></label>
+        </div>
+      </div>
+      <div class="field"><label>Destinataires du rapport</label><input class="input" type="text" value="finance@mabanque.tg, kodjo.a@mabanque.tg"></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Générer l'export</button><button type="button" class="btn btn-secondary">Enregistrer comme rapport</button></div>
+      <p class="text-muted" style="margin:0; font-size:11.5px">Au-delà de 100 000 lignes, l'export est préparé en arrière-plan et un lien de téléchargement est envoyé par email — valable 7 jours.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Exports récents</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">Consommation août — détaillé</span><span class="text-muted num" style="font-size:11.5px">01/09 · 412 800 lignes · 18 Mo</span></div><a href="#" style="font-size:12px">Télécharger</a></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">Délivrabilité par opérateur</span><span class="text-muted num" style="font-size:11.5px">08/09 · 1 240 lignes</span></div><a href="#" style="font-size:12px">Télécharger</a></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">Rapport mensuel automatique</span><span class="text-muted num" style="font-size:11.5px">récurrent · prochain envoi 01/10</span></div><span class="tag tag-accent">Actif</span></div>
+        </div>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Cohérence comptable</span><p class="card-body" style="margin:0">Les colonnes de coût utilisent le prix figé au moment de l'envoi. Un export refait six mois plus tard donne exactement les mêmes montants, même si les tarifs ont changé depuis.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Accès</span><p class="card-body" style="margin:0">Les rôles Viewer et Auditeur peuvent exporter mais pas modifier les rapports récurrents. Chaque export est inscrit au journal des actions du lot 16.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Les filtres sont partagés par les six vues et persistent dans l'URL, pour qu'un lien envoyé à un collègue montre exactement les mêmes chiffres. Tout coût affiché provient du prix figé à l'envoi, converti au taux du jour de l'opération. Les échecs non facturables sont comptés en volume mais exclus du coût. Les données sont consolidées avec un décalage maximal de 5 minutes, affiché en permanence.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Chargement · aucune donnée sur la période · période partielle (projet créé en cours de mois) · consolidation en retard · export en préparation · export trop volumineux · droits insuffisants sur un projet (ligne masquée et signalée, jamais silencieusement omise).</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Un changement de tarif en cours de période produit deux prix moyens : la vue affiche la moyenne pondérée et signale la rupture. Un projet supprimé reste dans l'historique en lecture seule. Une campagne à cheval sur deux mois est ventilée au jour d'envoi réel, jamais au jour de création.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il un tableau de bord personnalisable (widgets déplaçables), ou six vues fixes suffisent-elles ? La carte de couverture par pays est-elle dans le périmètre de cette phase ? Recommandation : vues fixes maintenant, rapports enregistrés comme substitut à la personnalisation, carte en phase 2.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 13 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 14 — Tarifs &amp; devis</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'overview' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['overview', 'Vue générale'],
+      ['channels', 'Par canal'],
+      ['countries', 'Par pays'],
+      ['operators', 'Par opérateur'],
+      ['deliverability', 'Délivrabilité'],
+      ['export', 'Export']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const bar = pct => ({ width: pct + '%', height: '100%', background: 'var(--color-accent)', opacity: 0.75 });
+
+    const daily = [52,48,61,58,44,39,57,64,70,66,51,47,62,59,55,41,38,60,68,100,74,63,58,22,49,67,72,88,76,69];
+
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isOverview: t === 'overview',
+      isChannels: t === 'channels',
+      isCountries: t === 'countries',
+      isOperators: t === 'operators',
+      isDeliverability: t === 'deliverability',
+      isExport: t === 'export',
+
+      kpis: [
+        { label:'Messages envoyés', value:'1,58 M', note:'30 j · +14 % vs période précédente' },
+        { label:'Délivrabilité', value:'96,2 %', note:'moyenne pondérée tous canaux' },
+        { label:'Coût total', value:'12,8 M FCFA', note:'prix figés, taxes incluses' },
+        { label:'Coût / message livré', value:'8,42 FCFA', note:'− 5,4 % · effet de palier' },
+        { label:'Délai médian', value:'6 s', note:'de l\u2019acceptation à la livraison' }
+      ],
+
+      series: daily.map((v, i) => ({
+        title: 'Jour ' + (i + 1) + ' · indice ' + v,
+        style: {
+          flex: 1,
+          height: v + '%',
+          minWidth: '4px',
+          borderRadius: '2px 2px 0 0',
+          background: v === 100 ? 'var(--color-accent)' : 'var(--color-accent-700)',
+          opacity: v === 22 ? 0.5 : 1
+        }
+      })),
+
+      channels: [
+        { name:'SMS', sent:'1 042 400', delivered:'1 002 100', rate:'96,1 %', cost:'8 277 000 FCFA', unit:'8,26 FCFA', share:'64,7 %' },
+        { name:'OTP', sent:'268 100', delivered:'264 900', rate:'98,8 %', cost:'1 731 480 FCFA', unit:'6,54 FCFA', share:'13,5 %' },
+        { name:'WhatsApp', sent:'188 200', delivered:'184 800', rate:'98,2 %', cost:'3 328 640 FCFA', unit:'18,01 FCFA', share:'26,0 %' },
+        { name:'Email', sent:'82 400', delivered:'80 100', rate:'97,2 %', cost:'164 800 FCFA', unit:'2,06 FCFA', share:'1,3 %' }
+      ],
+      channelBars: [
+        { name:'SMS', value:'8,28 M FCFA', barStyle: bar(100) },
+        { name:'WhatsApp', value:'3,33 M FCFA', barStyle: bar(40) },
+        { name:'OTP', value:'1,73 M FCFA', barStyle: bar(21) },
+        { name:'Email', value:'165 K FCFA', barStyle: bar(2) }
+      ],
+
+      countries: [
+        { name:'Togo', volume:'1 012 400', rate:'96,8 %', delay:'6 s', price:'7,10 FCFA', cost:'7 188 040 FCFA', ops:'Moov, Yas' },
+        { name:'Bénin', volume:'248 200', rate:'95,4 %', delay:'8 s', price:'8,40 FCFA', cost:'2 084 880 FCFA', ops:'MTN, Moov, Celtiis' },
+        { name:'Côte d\u2019Ivoire', volume:'182 600', rate:'94,1 %', delay:'9 s', price:'11,80 FCFA', cost:'2 154 680 FCFA', ops:'Orange, MTN, Moov' },
+        { name:'Ghana', volume:'68 400', rate:'91,2 %', delay:'14 s', price:'13,20 FCFA', cost:'902 880 FCFA', ops:'MTN, Telecel — 1 route de secours' },
+        { name:'Sénégal', volume:'42 100', rate:'95,8 %', delay:'7 s', price:'10,40 FCFA', cost:'437 840 FCFA', ops:'Orange, Free' },
+        { name:'Nigeria', volume:'27 400', rate:'89,6 %', delay:'18 s', price:'14,90 FCFA', cost:'408 260 FCFA', ops:'MTN, Airtel, Glo' }
+      ],
+
+      operators: [
+        { name:'Moov', country:'Togo', volume:'612 400', rate:'97,4 %', fails:'15 920', delay:'5 s', route:'Principale', health: tag('tag-accent','Nominale') },
+        { name:'Yas', country:'Togo', volume:'400 000', rate:'95,8 %', fails:'16 800', delay:'22 s', route:'Secours active', health: tag('tag-outline','Dégradée') },
+        { name:'MTN', country:'Bénin', volume:'148 600', rate:'96,1 %', fails:'5 795', delay:'8 s', route:'Principale', health: tag('tag-accent','Nominale') },
+        { name:'Celtiis', country:'Bénin', volume:'62 400', rate:'93,2 %', fails:'4 243', delay:'11 s', route:'Principale', health: tag('tag-accent','Nominale') },
+        { name:'Orange', country:'Côte d\u2019Ivoire', volume:'102 800', rate:'95,2 %', fails:'4 934', delay:'7 s', route:'Principale', health: tag('tag-accent','Nominale') },
+        { name:'MTN', country:'Ghana', volume:'44 200', rate:'92,4 %', fails:'3 359', delay:'12 s', route:'Principale', health: tag('tag-accent','Nominale') },
+        { name:'Telecel', country:'Ghana', volume:'24 200', rate:'89,0 %', fails:'2 662', delay:'19 s', route:'Secours uniquement', health: tag('tag-neutral','Couverture partielle') }
+      ],
+
+      funnel: [
+        { label:'Acceptés par NotifyAfrica', value:'1 581 100 · 100 %', barStyle: bar(100), note:'Requêtes valides, prix figé, fonds réservés' },
+        { label:'Transmis à l\u2019opérateur', value:'1 574 300 · 99,6 %', barStyle: bar(99.6), note:'6 800 rejetés avant transmission — non facturés' },
+        { label:'Accusés de remise au réseau', value:'1 549 200 · 98,0 %', barStyle: bar(98), note:'25 100 refus opérateur — non facturés' },
+        { label:'Livrés au destinataire', value:'1 521 900 · 96,2 %', barStyle: bar(96.2), note:'27 300 non remis · 2 610 facturés (fenêtre expirée)' },
+        { label:'Lus (canaux mesurables)', value:'218 400 sur 266 600 · 81,9 %', barStyle: bar(81.9), note:'WhatsApp et Email uniquement — le SMS ne remonte pas la lecture' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

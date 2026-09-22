@@ -1,0 +1,95 @@
+# Full-stack Docker Compose — first VPS target (04_Prompt §22). Every app
+# is an independent service/image so any one of them can be migrated off
+# this compose file onto its own host later without a functional change
+# (00_Contexte_Global §21). Domains/URLs come entirely from env vars.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: notifyafrica
+      POSTGRES_PASSWORD: notifyafrica
+      POSTGRES_DB: notifyafrica
+    volumes:
+      - notifyafrica_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - notifyafrica_redis_data:/data
+
+  core-api:
+    build:
+      context: ../..
+      dockerfile: apps/core-api/Dockerfile
+    restart: unless-stopped
+    env_file: ../../.env
+    depends_on:
+      - postgres
+      - redis
+    expose:
+      - "3010"
+
+  website:
+    build:
+      context: ../..
+      dockerfile: apps/website/Dockerfile
+    restart: unless-stopped
+    env_file: ../../.env
+    depends_on:
+      - core-api
+    expose:
+      - "3000"
+
+  console:
+    build:
+      context: ../..
+      dockerfile: apps/console/Dockerfile
+    restart: unless-stopped
+    env_file: ../../.env
+    depends_on:
+      - core-api
+    expose:
+      - "3001"
+
+  admin:
+    build:
+      context: ../..
+      dockerfile: apps/admin/Dockerfile
+    restart: unless-stopped
+    env_file: ../../.env
+    depends_on:
+      - core-api
+    expose:
+      - "3002"
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: apps/worker/Dockerfile
+    restart: unless-stopped
+    env_file: ../../.env
+    depends_on:
+      - postgres
+      - redis
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - notifyafrica_caddy_data:/data
+    depends_on:
+      - website
+      - console
+      - admin
+      - core-api
+
+volumes:
+  notifyafrica_postgres_data:
+  notifyafrica_redis_data:
+  notifyafrica_caddy_data:
