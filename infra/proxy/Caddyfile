@@ -1,6 +1,12 @@
 # Reverse proxy — domains come from environment (04_Prompt §8). Caddy reads
-# these from the shell environment it's launched with (docker-compose.yml's
+# these from the shell environment it's launched with (docker-compose.prod.yml's
 # env_file); substitute the placeholders or export them before `caddy run`.
+# Automatic HTTPS (Let's Encrypt) kicks in on its own once each domain's DNS
+# A record points at this VPS — no cert config needed here.
+{
+    email {$ACME_EMAIL:admin@example.com}
+}
+
 {$PUBLIC_SITE_DOMAIN:notifyafrica.com} {
     reverse_proxy website:3000
 }

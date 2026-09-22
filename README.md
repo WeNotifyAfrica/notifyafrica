@@ -1,8 +1,9 @@
 # NotifyAfrica
 
 Monorepo for the NotifyAfrica platform: Website, Console, Admin, Core API and a
-background Worker. See `docs/ARCHITECTURE.md` for the design and
-`docs/DECISIONS.md` for decisions taken where specs/design left an open question.
+background Worker. See `docs/ARCHITECTURE.md` for the design,
+`docs/DECISIONS.md` for decisions taken where specs/design left an open question,
+and `docs/DEPLOYMENT.md` for deploying to a VPS with subdomains and CI/CD.
 
 ## Prerequisites
 

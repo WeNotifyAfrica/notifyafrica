@@ -21,7 +21,10 @@ ENV NODE_ENV=production
 COPY --from=installer /repo/apps/core-api/.next ./apps/core-api/.next
 COPY --from=installer /repo/apps/core-api/prisma ./apps/core-api/prisma
 COPY --from=installer /repo/apps/core-api/package.json ./apps/core-api/package.json
+COPY --from=installer /repo/apps/core-api/node_modules ./apps/core-api/node_modules
 COPY --from=installer /repo/node_modules ./node_modules
 WORKDIR /repo/apps/core-api
 EXPOSE 3010
-CMD ["npx", "next", "start", "--port", "3010"]
+# Migrations run on every container start so a deploy never ships a build
+# whose schema is ahead of the database it's about to talk to.
+CMD ["sh", "-c", "npx prisma migrate deploy && npx next start --port 3010"]

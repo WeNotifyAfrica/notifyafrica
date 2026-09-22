@@ -1,0 +1,93 @@
+# Production compose for the VPS — pulls prebuilt images from GHCR instead
+# of building on the server (docker-compose.yml, at the repo root context,
+# is for building locally/on the VPS from source; this file is what CI/CD
+# deploys). Only this file + infra/proxy/Caddyfile + .env live on the VPS;
+# the rest of the repo (including the ~250MB of design assets) never needs
+# to be cloned there.
+#
+# Usage on the VPS (see docs/DEPLOYMENT.md):
+#   docker compose -f docker-compose.prod.yml --env-file .env pull
+#   docker compose -f docker-compose.prod.yml --env-file .env up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-notifyafrica}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-notifyafrica}
+    volumes:
+      - notifyafrica_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - notifyafrica_redis_data:/data
+
+  core-api:
+    image: ghcr.io/wenotifyafrica/notifyafrica-core-api:latest
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    expose:
+      - "3010"
+
+  website:
+    image: ghcr.io/wenotifyafrica/notifyafrica-website:latest
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - core-api
+    expose:
+      - "3000"
+
+  console:
+    image: ghcr.io/wenotifyafrica/notifyafrica-console:latest
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - core-api
+    expose:
+      - "3001"
+
+  admin:
+    image: ghcr.io/wenotifyafrica/notifyafrica-admin:latest
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - core-api
+    expose:
+      - "3002"
+
+  worker:
+    image: ghcr.io/wenotifyafrica/notifyafrica-worker:latest
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - notifyafrica_caddy_data:/data
+    env_file: .env
+    depends_on:
+      - website
+      - console
+      - admin
+      - core-api
+
+volumes:
+  notifyafrica_postgres_data:
+  notifyafrica_redis_data:
+  notifyafrica_caddy_data:

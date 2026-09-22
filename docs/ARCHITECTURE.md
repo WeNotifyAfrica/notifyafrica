@@ -26,10 +26,14 @@ packages/
   observability/   Structured logger
 infra/
   docker/     docker-compose.dev.yml (Postgres+Redis for local dev),
-              docker-compose.yml (full stack, first VPS target)
-  proxy/      Caddyfile, domains from env
+              docker-compose.yml (full stack, build-from-source),
+              docker-compose.prod.yml (full stack, pulls prebuilt GHCR images —
+              the one actually deployed to the VPS, see docs/DEPLOYMENT.md)
+  proxy/      Caddyfile, domains from env, automatic HTTPS via Let's Encrypt
+.github/workflows/
+  deploy.yml  Push to main -> build+push images to GHCR -> SSH-deploy to the VPS
 docs/
-  ARCHITECTURE.md, DECISIONS.md (this pair)
+  ARCHITECTURE.md, DECISIONS.md, DEPLOYMENT.md (this trio)
 ```
 
 ## The fallback chain (04_Prompt §6)
@@ -87,6 +91,11 @@ Built (Phase A slice, per 04_Prompt §25-27):
 - Website: catalog + SMS tarifs pages reading straight from the Core API
   (no hardcoded price, per 04_Prompt §5).
 - docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy proxy.
+- CI/CD (`.github/workflows/deploy.yml`): push to `main` builds and pushes
+  images to GHCR, then deploys to a VPS over SSH — see `docs/DEPLOYMENT.md`
+  for the one-time server setup this depends on. Not yet exercised against a
+  real server in this session (no VPS access here) — only the compose/CI
+  file syntax and the Dockerfile logic have been validated locally.
 
 Not built yet (tracked so it isn't silently dropped):
 - The other 23 design lots (Campaigns, OTP, WhatsApp, Email, Developers,
