@@ -621,6 +621,28 @@ only) to a real product + currency selector driven by the Catalog and
 currency)` already supported any product/currency, only the UI was
 hardcoded. Verified live for SMS/XOF and WhatsApp/XOF.
 
+### Follow-up: French-label sweep
+
+Design handoff README §3 requires "high fidelity" text, in French, for
+every screen — Console and Admin alike. A systematic grep for
+`<Tag>{x.status}</Tag>`-shaped patterns across every page turned up
+several spots still showing a raw Prisma enum value instead of a French
+label (some pages, like Billing or WhatsApp templates, already had this
+right — it just wasn't applied everywhere): Console SMS/WhatsApp message
+status, WhatsApp number status, Campaign status (list + detail), OTP code
+status, Pricing's product status, Developers' key environment, Team's 7
+console roles (member list, invitation list, and the invite form's
+select); Admin Quote status (including the status-change select), Catalog
+product status, Users status, Transaction status, Payment method family,
+Provider health state / Route status, and Discount type / scope. Left
+WhatsApp template category (UTILITY/AUTHENTICATION/MARKETING)
+untranslated deliberately — that's Meta's own Business Platform
+terminology, not an internal enum, and translating it would be wrong.
+
+Verified live across all of Console and Admin against a clean dev stack
+(pages return 200, French labels render instead of raw enum strings); all
+five apps typecheck and production-build clean.
+
 ## What's built vs. what's next
 
 Built:
