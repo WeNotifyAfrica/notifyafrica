@@ -3,6 +3,11 @@ import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { Card, Table, Tag } from "@notifyafrica/ui";
 
+const STATUS_LABELS: Record<string, string> = {
+  ACTIVE: "Actif",
+  SUSPENDED: "Suspendu",
+};
+
 /** User management list (02_Specifications_Backoffice §6). Suspend/reactivate
  * actions are a later increment — this is the read slice. */
 export default async function UsersPage() {
@@ -29,7 +34,9 @@ export default async function UsersPage() {
               <tr key={u.id}>
                 <td>{u.email}</td>
                 <td>
-                  <Tag variant={u.status === "ACTIVE" ? "accent" : "neutral"}>{u.status}</Tag>
+                  <Tag variant={u.status === "ACTIVE" ? "accent" : "neutral"}>
+                    {STATUS_LABELS[u.status] ?? u.status}
+                  </Tag>
                 </td>
                 <td>{u.emailVerifiedAt ? "Oui" : "Non"}</td>
                 <td>{u.organizations.map((o) => `${o.name} (${o.role})`).join(", ")}</td>

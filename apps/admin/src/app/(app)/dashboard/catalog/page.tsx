@@ -2,6 +2,14 @@ import { coreApi } from "@/lib/api";
 import { publishCatalogProductAction } from "../../actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
 
+const STATUS_LABELS: Record<string, string> = {
+  ACTIVE: "Actif",
+  BETA: "Bêta",
+  COMING_SOON: "Bientôt disponible",
+  PRIVATE: "Privé",
+  DISABLED: "Désactivé",
+};
+
 export default async function CatalogPage() {
   const { products, source } = await coreApi().listCatalog();
 
@@ -26,7 +34,9 @@ export default async function CatalogPage() {
                 <td>{p.key}</td>
                 <td>{p.name}</td>
                 <td>
-                  <Tag variant={p.status === "ACTIVE" ? "accent" : "neutral"}>{p.status}</Tag>
+                  <Tag variant={p.status === "ACTIVE" ? "accent" : "neutral"}>
+                    {STATUS_LABELS[p.status] ?? p.status}
+                  </Tag>
                 </td>
                 <td>{p.publicPageEnabled ? "Oui" : "Non"}</td>
               </tr>
@@ -59,11 +69,11 @@ export default async function CatalogPage() {
           </Field>
           <Field label="Statut">
             <select name="status" className="input" defaultValue="ACTIVE">
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="BETA">BETA</option>
-              <option value="COMING_SOON">COMING_SOON</option>
-              <option value="PRIVATE">PRIVATE</option>
-              <option value="DISABLED">DISABLED</option>
+              <option value="ACTIVE">Actif</option>
+              <option value="BETA">Bêta</option>
+              <option value="COMING_SOON">Bientôt disponible</option>
+              <option value="PRIVATE">Privé</option>
+              <option value="DISABLED">Désactivé</option>
             </select>
           </Field>
           <Field label="Ordre">

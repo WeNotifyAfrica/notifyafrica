@@ -5,6 +5,13 @@ import { createPaymentMethodAction } from "./actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
 import { paymentMethodFamilySchema } from "@notifyafrica/validation";
 
+const FAMILY_LABELS: Record<string, string> = {
+  MOBILE_MONEY: "Mobile Money",
+  CARD: "Carte",
+  BANK_TRANSFER: "Virement",
+  INVOICE: "Facturation",
+};
+
 /** Moyens de paiement (02_Specifications_Backoffice §23). */
 export default async function PaymentMethodsPage() {
   const cookieStore = await cookies();
@@ -31,7 +38,7 @@ export default async function PaymentMethodsPage() {
                 <tr key={m.id}>
                   <td>{m.name}</td>
                   <td>
-                    <Tag variant="neutral">{m.family}</Tag>
+                    <Tag variant="neutral">{FAMILY_LABELS[m.family] ?? m.family}</Tag>
                   </td>
                   <td>{m.countries.length === 0 ? "Tous" : m.countries.join(", ")}</td>
                   <td className="num">{m.feePercent}%</td>
@@ -67,7 +74,7 @@ export default async function PaymentMethodsPage() {
             <select name="family" className="input" defaultValue="MOBILE_MONEY">
               {paymentMethodFamilySchema.options.map((f) => (
                 <option key={f} value={f}>
-                  {f}
+                  {FAMILY_LABELS[f] ?? f}
                 </option>
               ))}
             </select>

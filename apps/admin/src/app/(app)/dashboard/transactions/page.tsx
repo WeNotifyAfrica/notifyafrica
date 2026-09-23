@@ -4,6 +4,14 @@ import { SESSION_COOKIE } from "@/lib/env";
 import { confirmTransactionAction } from "./actions";
 import { Button, Card, Table, Tag, formatMoney } from "@notifyafrica/ui";
 
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "En attente",
+  CAPTURED: "Confirmé",
+  FAILED: "Échoué",
+  RELEASED: "Libéré",
+  CANCELLED: "Annulé",
+};
+
 /**
  * Financial transactions (02_Specifications_Backoffice §16). A PENDING
  * WALLET_TOPUP (non-instant payment method — bank transfer, monthly
@@ -39,7 +47,9 @@ export default async function TransactionsPage() {
                 <td>{t.type}</td>
                 <td className="num">{formatMoney(t.amountMinor, t.currency, currencies)}</td>
                 <td>
-                  <Tag variant={t.status === "PENDING" ? "outline" : "neutral"}>{t.status}</Tag>
+                  <Tag variant={t.status === "PENDING" ? "outline" : "neutral"}>
+                    {STATUS_LABELS[t.status] ?? t.status}
+                  </Tag>
                 </td>
                 <td className="num">{new Date(t.createdAt).toLocaleString("fr-FR")}</td>
                 <td>
