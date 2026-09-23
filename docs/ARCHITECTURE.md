@@ -579,6 +579,48 @@ ad-hoc layout for their own content area and haven't been individually
 matched against their design handoff lot yet — only the shell wrapping them
 changed in this pass. Continuing lot by lot.
 
+### Follow-up: a real `formatMoney` bug, and `formatMoney` vs `formatPrice`
+
+While extending money formatting to the four other pages still showing a
+raw `wallet.availableMinor` + currency code, and then to the Admin Pricing
+page, two things surfaced:
+
+1. **`formatMoney` never divided by `10 ** decimals`.** It multiplied
+   nowhere and divided nowhere — for XOF/XAF (0 decimals) that's a no-op,
+   so every live check up to this point (all XOF) looked correct by
+   coincidence. `toMinorUnits()` (`packages/domain/src/wallet.ts`)
+   multiplies by `10 ** decimals` when *crediting* a wallet, so a 2-decimal
+   currency's `availableMinor` is truly in minor units (976 GHS credited ->
+   `availableMinor: "97600"`) — `formatMoney` needed the inverse operation
+   and didn't have it. Caught before it reached more pages, by reasoning
+   through the admin Pricing page's use of it on a Pricing Engine value
+   (see #2) — not by a XOF-only live check, which couldn't have caught it.
+   Fixed by dividing by `10 ** decimals` before formatting, then verified
+   against a fresh org with `currency: "GHS"` (2 decimals): credited 976
+   GHS, `availableMinor` stored as `"97600"` exactly as `toMinorUnits`
+   predicts, rendered page shows "976,00 GH₵" — correct.
+2. **Pricing Engine values (`unitPrice`/`subtotal`/`total`) are already
+   major-unit decimals, never minor units** (confirmed by the WhatsApp Lot
+   10 verification: `unitPrice: 24` for a 24 XOF rate, not 2400). Passing
+   one through the now-fixed `formatMoney` would wrongly divide it again.
+   Split into two functions in `packages/ui/src/format.ts`: `formatMoney`
+   (minor-unit amounts — wallets, transactions, campaigns) and
+   `formatPrice` (major-unit Pricing Engine rates). `formatPrice`
+   deliberately does *not* use the currency's official `decimals` either —
+   XOF's 0 decimals is correct for a real transaction (no FCFA cents
+   circulate) but a per-message *rate* still needs fractional precision to
+   be meaningful, exactly as the design handoff's own mockup shows ("6,10
+   FCFA / message"). `formatPrice` shows 2 decimals only when the amount
+   actually has a fractional part, else 0 — verified live: SMS tiers
+   (6.5/6.8 XOF) render "6,50 FCFA"/"6,80 FCFA", WhatsApp categories
+   (24/28/46, all integers) render "24 FCFA" etc. with no trailing zeros.
+
+Also upgraded the Admin Pricing page (previously hardcoded to SMS/XOF
+only) to a real product + currency selector driven by the Catalog and
+`catalog.currencies` APIs — the underlying `listPricingTiers(product,
+currency)` already supported any product/currency, only the UI was
+hardcoded. Verified live for SMS/XOF and WhatsApp/XOF.
+
 ## What's built vs. what's next
 
 Built:

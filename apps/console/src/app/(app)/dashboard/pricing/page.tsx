@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
-import { Card, CardTitle, CardBody, Table, Tag } from "@notifyafrica/ui";
+import { Card, CardTitle, CardBody, Table, Tag, formatPrice } from "@notifyafrica/ui";
 
 /**
  * Tarifs (03_Specifications_Console §18) — reads the same Catalog/Pricing
@@ -13,7 +13,8 @@ export default async function ConsolePricingPage() {
   const token = cookieStore.get(SESSION_COOKIE)!.value;
   const api = coreApi(token);
 
-  const { products } = await api.listCatalog();
+  const [{ products }, currenciesConfig] = await Promise.all([api.listCatalog(), api.listCurrencies()]);
+  const currencies = currenciesConfig.value ?? [];
   const activeProducts = products.filter((p) => p.status === "ACTIVE" || p.status === "BETA");
 
   const tiersByProduct = await Promise.all(
@@ -48,7 +49,7 @@ export default async function ConsolePricingPage() {
                       {t.volumeMax ? ` - ${t.volumeMax.toLocaleString("fr-FR")}` : "+"}
                     </td>
                     <td className="num">
-                      {t.quoteRequired ? "Sur devis" : `${t.unitPrice} ${t.currency}`}
+                      {t.quoteRequired ? "Sur devis" : formatPrice(t.unitPrice, t.currency, currencies)}
                     </td>
                   </tr>
                 ))}
