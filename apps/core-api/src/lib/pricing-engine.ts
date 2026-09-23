@@ -8,6 +8,14 @@ import type { PricingEstimateRequest, PricingEstimateResult } from "@notifyafric
  * and taxes are wired to Discount Engine / tax rules in a later phase; this
  * minimal version resolves the base tier + markup so no product hardcodes a
  * price (04_Prompt §5) while Phase B builds out the rest on the same shape.
+ *
+ * Rule selection also implements the first two steps of
+ * 00_Contexte_Global §11's priority order ("1. prix contractuel client;
+ * 2. prix spécifique organisation; ... 6. prix public par défaut"): an
+ * organization-scoped rule (created when Admin accepts a Quote — see
+ * apps/core-api/src/app/api/admin/quotes/[id]/status/route.ts) is matched
+ * alongside global (organizationId: null) rules, and naturally wins the
+ * tier lookup below as long as it's given a higher `priority`.
  */
 export async function estimatePricing(
   input: PricingEstimateRequest,
@@ -18,6 +26,9 @@ export async function estimatePricing(
       status: "ACTIVE",
       currency: input.currency,
       OR: [{ countryCode: null }, { countryCode: input.country }],
+      AND: input.organizationId
+        ? [{ OR: [{ organizationId: input.organizationId }, { organizationId: null }] }]
+        : [{ organizationId: null }],
     },
     orderBy: [{ priority: "desc" }, { version: "desc" }],
   });

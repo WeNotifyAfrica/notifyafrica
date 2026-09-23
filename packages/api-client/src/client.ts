@@ -9,6 +9,7 @@ import type {
   PricingEstimateRequest,
   PricingEstimateResult,
   Provider,
+  Quote,
   ResolvedConfig,
   RouteSummary,
   TeamMember,
@@ -146,6 +147,9 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
     verifyOtp: (payload: unknown) =>
       request<{ status: string }>("/api/otp/verify", { method: "POST", body: JSON.stringify(payload) }),
     listOtpHistory: () => request<{ codes: OtpCodeSummary[] }>("/api/otp/history"),
+    listQuotes: () => request<{ quotes: Quote[] }>("/api/quotes"),
+    createQuote: (payload: unknown) =>
+      request<{ quote: Quote }>("/api/quotes", { method: "POST", body: JSON.stringify(payload) }),
 
     // --- Admin-only endpoints (require a session with internalRole) ---
     publishConfig: (payload: unknown) =>
@@ -212,6 +216,12 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
     listRoutes: () => request<{ routes: RouteSummary[] }>("/api/admin/routes"),
     createRoute: (payload: unknown) =>
       request<{ route: unknown }>("/api/admin/routes", { method: "POST", body: JSON.stringify(payload) }),
+    listAdminQuotes: () => request<{ quotes: Quote[] }>("/api/admin/quotes"),
+    updateQuoteStatus: (id: string, payload: unknown) =>
+      request<{ quote: Quote; pricingRuleId: string | null }>(`/api/admin/quotes/${id}/status`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
   };
 }
 

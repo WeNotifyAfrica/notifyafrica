@@ -29,6 +29,9 @@ importers:
       '@notifyafrica/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@notifyafrica/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
       next:
         specifier: ^15.1.0
         version: 15.5.26(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)

@@ -33,6 +33,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <NavLink href="/dashboard/sms">SMS</NavLink>
           <NavLink href="/dashboard/otp">OTP</NavLink>
           <NavLink href="/dashboard/pricing">Tarifs</NavLink>
+          <NavLink href="/dashboard/quotes">Devis</NavLink>
           <NavLink href="/dashboard/billing">Facturation</NavLink>
           <NavLink href="/dashboard/developers">Développeurs</NavLink>
           <NavLink href="/dashboard/team">Équipe</NavLink>

@@ -26,7 +26,16 @@ export function consoleAuthUrl(
 
 /** Resolves a seeded CTA's abstract `target` (e.g. "register", "quote")
  * into a real href — keeps the seed content provider-agnostic instead of
- * baking a Console/mailto URL into packages/config-seed. */
+ * baking a Console/mailto URL into packages/config-seed.
+ *
+ * "quote" goes to Console registration rather than a mailto: link — the
+ * Console has a real Quotes page (03_Specifications_Console §19-20) that
+ * submits a `QUOTE_REQUESTED` request Admin can see and act on
+ * (02_Specifications_Backoffice §14), so an anonymous visitor should land
+ * in that flow (register first, per the "rediriger vers Console pour les
+ * utilisateurs authentifiés" option in 01_Specifications_Website §15)
+ * rather than a dead-end email. "contact" stays a mailto: — it's for
+ * reaching a human, not for a priced, trackable quote request. */
 export function ctaHref(target: string, source: string): string {
   switch (target) {
     case "register":
@@ -34,7 +43,7 @@ export function ctaHref(target: string, source: string): string {
     case "login":
       return consoleAuthUrl("login", { source });
     case "quote":
-      return `mailto:${env.contactEmail}?subject=Demande de devis`;
+      return consoleAuthUrl("register", { source, campaign: "quote" });
     case "contact":
     default:
       return `mailto:${env.contactEmail}`;

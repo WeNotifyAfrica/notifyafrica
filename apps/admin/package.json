@@ -14,6 +14,7 @@
     "@notifyafrica/design-system": "workspace:*",
     "@notifyafrica/types": "workspace:*",
     "@notifyafrica/ui": "workspace:*",
+    "@notifyafrica/validation": "workspace:*",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

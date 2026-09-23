@@ -189,10 +189,51 @@ of the placeholder pages Phase A shipped. Three things changed:
    engine exists yet (see "not built yet" below).
 
 Not yet done on the Website: the remaining `01_Specifications_Website`
-sections (testimonials, FAQ), a real Contact form (§14 — CTAs currently
-resolve to a `mailto:` link via `ctaHref()`), SEO beyond per-page
-title/description, a Status page, and cross-app cache invalidation
-(pages still fetch `no-store`, correct but unoptimized).
+sections (testimonials, FAQ), a real Contact form (§14 — the "contact"
+target still resolves to a `mailto:` link via `ctaHref()`; "quote" now goes
+to Console registration instead, see Quotes below), SEO beyond per-page
+title/description, a Status page, and cross-app cache invalidation (pages
+still fetch `no-store`, correct but unoptimized).
+
+## Quotes (closing the `quoteRequired` loop)
+
+`estimatePricing` has returned `quoteRequired: true` above a product's top
+volume tier since Phase A, and the Website's /tarifs shows "Sur devis" for
+it — but nothing existed to actually request one. The `Quote` Prisma model
+had sat unused since Phase A, exactly like `Provider`/`Route` before Lot 20.
+Closed end-to-end:
+
+- `POST /api/quotes` (Console org session) creates a `Quote`
+  (`status: SUBMITTED`) and fires `QUOTE_REQUESTED`, same
+  admin-notification pattern as `USER_REGISTERED`.
+- Console `/dashboard/quotes`: request form + status/offer list.
+- `POST /api/admin/quotes/:id/status` drives the workflow (Draft → Submitted
+  → Under Review → Info Required → Offer Available → Accepted/Rejected/
+  Expired, 03_Specifications_Console §20). Admin `/dashboard/quotes`: one
+  card per quote with an inline status + offer + audited-reason form.
+- **Accepting a quote with an offer converts it into an
+  organization-scoped `PricingRule`** (`customerScope: ORGANIZATION`,
+  `organizationId` set, `priority: 100`) — this is
+  `00_Contexte_Global §11`'s documented priority order ("1. prix
+  contractuel client; 2. prix spécifique organisation; ...") which the
+  Pricing Engine's query never actually implemented until now (it didn't
+  filter by `organizationId` at all — a real gap, not just an unbuilt
+  feature). `estimatePricing` now matches organization-scoped rules
+  alongside global ones, so the higher-priority contractual rule naturally
+  wins the tier lookup for that org only.
+- Website: `ctaHref("quote", …)` now routes to Console registration
+  (carrying `campaign=quote`) instead of a dead-end mailto — there's a real
+  destination for it now.
+
+Verified end-to-end: requested a quote for 500,000 SMS (above the public
+100,000 tier, so normally quote-required) → Admin saw the `QUOTE_REQUESTED`
+notification and the quote in its list → accepted it with a 5.5 XOF/SMS
+offer (below the public 6.8 XOF tier) → a `PricingRule` was created →
+re-estimating for that org at 500,000 SMS now returns `unitPrice: 5.5,
+quoteRequired: false`, at *any* volume for that org (confirmed at
+quantity=100 too) — while an anonymous/other-org estimate at the same
+500,000 quantity still correctly returns the public tier
+(`unitPrice: 6.8, quoteRequired: true`). No cross-org leakage.
 
 ## What's built vs. what's next
 
@@ -224,6 +265,9 @@ Built:
 - **Providers & Routing** (Lot 20 partial) — Admin CRUD for Operators,
   Providers, ProviderEndpoints, Routes. Configuration only, no live gateway
   or Credentials Vault yet.
+- **Quotes** (Lots 14, 19-20, 22 partial) — Console request + list, Admin
+  pipeline with status transitions, accepted offers become a binding
+  organization-scoped pricing rule the engine actually honors (see above).
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -245,14 +289,18 @@ tying them to a product/country — all three list endpoints reflect it with
 the right nested relations. Separately: all 6 rebuilt Website pages return
 200 with the expected mockup copy; the light-theme accent override
 (`#5d5294`) was confirmed present in the actual production CSS bundle, not
-just the source file.
+just the source file. Separately: requested a 500,000-SMS quote (above the
+public tier) → Admin accepted it with a negotiated price → the requesting
+org's estimates now use that price at any volume, while other orgs and
+anonymous estimates still see the public tier and `quoteRequired: true` —
+no cross-org leakage.
 
 Not built yet (tracked so it isn't silently dropped):
 - The other 19 design lots (Campaigns, WhatsApp, Email, Statistiques,
-  Settings, Support, and Back-office lots 19, 22, 24-25 — Pricing admin
-  (Lot 21) has a minimal slice).
+  Settings, Support, and Back-office lots 19, 24-25 — Pricing admin (Lot 21)
+  and Devis interne (Lot 22) each have a minimal slice).
 - Bulk SMS / Campaigns (only single-message send exists), Discount Engine,
-  tax rules, Quote workflow logic.
+  tax rules.
 - Real provider adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox
   credentials yet (design handoff README §9 point 4); `mock-sms.ts` is the
   swap point.

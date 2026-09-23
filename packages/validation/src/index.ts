@@ -7,3 +7,4 @@ export * from "./api-keys";
 export * from "./team";
 export * from "./otp";
 export * from "./providers";
+export * from "./quotes";

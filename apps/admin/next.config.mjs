@@ -6,6 +6,7 @@ const nextConfig = {
     "@notifyafrica/design-system",
     "@notifyafrica/types",
     "@notifyafrica/ui",
+    "@notifyafrica/validation",
   ],
 };
 
