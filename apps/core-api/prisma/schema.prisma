@@ -108,6 +108,18 @@ enum PaymentMethodFamily {
   INVOICE
 }
 
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  QUEUED
+  RUNNING
+  PAUSED
+  COMPLETED
+  PARTIAL
+  FAILED
+  CANCELLED
+}
+
 enum MessageStatus {
   QUEUED
   SENT
@@ -148,6 +160,7 @@ model Organization {
   messages     Message[]
   invitations  Invitation[]
   otpConfigs   OtpConfig[]
+  campaigns    Campaign[]
 
   @@map("organizations")
 }
@@ -178,6 +191,7 @@ model Project {
   transactions Transaction[]
   messages     Message[]
   otpConfigs   OtpConfig[]
+  campaigns    Campaign[]
 
   @@map("projects")
 }
@@ -392,6 +406,7 @@ model Transaction {
   project      Project?     @relation(fields: [projectId], references: [id])
   message      Message?
   otpCode      OtpCode?
+  campaign     Campaign?
 
   @@map("transactions")
 }
@@ -432,14 +447,56 @@ model Message {
   providerId      String?
   pricingSnapshot Json
   transactionId   String?       @unique
+  /// Set only for messages sent as part of a Campaign — a single-send
+  /// Message never has one. Campaigns don't create a Transaction per
+  /// message (only one, for the whole batch, on Campaign.transactionId).
+  campaignId      String?
   createdAt       DateTime      @default(now())
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
   transaction  Transaction? @relation(fields: [transactionId], references: [id])
+  campaign     Campaign?    @relation(fields: [campaignId], references: [id], onDelete: SetNull)
 
   @@index([organizationId, createdAt])
+  @@index([campaignId])
   @@map("messages")
+}
+
+/// Bulk send campaigns (03_Specifications_Console §12): Draft -> Channel ->
+/// Audience -> Content -> Estimate -> Schedule -> Review -> Reserve Funds ->
+/// Run -> Report. Launch holds funds for the whole estimated audience at
+/// once (unitPrice * destinations.length); the Worker's job processor
+/// (apps/worker/src/processors/campaign.ts) sends each destination, then
+/// captures the actual spend and releases whatever wasn't used.
+model Campaign {
+  id              String         @id @default(cuid())
+  organizationId  String
+  projectId       String
+  name            String
+  product         String         @default("SMS")
+  senderId        String?
+  content         String
+  destinations    String[]
+  status          CampaignStatus @default(DRAFT)
+  unitPrice       Decimal?       @db.Decimal(18, 6)
+  currency        String?
+  estimatedTotal  Decimal?       @db.Decimal(18, 6)
+  heldAmountMinor BigInt?
+  sentCount       Int            @default(0)
+  failedCount     Int            @default(0)
+  totalCount      Int            @default(0)
+  transactionId   String?        @unique
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  transaction  Transaction? @relation(fields: [transactionId], references: [id])
+  messages     Message[]
+
+  @@index([organizationId, createdAt])
+  @@map("campaigns")
 }
 
 enum OtpStatus {

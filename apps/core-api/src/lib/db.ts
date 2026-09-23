@@ -1,9 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
+// Moved to packages/domain so the Worker can share the same Prisma client
+// (and the wallet/mock-provider logic that depends on it) instead of
+// duplicating it — see packages/domain/src/db.ts.
+export { prisma } from "@notifyafrica/domain";

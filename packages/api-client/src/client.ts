@@ -1,5 +1,6 @@
 import type {
   ApiKeySummary,
+  Campaign,
   CatalogProduct,
   DiscountRule,
   Invitation,
@@ -114,6 +115,18 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         body: JSON.stringify(payload),
       }),
     listWalletTransactions: () => request<{ transactions: Transaction[] }>("/api/wallet/transactions"),
+    listCampaigns: () => request<{ campaigns: Campaign[] }>("/api/campaigns"),
+    createCampaign: (payload: unknown) =>
+      request<{ campaign: Campaign }>("/api/campaigns", { method: "POST", body: JSON.stringify(payload) }),
+    getCampaign: (id: string) => request<{ campaign: Campaign }>(`/api/campaigns/${id}`),
+    estimateCampaign: (id: string) =>
+      request<{ campaign: Campaign; estimate: PricingEstimateResult }>(`/api/campaigns/${id}/estimate`, {
+        method: "POST",
+      }),
+    launchCampaign: (id: string) =>
+      request<{ campaign: Campaign }>(`/api/campaigns/${id}/launch`, { method: "POST" }),
+    cancelCampaign: (id: string) =>
+      request<{ campaign: Campaign }>(`/api/campaigns/${id}/cancel`, { method: "POST" }),
     sendSms: (payload: unknown) =>
       request<{ message: Message; transaction: Transaction; estimate: PricingEstimateResult }>(
         "/api/sms/send",

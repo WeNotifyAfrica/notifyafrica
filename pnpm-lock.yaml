@@ -106,9 +106,15 @@ importers:
       '@notifyafrica/design-system':
         specifier: workspace:*
         version: link:../../packages/design-system
+      '@notifyafrica/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@notifyafrica/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@notifyafrica/queue':
+        specifier: workspace:*
+        version: link:../../packages/queue
       '@notifyafrica/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -118,6 +124,12 @@ importers:
       '@prisma/client':
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
+      bullmq:
+        specifier: ^5.34.0
+        version: 5.81.5
+      ioredis:
+        specifier: ^5.4.1
+        version: 5.11.1
       next:
         specifier: ^15.1.0
         version: 15.5.26(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -186,9 +198,18 @@ importers:
 
   apps/worker:
     dependencies:
+      '@notifyafrica/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@notifyafrica/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@notifyafrica/queue':
+        specifier: workspace:*
+        version: link:../../packages/queue
+      '@prisma/client':
+        specifier: ^5.22.0
+        version: 5.22.0(prisma@5.22.0)
       bullmq:
         specifier: ^5.34.0
         version: 5.81.5
@@ -241,7 +262,18 @@ importers:
 
   packages/design-system: {}
 
+  packages/domain:
+    dependencies:
+      '@notifyafrica/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@prisma/client':
+        specifier: ^5.22.0
+        version: 5.22.0(prisma@5.22.0)
+
   packages/observability: {}
+
+  packages/queue: {}
 
   packages/types:
     dependencies:

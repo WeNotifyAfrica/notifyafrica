@@ -14,3 +14,9 @@ export function walletJson<T extends { availableMinor: bigint; reservedMinor: bi
 export function transactionJson<T extends { amountMinor: bigint }>(transaction: T) {
   return { ...transaction, amountMinor: transaction.amountMinor.toString() };
 }
+
+/** Campaign.heldAmountMinor is also BigInt (the funds reserved at launch) —
+ * same reasoning as wallet/transaction amounts. */
+export function campaignJson<T extends { heldAmountMinor: bigint | null }>(campaign: T) {
+  return { ...campaign, heldAmountMinor: campaign.heldAmountMinor?.toString() ?? null };
+}

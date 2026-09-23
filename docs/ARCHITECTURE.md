@@ -11,7 +11,8 @@ apps/
   console/    Next.js, customer app (dark Nocturne)
   admin/      Next.js, internal backoffice (dark Nocturne)
   core-api/   Next.js Route Handlers only — no pages beyond a health landing
-  worker/     BullMQ consumer skeleton (campaigns / provider callbacks)
+  worker/     BullMQ consumer — campaigns have a real processor now, provider
+              callbacks still a logging-only placeholder (no real provider yet)
 packages/
   design-system/  Nocturne tokens/CSS (copied verbatim from the design handoff,
                    source of truth) + a light-theme override for the website
@@ -24,6 +25,12 @@ packages/
   auth/            Password hashing, JWT session sign/verify, Console RBAC
   api-client/      Typed fetch wrapper around the Core API
   observability/   Structured logger
+  domain/          Prisma client + wallet ledger + mock provider adapters —
+                    shared by Core API (HTTP) and Worker (background jobs) so
+                    neither duplicates this; Core API's apps/core-api/src/lib/
+                    {db,wallet,providers/*}.ts are thin re-exports of it
+  queue/           BullMQ queue name constants, imported by both the Core API
+                    producer and the Worker consumer so they can't drift
 infra/
   docker/     docker-compose.dev.yml (Postgres+Redis for local dev),
               docker-compose.yml (full stack, build-from-source),
@@ -330,6 +337,85 @@ became 610,000 → **confirming the same transaction a second time correctly
 returned 409 and did not double-credit the wallet**. All apps build and
 typecheck clean.
 
+## Campaigns (Lot 8) — and the Worker finally does real work
+
+The Worker has existed since Phase A as a connection/logging skeleton with
+no processor. Campaigns are the first thing that actually needs it: a
+bulk send must not block the HTTP request that launches it (04_Prompt §21),
+so this is the first feature genuinely split across two processes.
+
+**Shared domain logic first.** The Worker's campaign processor needs the
+same Prisma client and wallet ledger functions (`holdFunds`/`captureFunds`/
+`releaseFunds`) that Core API's route handlers already had in
+`apps/core-api/src/lib/{db,wallet}.ts` — duplicating that logic in the
+Worker would drift. Extracted into a new package, `packages/domain`
+(`db.ts`, `wallet.ts`, and the three mock provider adapters), and turned
+the original `apps/core-api/src/lib/*` files into thin re-exports so
+**none of the ~20 files already importing `@/lib/db` or `@/lib/wallet` in
+Core API needed to change**. Queue name constants moved the same way, into
+`packages/queue`, so producer (Core API) and consumer (Worker) can never
+drift on the string BullMQ builds Redis keys from.
+
+One resolution gotcha: `packages/domain` first shipped with per-module
+subpath exports (`@notifyafrica/domain/db`, `.../wallet`, ...), which broke
+under the Worker's `moduleResolution: "Node10"` (a classic/CommonJS
+resolution mode that doesn't understand package.json `"exports"` subpath
+maps at all — that's a Node16/NodeNext/Bundler-only feature). Rather than
+change the Worker's module settings (real risk to its `tsc`-then-`node`
+production build, unlike Core API which runs through Next's bundler),
+flattened `packages/domain` to a single entry point re-exporting
+everything — the same pattern `@notifyafrica/observability` already used
+successfully there.
+
+**The flow** (03_Specifications_Console §12: Draft → Channel → Audience →
+Content → Estimate → Schedule → Review → Reserve Funds → Run → Report):
+- `POST /api/campaigns` creates a `DRAFT` campaign (name, content,
+  destinations — one per line/comma in the Console form) — no pricing or
+  funds touched yet.
+- `POST /api/campaigns/:id/estimate` runs the same Pricing Engine single
+  sends use, quantity = audience size, and stores the resolved
+  unit price/total on the campaign.
+- `POST /api/campaigns/:id/launch` holds funds for the *entire* estimated
+  audience in one `holdFunds` call, creates a `PENDING` `Transaction`
+  (`type: CAMPAIGN_SEND`), flips the campaign to `QUEUED`, enqueues a
+  `notifyafrica-campaigns` job via `apps/core-api/src/lib/queue.ts`,
+  and returns immediately.
+- The Worker's `processCampaign` (`apps/worker/src/processors/campaign.ts`)
+  picks up the job, sends each destination through the same mock SMS
+  adapter single-send uses, creates one `Message` per destination
+  (`campaignId` set), then trues up the wallet: captures the amount for
+  what actually sent, releases whatever of the hold went unused, finalizes
+  the `Transaction` (`CAPTURED`/`FAILED`), and sets the campaign to
+  `COMPLETED`/`PARTIAL`/`FAILED` with `sentCount`/`failedCount`.
+- `POST /api/campaigns/:id/cancel` releases the hold if still
+  `DRAFT`/`SCHEDULED`/`QUEUED`. Cancelling mid-`RUNNING` isn't supported —
+  the send loop doesn't poll for it — documented, not silently dropped.
+- Console `/dashboard/campaigns` (list + create) and `/dashboard/campaigns/
+  [id]` (estimate/launch/cancel buttons + live report once terminal).
+
+A real bug surfaced during testing here, the same class as one already
+fixed for Wallet/Transaction: `Campaign.heldAmountMinor` is a Postgres
+`BigInt`, and `JSON.stringify` doesn't know how to serialize those —
+every route returning a campaign 500'd until a `campaignJson` serializer
+(mirroring `walletJson`/`transactionJson`) was applied everywhere a
+campaign crosses the HTTP boundary.
+
+Also cleaned up a benign but noisy build warning found along the way:
+bullmq optionally imports `@valkey/valkey-glide` (an alternative Redis
+client we don't use, we're on ioredis) — harmless at runtime, silenced via
+a one-line webpack alias in `apps/core-api/next.config.mjs`.
+
+Verified end-to-end against the real Worker process (not mocked): created
+a 5-destination campaign, estimated it, launched it → funds held → **the
+Worker received the BullMQ job, sent all 5 through the mock adapter,
+created 5 `Message` rows with the right `campaignId`, captured the exact
+spend, and marked the campaign `COMPLETED` — end to end in under 30ms**.
+Re-ran with 3 destinations after the BigInt fix: launch now returns clean
+JSON, `Transaction` finalized to `CAPTURED` at the exact captured amount,
+wallet debited precisely (9,967 → 9,947), all 3 `Message` rows correctly
+linked to the campaign. All five apps (Website, Console, Admin, Core API,
+Worker) build and typecheck clean.
+
 ## What's built vs. what's next
 
 Built:
@@ -369,6 +455,10 @@ Built:
 - **Facturation & Moyens de paiement** (Lots 15, 23 partial) — self-service
   recharge (instant + pending/confirm flows), Admin payment methods catalog
   and pending-transaction confirmation (see above).
+- **Campaigns** (Lot 8) — Draft → Estimate → Reserve Funds → Run → Report,
+  the Worker's first real job processor, shared `packages/domain`/
+  `packages/queue` so Core API and Worker never drift on business logic or
+  queue names (see above).
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -399,15 +489,24 @@ rules confirmed for correct amount math, priority-based exclusivity,
 opt-in stacking, and date-window expiry (see Discount Engine above).
 Separately: instant vs. non-instant recharge, min/max amount validation,
 and the Admin-confirm double-credit guard (see Facturation above).
+Separately: launched a real campaign through the real Worker process (not
+mocked/skipped) — 5-for-5 sent, wallet held/captured exactly right, then
+re-verified after the BigInt serialization fix with a fresh 3-destination
+campaign, checking the Transaction, Message rows, and wallet balance
+directly (see Campaigns above).
 
 Not built yet (tracked so it isn't silently dropped):
-- The other 19 design lots (Campaigns, WhatsApp, Email, Statistiques,
-  Settings, Support, and Back-office lots 19, 24-25 — Pricing admin (Lot 21)
-  and Devis interne (Lot 22) each have a minimal slice).
-- Bulk SMS / Campaigns (only single-message send exists), tax rules, a real
-  promo-code redemption flow (PROMO/BONUS discount types are matched by
-  scope only, not gated behind a code input yet), usage-limit enforcement
-  on discount rules (the `usageLimit` column exists but isn't checked).
+- The other 18 design lots (WhatsApp, Email, Statistiques, Settings,
+  Support, and Back-office lots 19, 24-25 — Pricing admin (Lot 21) and
+  Devis interne (Lot 22) each have a minimal slice).
+- Campaign scheduling (`scheduledAt`) and mid-run cancellation — launch is
+  immediate-only for now; audience is manual entry only, no CSV import or
+  saved segments (03_Specifications_Console §11 lists CSV/contacts/segments
+  alongside manual entry).
+- Tax rules, a real promo-code redemption flow (PROMO/BONUS discount types
+  are matched by scope only, not gated behind a code input yet),
+  usage-limit enforcement on discount rules (the `usageLimit` column exists
+  but isn't checked).
 - Real provider adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox
   credentials yet (design handoff README §9 point 4); `mock-sms.ts` is the
   swap point.

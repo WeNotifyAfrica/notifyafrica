@@ -9,7 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@notifyafrica/domain": "workspace:*",
     "@notifyafrica/observability": "workspace:*",
+    "@notifyafrica/queue": "workspace:*",
+    "@prisma/client": "^5.22.0",
     "bullmq": "^5.34.0",
     "ioredis": "^5.4.1"
   },

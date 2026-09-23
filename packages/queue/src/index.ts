@@ -5,8 +5,12 @@
  *
  * BullMQ builds its Redis keys as `<prefix>:<queueName>:<suffix>` and
  * rejects a `:` inside the queue name itself for that reason — hyphens
- * only. Namespacing across environments/apps belongs in the `prefix`
- * option (see apps/worker/src/index.ts), not in this string.
+ * only. Both sides import from this one package so the string can never
+ * drift between producer and consumer.
  */
 export const QUEUE_CAMPAIGNS = "notifyafrica-campaigns";
 export const QUEUE_PROVIDER_CALLBACKS = "notifyafrica-provider-callbacks";
+
+export interface CampaignJobData {
+  campaignId: string;
+}
