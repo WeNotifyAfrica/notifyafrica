@@ -95,6 +95,26 @@ Since no real payment gateway is wired, Admin's `POST
 /api/admin/wallet/credit` (audited, reason required) stands in for a topup
 — see `apps/admin/src/app/(app)/dashboard/organizations/page.tsx`.
 
+## Developers (API keys) and Team (invitations)
+
+`apps/core-api/src/lib/api-keys.ts` generates `na_<env>_<hex>` keys; only
+the SHA-256 digest is stored (`ApiKey.hashedKey`), the full value is
+returned once from `POST /api/keys` and never again — Console's
+`/dashboard/developers` page renders that one-time value with a Client
+Component (`CreateApiKeyForm.tsx`, `useActionState`) instead of the usual
+form-action-then-redirect pattern, specifically so the secret never touches
+a URL. Creating or revoking a key requires the `apikey.manage` permission
+(`packages/auth`'s `consoleRoleHasPermission`).
+
+Team invitations follow the same "no email provider yet" pattern as the
+Notification Engine: `POST /api/team/invitations` (requires `team.manage`)
+creates an `Invitation` row with a random token and logs the intended email
+instead of sending one. `GET /api/invitations/:token` is a public read (no
+session) so Console's `/invite/[token]` page can show who's inviting the
+visitor before they set a password; `POST /api/invitations/accept` creates
+the `User` + `Membership` and returns a session token, refusing if an
+account with that email already exists rather than silently merging.
+
 ## What's built vs. what's next
 
 Built:
@@ -114,6 +134,9 @@ Built:
   (`/dashboard/sms`, estimate → hold → capture, wallet-gated) and history,
   Console Facturation page (`/dashboard/billing`), Admin manual wallet
   credit, Admin Transactions list.
+- **Developers / Team** (Lots 12, 16 partial) — API key create/list/revoke
+  with one-time secret reveal; team member list, invite-by-email with a
+  7-day token, public accept screen, revoke pending invitation.
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -121,15 +144,18 @@ Built:
   access in this session) — only compose/CI YAML and the Dockerfile logic
   have been validated locally.
 
-Verified end-to-end against local Postgres/Redis (register → 0 balance →
+Verified end-to-end against local Postgres/Redis: register → 0 balance →
 send blocked with `insufficient_balance` → Admin credits wallet → send
 succeeds → wallet debited → Admin sees the Transaction, the credited
-Organization, and both `USER_REGISTERED`/`FIRST_MESSAGE_SENT` notifications).
+Organization, and both `USER_REGISTERED`/`FIRST_MESSAGE_SENT` notifications.
+Separately: create an API key → secret shown once, never in the list →
+revoke it; invite a team member → accept via the token → new member shows
+up in `/api/team/members` with a working session.
 
 Not built yet (tracked so it isn't silently dropped):
-- The other 23 design lots (Campaigns, OTP, WhatsApp, Email, Developers,
-  Billing/Wallet UI beyond the balance view, Team, Settings, Support, and
-  all Back-office lots 20-25).
+- The other 21 design lots (Campaigns, OTP, WhatsApp, Email, Statistiques,
+  Settings, Support, and all Back-office lots 19-20, 22, 24-25 — Providers/
+  Routing (Lot 20) and Pricing admin (Lot 21) have a minimal slice each).
 - Bulk SMS / Campaigns (only single-message send exists), Discount Engine,
   tax rules, Quote workflow logic.
 - Real provider adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox

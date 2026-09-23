@@ -139,6 +139,7 @@ model Organization {
   quotes       Quote[]
   transactions Transaction[]
   messages     Message[]
+  invitations  Invitation[]
 
   @@map("organizations")
 }
@@ -181,11 +182,38 @@ model ApiKey {
   prefix      String
   scopes      String[]
   expiresAt   DateTime?
+  revokedAt   DateTime?
   createdAt   DateTime    @default(now())
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("api_keys")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+/// Team invitations (03_Specifications_Console §29, Lot 16). A pending
+/// invitation is not a User yet — the invitee only gets one once they accept
+/// (packages/auth RBAC gates who can invite: team.manage permission).
+model Invitation {
+  id              String           @id @default(cuid())
+  organizationId  String
+  email           String
+  role            ConsoleRole
+  token           String           @unique
+  status          InvitationStatus @default(PENDING)
+  invitedByUserId String?
+  expiresAt       DateTime
+  createdAt       DateTime         @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("invitations")
 }
 
 /// Generic Config Registry object (02_Specifications_Backoffice §31).

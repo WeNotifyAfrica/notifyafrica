@@ -3,3 +3,5 @@ export * from "./pricing";
 export * from "./config";
 export * from "./sms";
 export * from "./wallet";
+export * from "./api-keys";
+export * from "./team";

@@ -100,6 +100,9 @@ importers:
       '@notifyafrica/config-seed':
         specifier: workspace:*
         version: link:../../packages/config-seed
+      '@notifyafrica/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
       '@notifyafrica/observability':
         specifier: workspace:*
         version: link:../../packages/observability

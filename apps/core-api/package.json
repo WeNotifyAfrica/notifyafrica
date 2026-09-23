@@ -15,6 +15,7 @@
   "dependencies": {
     "@notifyafrica/auth": "workspace:*",
     "@notifyafrica/config-seed": "workspace:*",
+    "@notifyafrica/design-system": "workspace:*",
     "@notifyafrica/observability": "workspace:*",
     "@notifyafrica/types": "workspace:*",
     "@notifyafrica/validation": "workspace:*",

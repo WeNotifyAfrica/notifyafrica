@@ -1,9 +1,12 @@
 import type {
+  ApiKeySummary,
   CatalogProduct,
+  Invitation,
   Message,
   PricingEstimateRequest,
   PricingEstimateResult,
   ResolvedConfig,
+  TeamMember,
   Transaction,
   Wallet,
 } from "@notifyafrica/types";
@@ -82,6 +85,31 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         { method: "POST", body: JSON.stringify(payload) },
       ),
     listSmsHistory: () => request<{ messages: Message[] }>("/api/sms/history"),
+    listApiKeys: () => request<{ keys: ApiKeySummary[] }>("/api/keys"),
+    createApiKey: (payload: unknown) =>
+      request<{ key: ApiKeySummary; secret: string }>("/api/keys", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    revokeApiKey: (id: string) => request<{ ok: true }>(`/api/keys/${id}/revoke`, { method: "POST" }),
+    listTeamMembers: () => request<{ members: TeamMember[] }>("/api/team/members"),
+    listInvitations: () => request<{ invitations: Invitation[] }>("/api/team/invitations"),
+    inviteMember: (payload: unknown) =>
+      request<{ invitation: { id: string; email: string; role: string } }>("/api/team/invitations", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    revokeInvitation: (id: string) =>
+      request<{ ok: true }>(`/api/team/invitations/${id}/revoke`, { method: "POST" }),
+    acceptInvitation: (payload: unknown) =>
+      request<{ token: string }>("/api/invitations/accept", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    getInvitation: (token: string) =>
+      request<{ email: string; role: string; organizationName: string }>(
+        `/api/invitations/${encodeURIComponent(token)}`,
+      ),
 
     // --- Admin-only endpoints (require a session with internalRole) ---
     publishConfig: (payload: unknown) =>
