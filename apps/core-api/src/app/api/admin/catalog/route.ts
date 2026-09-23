@@ -11,6 +11,8 @@ const upsertProductSchema = z.object({
   summary: z.string().nullable().default(null),
   description: z.string().nullable().default(null),
   icon: z.string().nullable().default(null),
+  features: z.array(z.string()).default([]),
+  billingUnit: z.string().nullable().default(null),
   countries: z.array(z.string()).default([]),
   status: z.enum(["ACTIVE", "BETA", "COMING_SOON", "PRIVATE", "DISABLED"]),
   publicPageEnabled: z.boolean().default(false),

@@ -7,3 +7,4 @@ export * from "./wallet";
 export * from "./team";
 export * from "./otp";
 export * from "./providers";
+export * from "./website";

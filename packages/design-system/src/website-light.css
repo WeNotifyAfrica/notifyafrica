@@ -3,15 +3,25 @@
  * tokens/components (import nocturne.css first, this file after).
  * Per design handoff §3: the public website is the one surface that runs on
  * a white ground, at the client's request. Everything else in the product
- * (Console, Admin) stays on the dark Nocturne ground. The accent is kept
- * identical; only the neutral/background/text roles are remapped.
- * Scope this under [data-theme="website-light"] on the app's <html>/<body>.
+ * (Console, Admin) stays on the dark Nocturne ground.
+ *
+ * Exact values from the reference mockup
+ * (design_handoff_notifyafrica/designs/NotifyAfrica - Site web (présentation).dc.html,
+ * inline <style> block): background/text/divider AND accent are all
+ * reaccorded for the light ground (the dark theme's lavender accent
+ * #9184d9 doesn't have enough contrast on white — the mockup drops to a
+ * darker step of the same accent ramp instead of a different hue).
  */
 [data-theme="website-light"] {
-  --color-bg: #ffffff;
+  --color-bg: #f7f7fb;
   --color-surface: #ffffff;
-  --color-text: var(--color-neutral-900);
-  --color-divider: var(--color-neutral-200);
+  --color-text: #1b1b24;
+  --color-divider: color-mix(in srgb, #1b1b24 14%, transparent);
+  --color-accent: #5d5294;
+  --color-accent-300: #423a6a;
+  --shadow-sm: 0 0 0 1px #e4e7f5;
+  --shadow-md: 0 0 0 1px #e4e7f5, 0 6px 18px rgba(27, 27, 36, 0.08);
+  --shadow-lg: 0 0 0 1px #cfd3e5, 0 16px 40px rgba(27, 27, 36, 0.12);
 }
 
 [data-theme="website-light"] .card {

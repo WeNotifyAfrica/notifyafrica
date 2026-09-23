@@ -152,14 +152,58 @@ path actually calls out to any of these endpoints yet, and `authType` is a
 label, not a stored credential (a Credentials Vault, 02_Specifications
 Backoffice §24, isn't built).
 
+## Website design-fidelity pass (Lot 2)
+
+Rebuilt against `design_handoff_notifyafrica/designs/NotifyAfrica - Site web
+(présentation).dc.html`, the reference mockup for the public site, instead
+of the placeholder pages Phase A shipped. Three things changed:
+
+1. **Light-theme tokens were wrong.** `packages/design-system/src/
+   website-light.css` only remapped background/text/divider and left the
+   dark theme's lavender accent (`#9184d9`) untouched — it doesn't have
+   enough contrast on white. The mockup's own `<style>` block reaccords the
+   accent too (`#5d5294`, with `--color-accent-300: #423a6a` for large price
+   numbers) plus lighter shadow tokens; the override now matches exactly.
+2. **Nav/footer/pages rebuilt to the mockup's actual structure**: logo
+   asset (`apps/website/public/notifyafrica-logo-lockup.png`), 5-item nav
+   with active-page highlighting (`SiteHeader.tsx`, a Client Component for
+   `usePathname()`), a real footer (`SiteFooter.tsx`), and all 6 routes the
+   nav links to: `/` (hero, stats, products, how-it-works, use cases,
+   pricing preview, trust cards, final CTA), `/produits`, `/tarifs`
+   (product-tab switcher + country/currency filters + example invoice +
+   payment methods), `/solutions`, `/developpeurs`, `/docs`.
+3. **Every price is still live, nothing new got hardcoded.** The mockup's
+   example data (hero preview card, product descriptions/feature chips,
+   stats bar, how-it-works steps, use cases, solutions, trust cards, payment
+   methods, docs sections) went into `packages/config-seed` as
+   `seedWebsiteContent` (new `website.content` config key, same
+   admin-config → seed → fallback resolution as everything else) — not into
+   component constants. `CatalogProduct` gained two columns to support this
+   without inventing local arrays: `features: String[]` and `billingUnit:
+   String?` (migration `20260923063229_add_catalog_features_billing_unit`).
+   The hero's illustrative "campaign in progress" card seeds only its
+   recipient/delivered counts and balance label — its unit price and total
+   are a live `estimatePricing` call, so that card can never show a stale
+   price. The Tarifs page's example invoice is a live estimate too; its
+   "TVA" line from the mockup was dropped rather than faked, since no tax
+   engine exists yet (see "not built yet" below).
+
+Not yet done on the Website: the remaining `01_Specifications_Website`
+sections (testimonials, FAQ), a real Contact form (§14 — CTAs currently
+resolve to a `mailto:` link via `ctaHref()`), SEO beyond per-page
+title/description, a Status page, and cross-app cache invalidation
+(pages still fetch `no-store`, correct but unoptimized).
+
 ## What's built vs. what's next
 
 Built:
 - **Phase A** — Monorepo, pnpm + Turborepo, shared packages, Nocturne design
   system wired into all three frontends, Prisma schema, Config Registry +
   resolver + seed + idempotent Admin import, Catalog + minimal Pricing
-  Engine, Console register/login → `USER_REGISTERED` → Admin notification,
-  Website catalog/tarifs pages.
+  Engine, Console register/login → `USER_REGISTERED` → Admin notification.
+- **Website** (Lot 2, design-fidelity pass) — all 6 pages the nav links to
+  rebuilt against the reference mockup, correct light-theme tokens, seeded
+  marketing content, zero hardcoded prices (see above for detail).
 - **Phase B** — Admin catalog publish/status form, Admin pricing rule
   publish (versioned, auto-archives the overlapping tier), Console Tarifs
   page (`/dashboard/pricing`) reading the same Catalog/Pricing API as
@@ -198,7 +242,10 @@ OTP pricing rule → generate a code (wallet debited) → wrong code rejected
 with attempts remaining → correct code verified → shows up in history.
 Separately: created an operator, a provider with an endpoint, and a route
 tying them to a product/country — all three list endpoints reflect it with
-the right nested relations.
+the right nested relations. Separately: all 6 rebuilt Website pages return
+200 with the expected mockup copy; the light-theme accent override
+(`#5d5294`) was confirmed present in the actual production CSS bundle, not
+just the source file.
 
 Not built yet (tracked so it isn't silently dropped):
 - The other 19 design lots (Campaigns, WhatsApp, Email, Statistiques,

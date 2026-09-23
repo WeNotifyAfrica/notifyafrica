@@ -13,6 +13,7 @@ import type { ConfigEnvironment, ConfigScope, ResolvedConfig } from "@notifyafri
 const SEED_LOOKUP: Record<string, unknown> = {
   "website.navigation": notifyAfricaSeed.navigation,
   "website.homepageSections": notifyAfricaSeed.homepageSections,
+  "website.content": notifyAfricaSeed.websiteContent,
   "catalog.countries": notifyAfricaSeed.countries,
   "catalog.currencies": notifyAfricaSeed.currencies,
 };

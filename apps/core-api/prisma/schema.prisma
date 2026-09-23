@@ -252,6 +252,13 @@ model CatalogProduct {
   summary            String?
   description        String?
   icon               String?
+  /// Short feature tags for the public product card (e.g. "Envoi en masse")
+  /// — Website §9 lists "avantages" as part of the public catalog entry.
+  features           String[]
+  /// Billing unit label used to render "par {billingUnit}" on pricing
+  /// surfaces (e.g. "message", "code vérifié") without hardcoding it in a
+  /// component.
+  billingUnit        String?
   countries          String[]
   status             ProductStatus @default(COMING_SOON)
   publicPageEnabled  Boolean       @default(false)

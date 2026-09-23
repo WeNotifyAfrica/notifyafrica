@@ -8,6 +8,7 @@ export const env = {
   coreApiUrl: process.env.CORE_API_URL ?? "http://localhost:3010",
   docsUrl: process.env.DOCS_URL ?? "http://localhost:3000/docs",
   statusUrl: process.env.STATUS_URL ?? "http://localhost:3000/status",
+  contactEmail: process.env.CONTACT_EMAIL ?? "contact@notifyafrica.com",
 };
 
 /** Builds a Console signup/login link, preserving campaign attribution
@@ -21,4 +22,21 @@ export function consoleAuthUrl(
   if (context.product) url.searchParams.set("product", context.product);
   if (context.campaign) url.searchParams.set("campaign", context.campaign);
   return url.toString();
+}
+
+/** Resolves a seeded CTA's abstract `target` (e.g. "register", "quote")
+ * into a real href — keeps the seed content provider-agnostic instead of
+ * baking a Console/mailto URL into packages/config-seed. */
+export function ctaHref(target: string, source: string): string {
+  switch (target) {
+    case "register":
+      return consoleAuthUrl("register", { source });
+    case "login":
+      return consoleAuthUrl("login", { source });
+    case "quote":
+      return `mailto:${env.contactEmail}?subject=Demande de devis`;
+    case "contact":
+    default:
+      return `mailto:${env.contactEmail}`;
+  }
 }

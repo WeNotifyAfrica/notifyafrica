@@ -14,16 +14,27 @@
  * "import seed" action (04_Prompt §7) stays idempotent and auditable.
  */
 
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 2;
 
+/**
+ * Catalog copy (description/features/billingUnit) mirrors the reference
+ * mockup's product cards (design_handoff_notifyafrica/designs/NotifyAfrica
+ * - Site web (présentation).dc.html, `catalog` getter) — this is exactly
+ * the "donnée métier d'exemple" the handoff says to seed, not hardcode into
+ * a Website component (04_Prompt §6).
+ */
 export const seedCatalog = [
   {
     key: "SMS",
     name: "SMS",
     slug: "sms",
-    category: "messaging",
+    category: "Messagerie",
     summary: "Envoi de SMS transactionnels et de masse en Afrique de l'Ouest et centrale.",
+    description:
+      "Envoi unitaire, envoi en masse et campagnes planifiées. Nom d'expéditeur personnalisé, modèles réutilisables, personnalisation par destinataire, plusieurs opérateurs avec repli automatique en cas de dégradation.",
     icon: "chat-text",
+    features: ["Envoi en masse", "Planification", "Modèles", "Nom d'expéditeur", "Suivi de livraison"],
+    billingUnit: "message",
     countries: ["TG", "CI", "SN", "BJ", "BF", "ML"],
     status: "ACTIVE" as const,
     publicPageEnabled: true,
@@ -31,11 +42,15 @@ export const seedCatalog = [
   },
   {
     key: "OTP",
-    name: "OTP",
+    name: "Codes OTP",
     slug: "otp",
-    category: "messaging",
+    category: "Authentification",
     summary: "Codes de vérification à usage unique, multi-canal avec repli.",
+    description:
+      "Génération, envoi et vérification de codes à usage unique. Durée de validité, longueur et format paramétrables, nombre de tentatives limité, message personnalisable. Les codes non délivrés ne sont pas facturés.",
     icon: "shield-check",
+    features: ["Vérification", "Durée de validité", "Anti-fraude", "Multi-applications"],
+    billingUnit: "code vérifié",
     countries: ["TG", "CI", "SN", "BJ", "BF", "ML"],
     status: "ACTIVE" as const,
     publicPageEnabled: true,
@@ -45,9 +60,13 @@ export const seedCatalog = [
     key: "WHATSAPP",
     name: "WhatsApp Business",
     slug: "whatsapp",
-    category: "messaging",
+    category: "Conversationnel",
     summary: "Modèles Meta, conversations et notifications WhatsApp Business.",
+    description:
+      "Numéro professionnel vérifié, modèles de message approuvés, conversations entrantes centralisées. Catégories service client, authentification et marketing, chacune avec son tarif.",
     icon: "whatsapp-logo",
+    features: ["Modèles approuvés", "Conversations entrantes", "Numéros vérifiés", "Catégories Meta"],
+    billingUnit: "conversation",
     countries: ["TG", "CI", "SN", "BJ", "BF", "ML"],
     status: "BETA" as const,
     publicPageEnabled: true,
@@ -57,9 +76,13 @@ export const seedCatalog = [
     key: "EMAIL",
     name: "Email",
     slug: "email",
-    category: "messaging",
+    category: "Transactionnel",
     summary: "Envoi transactionnel, domaines et modèles email.",
+    description:
+      "Domaines authentifiés, adresses d'expédition vérifiées, gestion automatique des désinscriptions et des adresses invalides, suivi d'ouverture et de délivrabilité.",
     icon: "envelope",
+    features: ["Domaines authentifiés", "Désinscriptions", "Délivrabilité", "Modèles"],
+    billingUnit: "email",
     countries: ["TG", "CI", "SN", "BJ", "BF", "ML"],
     status: "COMING_SOON" as const,
     publicPageEnabled: true,
@@ -69,9 +92,12 @@ export const seedCatalog = [
     key: "PAYMENT_COLLECTION",
     name: "Payment Collection",
     slug: "payment-collection",
-    category: "payments",
+    category: "Paiements",
     summary: "Collecte de paiements Mobile Money et carte (feuille de route).",
+    description: null,
     icon: "wallet",
+    features: [],
+    billingUnit: null,
     countries: [],
     status: "COMING_SOON" as const,
     publicPageEnabled: false,
@@ -81,9 +107,12 @@ export const seedCatalog = [
     key: "PAYOUT",
     name: "Payout",
     slug: "payout",
-    category: "payments",
+    category: "Paiements",
     summary: "Décaissement vers portefeuilles Mobile Money (feuille de route).",
+    description: null,
     icon: "arrow-line-up-right",
+    features: [],
+    billingUnit: null,
     countries: [],
     status: "COMING_SOON" as const,
     publicPageEnabled: false,
@@ -171,15 +200,112 @@ export const seedPricingRules = [
   },
 ];
 
-/** Website navigation seed (01_Specifications_Website §4). */
+/** Website navigation seed (01_Specifications_Website §4) — matches the
+ * reference mockup's nav bar exactly (Produits, Solutions, Tarifs,
+ * Développeurs, Docs). */
 export const seedNavigation = [
   { key: "products", label: "Produits", href: "/produits", order: 1, enabled: true },
   { key: "solutions", label: "Solutions", href: "/solutions", order: 2, enabled: true },
   { key: "pricing", label: "Tarifs", href: "/tarifs", order: 3, enabled: true },
   { key: "developers", label: "Développeurs", href: "/developpeurs", order: 4, enabled: true },
-  { key: "resources", label: "Ressources", href: "/ressources", order: 5, enabled: true },
-  { key: "company", label: "Entreprise", href: "/entreprise", order: 6, enabled: true },
+  { key: "docs", label: "Docs", href: "/docs", order: 5, enabled: true },
 ];
+
+/**
+ * Website marketing content seed — mirrors the reference mockup's example
+ * data verbatim (design handoff, `Component.renderVals()` /
+ * `Component.catalog`). Illustrative, Admin-editable content
+ * (00_Contexte_Global §7.1 lists "contenu commercial critique" among what
+ * must never be hardcoded in a component), not pricing — pricing always
+ * comes from the Pricing Engine.
+ */
+export const seedWebsiteContent = {
+  /** The hero's illustrative "campaign in progress" card. Recipient/delivery
+   * counts and the balance-after label are decorative UI-mockup flavor;
+   * unit price and total are deliberately NOT seeded here — the Website
+   * computes them live from a real Pricing Engine estimate at `recipients`
+   * quantity, so this card never shows a stale or fabricated price
+   * (04_Prompt §5/§6). */
+  heroPreview: {
+    campaignLabel: "Rappel échéance",
+    statusLabel: "En cours",
+    recipients: 50000,
+    delivered: 48912,
+    balanceAfterLabel: "1 260 000 FCFA",
+  },
+  stats: [
+    { value: "12", label: "pays couverts" },
+    { value: "28", label: "opérateurs connectés" },
+    { value: "98,4 %", label: "taux de délivrabilité" },
+    { value: "99,95 %", label: "disponibilité sur 30 jours" },
+  ],
+  howItWorks: [
+    { n: "01", title: "Créez votre compte", desc: "Une organisation, autant de projets que nécessaire." },
+    { n: "02", title: "Testez gratuitement", desc: "100 messages de test offerts, sans carte bancaire." },
+    { n: "03", title: "Rechargez votre solde", desc: "Mobile money, carte bancaire ou virement." },
+    { n: "04", title: "Envoyez et suivez", desc: "Coût affiché avant envoi, livraison suivie en temps réel." },
+  ],
+  useCases: [
+    { title: "Codes de connexion", desc: "Sécuriser les connexions des banques, fintechs et applications." },
+    { title: "Alertes transactionnelles", desc: "Confirmations de paiement, relevés, rappels d'échéance." },
+    { title: "Campagnes marketing", desc: "Audiences ciblées, planification, rapport de campagne." },
+    { title: "Notifications logistiques", desc: "Statuts de livraison et confirmations de rendez-vous." },
+    { title: "Secteur public", desc: "Convocations, rappels de santé, alertes institutionnelles." },
+    { title: "Service client", desc: "WhatsApp entrant relié à vos outils internes." },
+  ],
+  solutions: [
+    {
+      title: "Banques & fintechs",
+      desc: "Codes de connexion, alertes de transaction, relances de prélèvement. Volumes élevés et exigences de sécurité.",
+    },
+    { title: "Opérateurs & utilities", desc: "Rappels de facture, coupures programmées, campagnes de recouvrement." },
+    { title: "E-commerce & logistique", desc: "Confirmations de commande, suivi de livraison, créneaux de retrait." },
+    { title: "Santé & institutions", desc: "Convocations, rappels de rendez-vous, alertes de santé publique." },
+    { title: "Plateformes SaaS", desc: "Notifications produit et authentification, en marque blanche via API." },
+    { title: "ONG & bailleurs", desc: "Sensibilisation de masse, enquêtes par SMS, coordination terrain." },
+  ],
+  trustCards: [
+    {
+      kicker: "Sécurité",
+      title: "Vos données restent les vôtres",
+      desc: "Chiffrement des échanges, accès par rôle, journal d'activité complet, conformité aux exigences locales de conservation des données.",
+      meta: null,
+    },
+    {
+      kicker: "Fiabilité",
+      title: "Plusieurs routes par opérateur",
+      desc: "Si une route se dégrade, vos messages basculent automatiquement sur une autre. Page de statut publique et historique des incidents.",
+      meta: "99,95 % de disponibilité sur 30 jours",
+    },
+    {
+      kicker: "Couverture",
+      title: "Multi-pays, multi-devises",
+      desc: "Facturation dans la devise de votre choix, disponibilité gérée pays par pays.",
+      meta: "XOF · XAF · GHS · NGN · KES · USD · EUR · ZAR",
+    },
+  ],
+  paymentMethods: [
+    { title: "Mobile Money", desc: "Moov, MTN, Yas, Telecel — crédit immédiat" },
+    { title: "Carte bancaire", desc: "Visa, Mastercard — crédit immédiat" },
+    { title: "Virement bancaire", desc: "À partir de 500 000 FCFA — 24 à 48 h" },
+    { title: "Facturation mensuelle", desc: "Réservée aux contrats Enterprise" },
+  ],
+  developerStats: [
+    { kicker: "Disponibilité", value: "99,95 %", desc: "sur les 30 derniers jours" },
+    { kicker: "Latence moyenne", value: "1,2 s", desc: "de l'appel à la remise opérateur" },
+    { kicker: "Taux de livraison", value: "98,4 %", desc: "toutes destinations confondues" },
+  ],
+  docsSections: [
+    { title: "Démarrage", items: "Créer un compte · Générer une clé · Premier envoi" },
+    { title: "SMS", items: "Envoi simple · Envoi en masse · Noms d'expéditeur · Modèles" },
+    { title: "OTP", items: "Générer un code · Vérifier · Durée de validité" },
+    { title: "WhatsApp", items: "Modèles approuvés · Conversations · Numéros" },
+    { title: "Email", items: "Domaines · Adresses d'expédition · Désinscriptions" },
+    { title: "Suivi", items: "Statuts de livraison · Notifications de statut · Journaux" },
+    { title: "Facturation", items: "Solde · Recharges · Factures" },
+    { title: "Sécurité", items: "Clés et environnements · Rôles · Journal d'activité" },
+  ],
+};
 
 /** Countries/currencies seed (design handoff §5 invariant 6, invariant 7 scope). */
 export const seedCountries = [
@@ -202,9 +328,22 @@ export const seedCurrencies = [
   { code: "ZAR", symbol: "R", decimals: 2 },
 ];
 
-/** Homepage sections seed (01_Specifications_Website §7). */
+/** Homepage sections seed (01_Specifications_Website §7) — hero copy matches
+ * the reference mockup verbatim. */
 export const seedHomepageSections = [
-  { key: "hero", order: 1, visible: true, title: "Communiquez avec toute l'Afrique de l'Ouest et centrale", cta: { label: "Créer un compte", target: "register" } },
+  {
+    key: "hero",
+    order: 1,
+    visible: true,
+    kicker: "Plateforme de communication",
+    title: "Parlez à toute l'Afrique depuis une seule plateforme.",
+    accentSpan: "une seule plateforme",
+    subtitle:
+      "SMS, codes de sécurité, WhatsApp Business et Email — routage multi-opérateurs, tarifs transparents, paiement à l'usage sans abonnement.",
+    badge: "100 messages de test offerts · aucune carte bancaire requise",
+    cta: { label: "Créer un compte", target: "register" },
+    secondaryCta: { label: "Parler à un expert", target: "contact" },
+  },
   { key: "value_prop", order: 2, visible: true },
   { key: "products", order: 3, visible: true },
   { key: "use_cases", order: 4, visible: true },
@@ -214,7 +353,15 @@ export const seedHomepageSections = [
   { key: "trust_security", order: 8, visible: true },
   { key: "testimonials", order: 9, visible: true },
   { key: "faq", order: 10, visible: true },
-  { key: "cta_final", order: 11, visible: true, cta: { label: "Créer un compte", target: "register" } },
+  {
+    key: "cta_final",
+    order: 11,
+    visible: true,
+    title: "Vos 100 premiers messages de test sont offerts.",
+    subtitle: "Créez un compte, testez gratuitement, rechargez seulement quand vous passez en production.",
+    cta: { label: "Créer un compte", target: "register" },
+    secondaryCta: { label: "Demander un devis", target: "quote" },
+  },
 ];
 
 export const notifyAfricaSeed = {
@@ -225,4 +372,5 @@ export const notifyAfricaSeed = {
   countries: seedCountries,
   currencies: seedCurrencies,
   homepageSections: seedHomepageSections,
+  websiteContent: seedWebsiteContent,
 };

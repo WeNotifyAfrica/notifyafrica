@@ -11,6 +11,10 @@ export interface CatalogProduct {
   summary: string | null;
   description: string | null;
   icon: string | null;
+  /** Short feature tags for the public product card. */
+  features: string[];
+  /** Billing unit label, e.g. "message" -> rendered as "par message". */
+  billingUnit: string | null;
   countries: string[];
   status: ProductStatus;
   publicPageEnabled: boolean;
