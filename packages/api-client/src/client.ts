@@ -1,8 +1,11 @@
 import type {
   CatalogProduct,
+  Message,
   PricingEstimateRequest,
   PricingEstimateResult,
   ResolvedConfig,
+  Transaction,
+  Wallet,
 } from "@notifyafrica/types";
 
 export interface CoreApiClientOptions {
@@ -71,6 +74,15 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         };
       }>("/api/auth/session"),
 
+    // --- Console endpoints (require an authenticated org session) ---
+    getWallet: () => request<{ wallet: Wallet }>("/api/wallet"),
+    sendSms: (payload: unknown) =>
+      request<{ message: Message; transaction: Transaction; estimate: PricingEstimateResult }>(
+        "/api/sms/send",
+        { method: "POST", body: JSON.stringify(payload) },
+      ),
+    listSmsHistory: () => request<{ messages: Message[] }>("/api/sms/history"),
+
     // --- Admin-only endpoints (require a session with internalRole) ---
     publishConfig: (payload: unknown) =>
       request<{ entry: unknown }>("/api/admin/config", { method: "POST", body: JSON.stringify(payload) }),
@@ -92,6 +104,36 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
       }),
     triggerSeedImport: () =>
       request<{ skipped: boolean; version: number }>("/api/admin/seed-import", { method: "POST" }),
+    listOrganizations: () =>
+      request<{
+        organizations: {
+          id: string;
+          name: string;
+          country: string;
+          currency: string;
+          createdAt: string;
+          memberCount: number;
+          projectCount: number;
+          wallet: Wallet | null;
+        }[];
+      }>("/api/admin/organizations"),
+    listUsers: () =>
+      request<{
+        users: {
+          id: string;
+          email: string;
+          status: string;
+          emailVerifiedAt: string | null;
+          createdAt: string;
+          organizations: { id: string; name: string; role: string }[];
+        }[];
+      }>("/api/admin/users"),
+    creditWallet: (payload: unknown) =>
+      request<{ wallet: Wallet }>("/api/admin/wallet/credit", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    listTransactions: () => request<{ transactions: Transaction[] }>("/api/admin/transactions"),
   };
 }
 

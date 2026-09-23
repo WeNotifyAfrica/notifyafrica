@@ -1,4 +1,4 @@
-# NotifyAfrica — Architecture (Phase A: Foundation)
+# NotifyAfrica — Architecture (Phases A-D: Foundation through Wallet/SMS)
 
 Source documents: `00_Contexte_Global_NotifyAfrica.md` through `03_Specifications_Console_NotifyAfrica.md`,
 `04_Prompt_Claude_Initialisation_NotifyAfrica.md`, and `design_handoff_notifyafrica/README.md` (25/27 design lots).
@@ -73,38 +73,68 @@ This is a documented deviation from a literal Auth.js install (see
 `docs/DECISIONS.md`), consistent with 04_Prompt §28 ("ambiguïté mineure →
 décision cohérente, documentée").
 
+## Wallet ledger and SMS send (Phase D)
+
+`apps/core-api/src/lib/wallet.ts` implements the ledger primitives from
+04_Prompt §15 as DB-transactional pairs (balance mutation + `LedgerEntry` row
+in the same commit): `creditWallet`, `holdFunds`, `captureFunds`,
+`releaseFunds`. A wallet is auto-provisioned at registration
+(`ensureWallet`, 0 balance, org's currency).
+
+`POST /api/sms/send` is the one place that exercises the mandatory sequence
+end to end: `estimatePricing` (1 unit) → `holdFunds` (402 if insufficient) →
+`sendViaMockProvider` (`apps/core-api/src/lib/providers/mock-sms.ts` — the
+one file a real SMPP/aggregator adapter replaces later) → `captureFunds` on
+success / `releaseFunds` on failure → a `Transaction` row (frozen
+`pricingSnapshot`) + a `Message` row, plus a `FIRST_MESSAGE_SENT` event on an
+org's first send. Amounts are converted from the Pricing Engine's decimal
+output to integer minor units via `toMinorUnits` (rounds to the currency's
+seeded `decimals`, so XOF — 0 decimals — rounds to the nearest whole unit).
+
+Since no real payment gateway is wired, Admin's `POST
+/api/admin/wallet/credit` (audited, reason required) stands in for a topup
+— see `apps/admin/src/app/(app)/dashboard/organizations/page.tsx`.
+
 ## What's built vs. what's next
 
-Built (Phase A slice, per 04_Prompt §25-27):
-- Monorepo, pnpm + Turborepo, shared packages.
-- Nocturne design system wired into all three frontends (dark for
-  Console/Admin, light override for Website).
-- Prisma schema covering Phase A entities plus schema-only stubs for
-  Wallet/Ledger/Transaction/Quote/Provider/Route (no engine logic yet —
-  04_Prompt §16 "prepare the models").
-- Config Registry + resolver + seed + idempotent Admin-triggered import.
-- Catalog + minimal Pricing Engine (base price / tier / provider-cost+markup;
-  discounts/taxes wired as empty arrays, pending Discount Engine).
-- Console register/login → `USER_REGISTERED` → Admin notification.
-- Admin: seed import trigger, catalog publish form, pricing rule publish form,
-  notification center list.
-- Website: catalog + SMS tarifs pages reading straight from the Core API
-  (no hardcoded price, per 04_Prompt §5).
-- docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy proxy.
-- CI/CD (`.github/workflows/deploy.yml`): push to `main` builds and pushes
-  images to GHCR, then deploys to a VPS over SSH — see `docs/DEPLOYMENT.md`
-  for the one-time server setup this depends on. Not yet exercised against a
-  real server in this session (no VPS access here) — only the compose/CI
-  file syntax and the Dockerfile logic have been validated locally.
+Built:
+- **Phase A** — Monorepo, pnpm + Turborepo, shared packages, Nocturne design
+  system wired into all three frontends, Prisma schema, Config Registry +
+  resolver + seed + idempotent Admin import, Catalog + minimal Pricing
+  Engine, Console register/login → `USER_REGISTERED` → Admin notification,
+  Website catalog/tarifs pages.
+- **Phase B** — Admin catalog publish/status form, Admin pricing rule
+  publish (versioned, auto-archives the overlapping tier), Console Tarifs
+  page (`/dashboard/pricing`) reading the same Catalog/Pricing API as
+  Website and Admin, so a repricing shows up in all three at once.
+- **Phase C** — Organization + default Project created at registration,
+  wallet auto-provisioned, Admin Organizations list (Customer 360 slice:
+  identity, wallet, member/project counts) and Admin Users list.
+- **Phase D** — Wallet ledger engine (see above), Console SMS send
+  (`/dashboard/sms`, estimate → hold → capture, wallet-gated) and history,
+  Console Facturation page (`/dashboard/billing`), Admin manual wallet
+  credit, Admin Transactions list.
+- Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
+  proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
+  pushes images to GHCR, then deploys to a VPS over SSH, see
+  `docs/DEPLOYMENT.md`. Not yet exercised against a real server (no VPS
+  access in this session) — only compose/CI YAML and the Dockerfile logic
+  have been validated locally.
+
+Verified end-to-end against local Postgres/Redis (register → 0 balance →
+send blocked with `insufficient_balance` → Admin credits wallet → send
+succeeds → wallet debited → Admin sees the Transaction, the credited
+Organization, and both `USER_REGISTERED`/`FIRST_MESSAGE_SENT` notifications).
 
 Not built yet (tracked so it isn't silently dropped):
 - The other 23 design lots (Campaigns, OTP, WhatsApp, Email, Developers,
-  Billing/Wallet UI, Team, Settings, Support, and all Back-office lots
-  20-25) — Phase B onward per 04_Prompt §3.
-- Discount Engine, tax rules, Quote workflow logic.
-- Wallet ledger engine (estimate → hold → capture/release), real provider
-  adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox credentials yet
-  (design handoff README §9 point 4).
+  Billing/Wallet UI beyond the balance view, Team, Settings, Support, and
+  all Back-office lots 20-25).
+- Bulk SMS / Campaigns (only single-message send exists), Discount Engine,
+  tax rules, Quote workflow logic.
+- Real provider adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox
+  credentials yet (design handoff README §9 point 4); `mock-sms.ts` is the
+  swap point.
 - Cross-app cache invalidation on publish (Website currently always fetches
   `no-store`, so it's correct but not optimized — 01_Specifications_Website §21).
 - Lots 26/27 (not designed yet) — see `docs/DECISIONS.md`.

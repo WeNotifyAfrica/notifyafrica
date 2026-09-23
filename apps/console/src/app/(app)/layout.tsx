@@ -31,9 +31,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <nav style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <NavLink href="/dashboard">Vue d&apos;ensemble</NavLink>
           <NavLink href="/dashboard/sms">SMS</NavLink>
+          <NavLink href="/dashboard/pricing">Tarifs</NavLink>
           <NavLink href="/dashboard/billing">Facturation</NavLink>
-          <NavLink href="/dashboard/team">Équipe</NavLink>
-          <NavLink href="/dashboard/settings">Paramètres</NavLink>
         </nav>
       </aside>
       <div>

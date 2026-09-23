@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { recordEvent } from "@/lib/notify";
 import { recordAudit } from "@/lib/audit";
+import { ensureWallet } from "@/lib/wallet";
 import { hashPassword, signSession } from "@notifyafrica/auth";
 import { registerSchema } from "@notifyafrica/validation";
 
@@ -42,6 +43,8 @@ export async function POST(req: Request) {
   await prisma.project.create({
     data: { organizationId: organization.id, name: "Default", environment: "sandbox" },
   });
+
+  await ensureWallet(organization.id, input.currency);
 
   await recordEvent("USER_REGISTERED", {
     organizationId: organization.id,

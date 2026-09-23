@@ -47,3 +47,13 @@ export async function publishPricingRuleAction(formData: FormData) {
   });
   revalidatePath("/dashboard/pricing");
 }
+
+export async function creditWalletAction(formData: FormData) {
+  const token = await tokenOrThrow();
+  await coreApi(token).creditWallet({
+    organizationId: String(formData.get("organizationId")),
+    amount: Number(formData.get("amount")),
+    reason: String(formData.get("reason")),
+  });
+  revalidatePath("/dashboard/organizations");
+}

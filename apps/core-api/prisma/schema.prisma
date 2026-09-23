@@ -101,6 +101,12 @@ enum LedgerEntryType {
   ADJUSTMENT
 }
 
+enum MessageStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
 model User {
   id              String     @id @default(cuid())
   email           String     @unique
@@ -132,6 +138,7 @@ model Organization {
   wallet       Wallet?
   quotes       Quote[]
   transactions Transaction[]
+  messages     Message[]
 
   @@map("organizations")
 }
@@ -160,6 +167,7 @@ model Project {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   apiKeys      ApiKey[]
   transactions Transaction[]
+  messages     Message[]
 
   @@map("projects")
 }
@@ -334,8 +342,35 @@ model Transaction {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   project      Project?     @relation(fields: [projectId], references: [id])
+  message      Message?
 
   @@map("transactions")
+}
+
+/// SMS send record (03_Specifications_Console §10-13). One Transaction per
+/// paid send holds the frozen pricing snapshot (design handoff invariant
+/// #2); the Message row holds the send-specific fields (destination,
+/// content, provider status) that don't belong on a generic Transaction.
+model Message {
+  id              String        @id @default(cuid())
+  organizationId  String
+  projectId       String
+  product         String        @default("SMS")
+  senderId        String?
+  destination     String
+  content         String
+  status          MessageStatus @default(QUEUED)
+  providerId      String?
+  pricingSnapshot Json
+  transactionId   String?       @unique
+  createdAt       DateTime      @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  transaction  Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@map("messages")
 }
 
 model Country {
