@@ -5,6 +5,22 @@ import { createDiscountRuleAction } from "./actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
 import { discountTypeSchema, discountScopeSchema } from "@notifyafrica/validation";
 
+const TYPE_LABELS: Record<string, string> = {
+  PERCENT: "Pourcentage",
+  FIXED_AMOUNT: "Montant fixe",
+  UNIT_DISCOUNT: "Remise à l'unité",
+  FIXED_PRICE: "Prix fixe",
+  PROMO: "Code promo",
+  BONUS: "Bonus",
+};
+
+const SCOPE_LABELS: Record<string, string> = {
+  GLOBAL: "Global",
+  COUNTRY: "Pays",
+  ORGANIZATION: "Organisation",
+  PROJECT: "Projet",
+};
+
 /**
  * Discount Engine (02_Specifications_Backoffice §13). Exclusive by
  * default — the highest-priority matching rule wins — unless marked
@@ -35,11 +51,11 @@ export default async function DiscountsPage() {
               {rules.map((r) => (
                 <tr key={r.id}>
                   <td>
-                    <Tag variant="outline">{r.type}</Tag>
+                    <Tag variant="outline">{TYPE_LABELS[r.type] ?? r.type}</Tag>
                   </td>
                   <td>{r.productKey ?? "Tous"}</td>
                   <td>
-                    {r.scope}
+                    {SCOPE_LABELS[r.scope] ?? r.scope}
                     {r.scopeId ? ` (${r.scopeId})` : ""}
                   </td>
                   <td className="num">{r.value}</td>
@@ -74,7 +90,7 @@ export default async function DiscountsPage() {
             <select name="type" className="input" defaultValue="PERCENT">
               {discountTypeSchema.options.map((t) => (
                 <option key={t} value={t}>
-                  {t}
+                  {TYPE_LABELS[t] ?? t}
                 </option>
               ))}
             </select>
@@ -86,7 +102,7 @@ export default async function DiscountsPage() {
             <select name="scope" className="input" defaultValue="GLOBAL">
               {discountScopeSchema.options.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {SCOPE_LABELS[s] ?? s}
                 </option>
               ))}
             </select>

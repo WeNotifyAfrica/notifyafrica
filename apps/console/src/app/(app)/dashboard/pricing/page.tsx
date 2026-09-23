@@ -3,6 +3,14 @@ import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { Card, CardTitle, CardBody, Table, Tag, formatPrice } from "@notifyafrica/ui";
 
+const STATUS_LABELS: Record<string, string> = {
+  ACTIVE: "Actif",
+  BETA: "Bêta",
+  COMING_SOON: "Bientôt disponible",
+  PRIVATE: "Privé",
+  DISABLED: "Désactivé",
+};
+
 /**
  * Tarifs (03_Specifications_Console §18) — reads the same Catalog/Pricing
  * API the Website and Admin use; a product published or repriced in Admin
@@ -30,7 +38,7 @@ export default async function ConsolePricingPage() {
       {tiersByProduct.map(({ product, tiers }) => (
         <Card key={product.id} elevation="md" style={{ marginBottom: 16, overflow: "auto" }}>
           <CardTitle>
-            {product.name} <Tag variant="outline">{product.status}</Tag>
+            {product.name} <Tag variant="outline">{STATUS_LABELS[product.status] ?? product.status}</Tag>
           </CardTitle>
           <CardBody>{product.summary}</CardBody>
           {tiers.length > 0 ? (

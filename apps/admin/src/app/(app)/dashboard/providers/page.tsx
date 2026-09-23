@@ -9,6 +9,18 @@ import {
 } from "./actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
 
+const HEALTH_LABELS: Record<string, string> = {
+  UNKNOWN: "Inconnue",
+  HEALTHY: "Opérationnel",
+  DEGRADED: "Dégradé",
+  DOWN: "Hors service",
+};
+
+const ROUTE_STATUS_LABELS: Record<string, string> = {
+  ACTIVE: "Actif",
+  INACTIVE: "Inactif",
+};
+
 /**
  * Providers, Operators & Routing (02_Specifications_Backoffice §19-22,
  * 04_Prompt §17). Configuration storage only — adding a provider here does
@@ -51,7 +63,7 @@ export default async function ProvidersPage() {
                     <td>{p.type}</td>
                     <td>{p.countryCode ?? "—"}</td>
                     <td>
-                      <Tag variant="neutral">{p.healthState}</Tag>
+                      <Tag variant="neutral">{HEALTH_LABELS[p.healthState] ?? p.healthState}</Tag>
                     </td>
                     <td>
                       {p.endpoints.length === 0 ? (
@@ -100,7 +112,9 @@ export default async function ProvidersPage() {
                     <td className="num">{r.priority}</td>
                     <td>{r.strategy}</td>
                     <td>
-                      <Tag variant={r.status === "ACTIVE" ? "accent" : "neutral"}>{r.status}</Tag>
+                      <Tag variant={r.status === "ACTIVE" ? "accent" : "neutral"}>
+                        {ROUTE_STATUS_LABELS[r.status] ?? r.status}
+                      </Tag>
                     </td>
                   </tr>
                 ))}

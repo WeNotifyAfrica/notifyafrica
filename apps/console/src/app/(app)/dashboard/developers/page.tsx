@@ -5,6 +5,11 @@ import { revokeApiKeyAction } from "./actions";
 import { CreateApiKeyForm } from "./CreateApiKeyForm";
 import { Button, Card, CardTitle, Table, Tag } from "@notifyafrica/ui";
 
+const ENV_LABELS: Record<string, string> = {
+  production: "Production",
+  sandbox: "Test",
+};
+
 /** Développeurs - Clés API (03_Specifications_Console §21-22). */
 export default async function DevelopersPage() {
   const cookieStore = await cookies();
@@ -31,7 +36,9 @@ export default async function DevelopersPage() {
                 <tr key={k.id}>
                   <td>{k.name}</td>
                   <td>
-                    <Tag variant={k.environment === "production" ? "accent" : "neutral"}>{k.environment}</Tag>
+                    <Tag variant={k.environment === "production" ? "accent" : "neutral"}>
+                      {ENV_LABELS[k.environment] ?? k.environment}
+                    </Tag>
                   </td>
                   <td className="num">{k.prefix}…</td>
                   <td>{k.revokedAt ? <Tag variant="neutral">Révoquée</Tag> : <Tag variant="accent">Active</Tag>}</td>

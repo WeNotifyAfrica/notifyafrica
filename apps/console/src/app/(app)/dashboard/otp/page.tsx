@@ -10,6 +10,13 @@ const VERIFY_LABELS: Record<string, string> = {
   FAILED: "Code incorrect — tentatives épuisées.",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "En attente",
+  VERIFIED: "Vérifié",
+  EXPIRED: "Expiré",
+  FAILED: "Échoué",
+};
+
 /**
  * OTP (03_Specifications_Console §15). No real channel is wired yet
  * (design handoff README §9 point 4) — generated codes are logged
@@ -104,7 +111,9 @@ export default async function OtpPage({
                 <tr key={c.id}>
                   <td>{c.destination}</td>
                   <td>
-                    <Tag variant={c.status === "VERIFIED" ? "accent" : "neutral"}>{c.status}</Tag>
+                    <Tag variant={c.status === "VERIFIED" ? "accent" : "neutral"}>
+                      {STATUS_LABELS[c.status] ?? c.status}
+                    </Tag>
                   </td>
                   <td className="num">{c.attempts}</td>
                   <td className="num">{new Date(c.expiresAt).toLocaleTimeString("fr-FR")}</td>

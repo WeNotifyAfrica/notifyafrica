@@ -5,6 +5,16 @@ import { inviteMemberAction, revokeInvitationAction } from "./actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
 import { CONSOLE_ROLES } from "@notifyafrica/design-system";
 
+const ROLE_LABELS: Record<string, string> = {
+  OWNER: "Propriétaire",
+  ADMIN: "Administrateur",
+  BILLING_MANAGER: "Responsable facturation",
+  DEVELOPER: "Développeur",
+  CAMPAIGN_MANAGER: "Responsable campagnes",
+  SUPPORT_AGENT: "Agent support",
+  VIEWER_AUDITOR: "Lecteur / Audit",
+};
+
 /** Équipe (03_Specifications_Console §29): membres, invitations, rôles (7). */
 export default async function TeamPage({
   searchParams,
@@ -49,7 +59,7 @@ export default async function TeamPage({
                 <tr key={m.userId}>
                   <td>{m.email}</td>
                   <td>
-                    <Tag variant="neutral">{m.role}</Tag>
+                    <Tag variant="neutral">{ROLE_LABELS[m.role] ?? m.role}</Tag>
                   </td>
                   <td className="num">{new Date(m.memberSince).toLocaleDateString("fr-FR")}</td>
                 </tr>
@@ -74,7 +84,7 @@ export default async function TeamPage({
                 <tr key={inv.id}>
                   <td>{inv.email}</td>
                   <td>
-                    <Tag variant="outline">{inv.role}</Tag>
+                    <Tag variant="outline">{ROLE_LABELS[inv.role] ?? inv.role}</Tag>
                   </td>
                   <td className="num">{new Date(inv.expiresAt).toLocaleDateString("fr-FR")}</td>
                   <td>
@@ -109,7 +119,7 @@ export default async function TeamPage({
             <select name="role" className="input" defaultValue="DEVELOPER">
               {CONSOLE_ROLES.map((role) => (
                 <option key={role} value={role}>
-                  {role}
+                  {ROLE_LABELS[role] ?? role}
                 </option>
               ))}
             </select>
