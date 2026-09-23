@@ -15,6 +15,17 @@ const STATUS_VARIANT: Record<string, "accent" | "neutral" | "outline"> = {
   CANCELLED: "neutral",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Brouillon",
+  SCHEDULED: "Planifiée",
+  QUEUED: "En file",
+  RUNNING: "En cours",
+  COMPLETED: "Terminée",
+  PARTIAL: "Partielle",
+  FAILED: "Échouée",
+  CANCELLED: "Annulée",
+};
+
 /**
  * Campagnes (03_Specifications_Console §12). Creating one only drafts it —
  * estimate/launch happen on the detail page, matching the
@@ -46,7 +57,7 @@ export default async function CampaignsPage() {
                   <td>{c.name}</td>
                   <td className="num">{c.totalCount.toLocaleString("fr-FR")}</td>
                   <td>
-                    <Tag variant={STATUS_VARIANT[c.status] ?? "neutral"}>{c.status}</Tag>
+                    <Tag variant={STATUS_VARIANT[c.status] ?? "neutral"}>{STATUS_LABELS[c.status] ?? c.status}</Tag>
                   </td>
                   <td className="num">
                     {c.sentCount}/{c.totalCount}

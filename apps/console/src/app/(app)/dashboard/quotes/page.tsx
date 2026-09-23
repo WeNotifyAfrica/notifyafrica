@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { requestQuoteAction } from "./actions";
-import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
+import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag, formatPrice } from "@notifyafrica/ui";
 
 const STATUS_LABELS: Record<string, string> = {
   DRAFT: "Brouillon",
@@ -23,7 +23,12 @@ export default async function QuotesPage() {
   const token = cookieStore.get(SESSION_COOKIE)!.value;
   const api = coreApi(token);
 
-  const [{ quotes }, { products }] = await Promise.all([api.listQuotes(), api.listCatalog()]);
+  const [{ quotes }, { products }, currenciesConfig] = await Promise.all([
+    api.listQuotes(),
+    api.listCatalog(),
+    api.listCurrencies(),
+  ]);
+  const currencies = currenciesConfig.value ?? [];
   const publicProducts = products.filter((p) => p.publicPageEnabled);
 
   return (
@@ -52,7 +57,9 @@ export default async function QuotesPage() {
                     </Tag>
                   </td>
                   <td className="num">
-                    {q.payload.offer ? `${q.payload.offer.unitPrice} ${q.payload.offer.currency}` : "—"}
+                    {q.payload.offer
+                      ? formatPrice(q.payload.offer.unitPrice, q.payload.offer.currency, currencies)
+                      : "—"}
                   </td>
                   <td className="num">{new Date(q.createdAt).toLocaleDateString("fr-FR")}</td>
                 </tr>

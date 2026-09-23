@@ -2,12 +2,23 @@ import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { estimateCampaignAction, launchCampaignAction, cancelCampaignAction } from "../actions";
-import { Button, Card, CardTitle, CardBody, Tag } from "@notifyafrica/ui";
+import { Button, Card, CardTitle, CardBody, Tag, formatPrice } from "@notifyafrica/ui";
 
 const ERROR_LABELS: Record<string, string> = {
   insufficient_balance: "Solde insuffisant pour réserver le montant estimé.",
   estimate_required: "Estimez la campagne avant de la lancer.",
   launch_failed: "Le lancement a échoué. Réessayez.",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Brouillon",
+  SCHEDULED: "Planifiée",
+  QUEUED: "En file",
+  RUNNING: "En cours",
+  COMPLETED: "Terminée",
+  PARTIAL: "Partielle",
+  FAILED: "Échouée",
+  CANCELLED: "Annulée",
 };
 
 /**
@@ -26,7 +37,9 @@ export default async function CampaignDetailPage({
   const sp = await searchParams;
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const { campaign } = await coreApi(token).getCampaign(id);
+  const api = coreApi(token);
+  const [{ campaign }, currenciesConfig] = await Promise.all([api.getCampaign(id), api.listCurrencies()]);
+  const currencies = currenciesConfig.value ?? [];
 
   const canEdit = campaign.status === "DRAFT";
   const canCancel = ["DRAFT", "SCHEDULED", "QUEUED"].includes(campaign.status);
@@ -54,7 +67,7 @@ export default async function CampaignDetailPage({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
           <CardTitle>Statut</CardTitle>
           <Tag variant={isTerminal ? (campaign.status === "COMPLETED" ? "accent" : "neutral") : "outline"}>
-            {campaign.status}
+            {STATUS_LABELS[campaign.status] ?? campaign.status}
           </Tag>
         </div>
         <CardBody>{campaign.content}</CardBody>
@@ -69,7 +82,7 @@ export default async function CampaignDetailPage({
           <CardTitle>Estimation</CardTitle>
           <CardBody>
             <span className="num">
-              {campaign.unitPrice} {campaign.currency} / message
+              {formatPrice(campaign.unitPrice, campaign.currency ?? "", currencies)} / message
             </span>
           </CardBody>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -77,7 +90,7 @@ export default async function CampaignDetailPage({
               Coût total réservé
             </span>
             <span className="num" style={{ color: "var(--color-accent-300)" }}>
-              {campaign.estimatedTotal} {campaign.currency}
+              {formatPrice(campaign.estimatedTotal, campaign.currency ?? "", currencies)}
             </span>
           </div>
         </Card>

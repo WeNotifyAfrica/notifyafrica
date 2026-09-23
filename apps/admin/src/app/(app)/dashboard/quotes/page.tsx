@@ -2,8 +2,19 @@ import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { updateQuoteStatusAction } from "./actions";
-import { Button, Card, CardTitle, CardBody, Field, Input, Tag } from "@notifyafrica/ui";
+import { Button, Card, CardTitle, CardBody, Field, Input, Tag, formatPrice } from "@notifyafrica/ui";
 import { quoteStatusSchema } from "@notifyafrica/validation";
+
+const STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Brouillon",
+  SUBMITTED: "Envoyé",
+  UNDER_REVIEW: "En cours d'examen",
+  INFO_REQUIRED: "Information requise",
+  OFFER_AVAILABLE: "Offre disponible",
+  ACCEPTED: "Accepté",
+  REJECTED: "Refusé",
+  EXPIRED: "Expiré",
+};
 
 /**
  * Quotes pipeline (02_Specifications_Backoffice §14). Each card is one
@@ -14,7 +25,9 @@ import { quoteStatusSchema } from "@notifyafrica/validation";
 export default async function AdminQuotesPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const { quotes } = await coreApi(token).listAdminQuotes();
+  const api = coreApi(token);
+  const [{ quotes }, currenciesConfig] = await Promise.all([api.listAdminQuotes(), api.listCurrencies()]);
+  const currencies = currenciesConfig.value ?? [];
 
   return (
     <div>
@@ -32,11 +45,13 @@ export default async function AdminQuotesPage() {
                   {q.payload.notes ?? "Aucune note"}
                 </CardBody>
               </div>
-              <Tag variant={q.status === "ACCEPTED" ? "accent" : "neutral"}>{q.status}</Tag>
+              <Tag variant={q.status === "ACCEPTED" ? "accent" : "neutral"}>
+                {STATUS_LABELS[q.status] ?? q.status}
+              </Tag>
             </div>
             {q.payload.offer ? (
               <p className="text-muted" style={{ fontSize: 13 }}>
-                Offre actuelle : {q.payload.offer.unitPrice} {q.payload.offer.currency} / unité
+                Offre actuelle : {formatPrice(q.payload.offer.unitPrice, q.payload.offer.currency, currencies)} / unité
               </p>
             ) : null}
             <form
@@ -49,7 +64,7 @@ export default async function AdminQuotesPage() {
                 <select name="status" className="input" defaultValue={q.status}>
                   {quoteStatusSchema.options.map((s) => (
                     <option key={s} value={s}>
-                      {s}
+                      {STATUS_LABELS[s] ?? s}
                     </option>
                   ))}
                 </select>

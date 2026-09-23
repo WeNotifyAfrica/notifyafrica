@@ -19,6 +19,18 @@ const TEMPLATE_STATUS_LABEL: Record<string, string> = {
   REJECTED: "Refusé",
 };
 
+const NUMBER_STATUS_LABEL: Record<string, string> = {
+  PENDING: "En attente",
+  VERIFIED: "Vérifié",
+  REJECTED: "Refusé",
+};
+
+const MESSAGE_STATUS_LABEL: Record<string, string> = {
+  SENT: "Envoyé",
+  QUEUED: "En file",
+  FAILED: "Échoué",
+};
+
 /**
  * WhatsApp Business (03_Specifications_Console §16): numéros, modèles,
  * envoi, journal. Seuls les modèles APPROVED (revus par Admin) peuvent être
@@ -73,7 +85,9 @@ export default async function WhatsAppPage({
                   <td>{n.phoneNumber}</td>
                   <td>{n.displayName}</td>
                   <td>
-                    <Tag variant={n.status === "VERIFIED" ? "accent" : "neutral"}>{n.status}</Tag>
+                    <Tag variant={n.status === "VERIFIED" ? "accent" : "neutral"}>
+                      {NUMBER_STATUS_LABEL[n.status] ?? n.status}
+                    </Tag>
                   </td>
                 </tr>
               ))}
@@ -138,7 +152,9 @@ export default async function WhatsAppPage({
                 <tr key={m.id}>
                   <td>{m.destination}</td>
                   <td>
-                    <Tag variant={m.status === "SENT" ? "accent" : "neutral"}>{m.status}</Tag>
+                    <Tag variant={m.status === "SENT" ? "accent" : "neutral"}>
+                      {MESSAGE_STATUS_LABEL[m.status] ?? m.status}
+                    </Tag>
                   </td>
                   <td className="num">{new Date(m.createdAt).toLocaleString("fr-FR")}</td>
                 </tr>

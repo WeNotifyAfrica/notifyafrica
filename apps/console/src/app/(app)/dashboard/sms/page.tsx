@@ -10,6 +10,12 @@ const ERROR_LABELS: Record<string, string> = {
   send_failed: "L'envoi a échoué. Réessayez.",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  SENT: "Envoyé",
+  QUEUED: "En file",
+  FAILED: "Échoué",
+};
+
 export default async function SmsPage({
   searchParams,
 }: {
@@ -60,7 +66,7 @@ export default async function SmsPage({
                   <td>{m.destination}</td>
                   <td>{m.content.slice(0, 40)}</td>
                   <td>
-                    <Tag variant={m.status === "SENT" ? "accent" : "neutral"}>{m.status}</Tag>
+                    <Tag variant={m.status === "SENT" ? "accent" : "neutral"}>{STATUS_LABELS[m.status] ?? m.status}</Tag>
                   </td>
                   <td className="num">{new Date(m.createdAt).toLocaleString("fr-FR")}</td>
                 </tr>
