@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { confirmTransactionAction } from "./actions";
-import { Button, Card, Table, Tag } from "@notifyafrica/ui";
+import { Button, Card, Table, Tag, formatMoney } from "@notifyafrica/ui";
 
 /**
  * Financial transactions (02_Specifications_Backoffice §16). A PENDING
@@ -13,7 +13,9 @@ import { Button, Card, Table, Tag } from "@notifyafrica/ui";
 export default async function TransactionsPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const { transactions } = await coreApi(token).listTransactions();
+  const api = coreApi(token);
+  const [{ transactions }, currenciesConfig] = await Promise.all([api.listTransactions(), api.listCurrencies()]);
+  const currencies = currenciesConfig.value ?? [];
 
   return (
     <div>
@@ -35,9 +37,7 @@ export default async function TransactionsPage() {
               <tr key={t.id}>
                 <td>{t.organization?.name ?? t.organizationId}</td>
                 <td>{t.type}</td>
-                <td className="num">
-                  {t.amountMinor} {t.currency}
-                </td>
+                <td className="num">{formatMoney(t.amountMinor, t.currency, currencies)}</td>
                 <td>
                   <Tag variant={t.status === "PENDING" ? "outline" : "neutral"}>{t.status}</Tag>
                 </td>

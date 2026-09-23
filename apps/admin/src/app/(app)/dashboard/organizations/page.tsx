@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { creditWalletAction } from "../../actions";
-import { Button, Card, CardTitle, CardBody, Field, Input, Table } from "@notifyafrica/ui";
+import { Button, Card, CardTitle, CardBody, Field, Input, Table, formatMoney } from "@notifyafrica/ui";
 
 /**
  * Organizations / Customer 360 (minimal slice — 02_Specifications_Backoffice
@@ -12,7 +12,12 @@ import { Button, Card, CardTitle, CardBody, Field, Input, Table } from "@notifya
 export default async function OrganizationsPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const { organizations } = await coreApi(token).listOrganizations();
+  const api = coreApi(token);
+  const [{ organizations }, currenciesConfig] = await Promise.all([
+    api.listOrganizations(),
+    api.listCurrencies(),
+  ]);
+  const currencies = currenciesConfig.value ?? [];
 
   return (
     <div>
@@ -38,10 +43,10 @@ export default async function OrganizationsPage() {
                 <td>{org.memberCount}</td>
                 <td>{org.projectCount}</td>
                 <td className="num">
-                  {org.wallet ? `${org.wallet.availableMinor} ${org.wallet.currency}` : "—"}
+                  {org.wallet ? formatMoney(org.wallet.availableMinor, org.wallet.currency, currencies) : "—"}
                 </td>
                 <td className="num">
-                  {org.wallet ? `${org.wallet.reservedMinor} ${org.wallet.currency}` : "—"}
+                  {org.wallet ? formatMoney(org.wallet.reservedMinor, org.wallet.currency, currencies) : "—"}
                 </td>
               </tr>
             ))}

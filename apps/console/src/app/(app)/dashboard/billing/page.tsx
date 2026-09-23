@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
 import { topupAction } from "./actions";
-import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
+import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag, formatMoney } from "@notifyafrica/ui";
 
 const ERROR_LABELS: Record<string, string> = {
   payment_method_not_eligible: "Ce moyen de paiement n'est pas disponible dans votre pays.",
@@ -32,11 +32,13 @@ export default async function BillingPage({
   const token = cookieStore.get(SESSION_COOKIE)!.value;
   const api = coreApi(token);
 
-  const [{ wallet }, { methods }, { transactions }] = await Promise.all([
+  const [{ wallet }, { methods }, { transactions }, currenciesConfig] = await Promise.all([
     api.getWallet(),
     api.listPaymentMethods(),
     api.listWalletTransactions(),
+    api.listCurrencies(),
   ]);
+  const currencies = currenciesConfig.value ?? [];
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 24 }}>
@@ -59,7 +61,7 @@ export default async function BillingPage({
             <CardTitle>Disponible</CardTitle>
             <CardBody>
               <span className="num" style={{ fontSize: 22, color: "var(--color-accent-300)" }}>
-                {wallet.availableMinor} {wallet.currency}
+                {formatMoney(wallet.availableMinor, wallet.currency, currencies)}
               </span>
             </CardBody>
           </Card>
@@ -67,7 +69,7 @@ export default async function BillingPage({
             <CardTitle>Réservé</CardTitle>
             <CardBody>
               <span className="num">
-                {wallet.reservedMinor} {wallet.currency}
+                {formatMoney(wallet.reservedMinor, wallet.currency, currencies)}
               </span>
             </CardBody>
           </Card>
@@ -88,9 +90,7 @@ export default async function BillingPage({
               {transactions.map((t) => (
                 <tr key={t.id}>
                   <td>{t.type}</td>
-                  <td className="num">
-                    {t.amountMinor} {t.currency}
-                  </td>
+                  <td className="num">{formatMoney(t.amountMinor, t.currency, currencies)}</td>
                   <td>
                     <Tag variant={t.status === "CAPTURED" ? "accent" : "neutral"}>
                       {STATUS_LABELS[t.status] ?? t.status}
