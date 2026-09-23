@@ -115,6 +115,29 @@ visitor before they set a password; `POST /api/invitations/accept` creates
 the `User` + `Membership` and returns a session token, refusing if an
 account with that email already exists rather than silently merging.
 
+## OTP (Lot 9)
+
+Same estimate → hold → deliver → capture/release sequence as SMS send, on
+the `OTP` catalog product (`apps/core-api/src/app/api/otp/generate/route.ts`).
+Per-"app" configuration (`OtpConfig`: length, expiry, max attempts, resend
+cooldown, channel, fallback channel, template with a `{code}` placeholder)
+lives on the organization, not hardcoded — 03_Specifications_Console §15.
+Only `hashOtpCode` output is persisted on `OtpCode`, never the plaintext
+code; `POST /api/otp/verify` enforces expiry and `maxAttempts` server-side
+("les limites viennent du backend"), flipping to `EXPIRED`/`FAILED` as
+appropriate. Delivery goes through the same mock-channel pattern as SMS
+(`apps/core-api/src/lib/providers/mock-otp.ts`) — logs `otp.intended_delivery`
+with the rendered message instead of actually sending it, since no
+SMS/Email/WhatsApp provider is wired yet.
+
+Fixed along the way: `packages/observability`'s logger let a meta object's
+own `message` key silently overwrite the log line's event-name `message` —
+harmless until a caller's payload happened to have a `message` field of its
+own (OTP's `{destination, channel, message}` did). The logger now applies
+`level`/`message`/`time` after spreading `meta`, so a caller's data can never
+clobber them; the OTP payload field was also renamed to `content` to avoid
+the collision in the first place.
+
 ## What's built vs. what's next
 
 Built:
@@ -137,6 +160,9 @@ Built:
 - **Developers / Team** (Lots 12, 16 partial) — API key create/list/revoke
   with one-time secret reveal; team member list, invite-by-email with a
   7-day token, public accept screen, revoke pending invitation.
+- **OTP** (Lot 9 partial) — per-app config, generate (wallet-gated) and
+  verify with server-enforced expiry/attempts, history log. Bulk/fallback
+  channel logic and analytics aren't built.
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -150,10 +176,12 @@ succeeds → wallet debited → Admin sees the Transaction, the credited
 Organization, and both `USER_REGISTERED`/`FIRST_MESSAGE_SENT` notifications.
 Separately: create an API key → secret shown once, never in the list →
 revoke it; invite a team member → accept via the token → new member shows
-up in `/api/team/members` with a working session.
+up in `/api/team/members` with a working session. Separately: publish an
+OTP pricing rule → generate a code (wallet debited) → wrong code rejected
+with attempts remaining → correct code verified → shows up in history.
 
 Not built yet (tracked so it isn't silently dropped):
-- The other 21 design lots (Campaigns, OTP, WhatsApp, Email, Statistiques,
+- The other 20 design lots (Campaigns, WhatsApp, Email, Statistiques,
   Settings, Support, and all Back-office lots 19-20, 22, 24-25 — Providers/
   Routing (Lot 20) and Pricing admin (Lot 21) have a minimal slice each).
 - Bulk SMS / Campaigns (only single-message send exists), Discount Engine,

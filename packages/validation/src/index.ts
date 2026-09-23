@@ -5,3 +5,4 @@ export * from "./sms";
 export * from "./wallet";
 export * from "./api-keys";
 export * from "./team";
+export * from "./otp";

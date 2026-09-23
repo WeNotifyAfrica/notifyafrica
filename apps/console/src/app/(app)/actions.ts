@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
+import { CoreApiError } from "@notifyafrica/api-client";
 
 async function tokenOrRedirect() {
   const cookieStore = await cookies();
@@ -29,12 +30,7 @@ export async function sendSmsAction(formData: FormData) {
       senderId: formData.get("senderId") ? String(formData.get("senderId")) : null,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown_error";
-    const code = message.includes("402")
-      ? "insufficient_balance"
-      : message.includes("422")
-        ? "quote_required"
-        : "send_failed";
+    const code = err instanceof CoreApiError ? (err.body?.error ?? "send_failed") : "send_failed";
     redirect(`/dashboard/sms?error=${code}`);
   }
 

@@ -1,7 +1,11 @@
 type Level = "debug" | "info" | "warn" | "error";
 
 function log(level: Level, message: string, meta?: Record<string, unknown>) {
-  const line = { level, message, time: new Date().toISOString(), ...meta };
+  // meta spreads last so extra context wins on custom keys, but reserved
+  // keys are re-applied after so a caller's own `level`/`message`/`time`
+  // field (e.g. an OTP payload with a `message` field) can never silently
+  // overwrite the log line's own — it stays visible under `meta`.
+  const line = { ...meta, level, message, time: new Date().toISOString() };
   // eslint-disable-next-line no-console
   console[level === "debug" ? "log" : level](JSON.stringify(line));
 }

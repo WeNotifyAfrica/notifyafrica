@@ -3,6 +3,8 @@ import type {
   CatalogProduct,
   Invitation,
   Message,
+  OtpCodeSummary,
+  OtpConfig,
   PricingEstimateRequest,
   PricingEstimateResult,
   ResolvedConfig,
@@ -15,6 +17,20 @@ export interface CoreApiClientOptions {
   baseUrl: string;
   /** Bearer session token, when the calling app has an authenticated user. */
   sessionToken?: string;
+}
+
+/** Thrown on any non-2xx response, with the parsed JSON error body attached
+ * (falls back to the raw text if the body isn't JSON) so callers can branch
+ * on `err.body?.error` instead of string-matching `err.message`. */
+export class CoreApiError extends Error {
+  constructor(
+    public readonly path: string,
+    public readonly status: number,
+    public readonly body: { error?: string; [key: string]: unknown } | null,
+  ) {
+    super(`Core API ${path} -> ${status}: ${JSON.stringify(body)}`);
+    this.name = "CoreApiError";
+  }
 }
 
 /**
@@ -34,8 +50,14 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
       cache: init?.cache ?? "no-store",
     });
     if (!res.ok) {
-      const body = await res.text();
-      throw new Error(`Core API ${path} -> ${res.status}: ${body}`);
+      const text = await res.text();
+      let parsed: { error?: string; [key: string]: unknown } | null = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        // non-JSON error body — parsed stays null, raw text is still in the message
+      }
+      throw new CoreApiError(path, res.status, parsed);
     }
     return res.json() as Promise<T>;
   }
@@ -110,6 +132,17 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
       request<{ email: string; role: string; organizationName: string }>(
         `/api/invitations/${encodeURIComponent(token)}`,
       ),
+    listOtpConfigs: () => request<{ configs: OtpConfig[] }>("/api/otp/configs"),
+    createOtpConfig: (payload: unknown) =>
+      request<{ config: OtpConfig }>("/api/otp/configs", { method: "POST", body: JSON.stringify(payload) }),
+    generateOtp: (payload: unknown) =>
+      request<{ otpId: string; destination: string; expiresAt: string }>("/api/otp/generate", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    verifyOtp: (payload: unknown) =>
+      request<{ status: string }>("/api/otp/verify", { method: "POST", body: JSON.stringify(payload) }),
+    listOtpHistory: () => request<{ codes: OtpCodeSummary[] }>("/api/otp/history"),
 
     // --- Admin-only endpoints (require a session with internalRole) ---
     publishConfig: (payload: unknown) =>

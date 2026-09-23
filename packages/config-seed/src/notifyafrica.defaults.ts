@@ -152,6 +152,23 @@ export const seedPricingRules = [
     quoteRequired: false,
     priority: 0,
   },
+  {
+    // OTP: illustrative seed price, same ballpark as a transactional SMS —
+    // not a business decision, just a non-empty starting point for Admin
+    // to replace (04_Prompt §11 applies here the same as SMS/WhatsApp).
+    productKey: "OTP",
+    countryCode: null,
+    category: null,
+    volumeMin: 0,
+    volumeMax: null,
+    currency: "XOF",
+    basePrice: 5,
+    markupType: "PERCENT" as const,
+    markupValue: 0,
+    publicVisible: true,
+    quoteRequired: false,
+    priority: 0,
+  },
 ];
 
 /** Website navigation seed (01_Specifications_Website §4). */

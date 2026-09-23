@@ -140,6 +140,7 @@ model Organization {
   transactions Transaction[]
   messages     Message[]
   invitations  Invitation[]
+  otpConfigs   OtpConfig[]
 
   @@map("organizations")
 }
@@ -169,6 +170,7 @@ model Project {
   apiKeys      ApiKey[]
   transactions Transaction[]
   messages     Message[]
+  otpConfigs   OtpConfig[]
 
   @@map("projects")
 }
@@ -371,6 +373,7 @@ model Transaction {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   project      Project?     @relation(fields: [projectId], references: [id])
   message      Message?
+  otpCode      OtpCode?
 
   @@map("transactions")
 }
@@ -399,6 +402,58 @@ model Message {
 
   @@index([organizationId, createdAt])
   @@map("messages")
+}
+
+enum OtpStatus {
+  PENDING
+  VERIFIED
+  EXPIRED
+  FAILED
+}
+
+/// OTP configuration (03_Specifications_Console §15) — one org can define
+/// several, one per "app" (their own end-user application, not NotifyAfrica).
+model OtpConfig {
+  id                    String   @id @default(cuid())
+  organizationId        String
+  projectId             String
+  name                  String
+  length                Int      @default(6)
+  expirySeconds         Int      @default(300)
+  maxAttempts           Int      @default(3)
+  resendCooldownSeconds Int      @default(60)
+  channel               String   @default("SMS")
+  fallbackChannel       String?
+  template              String   @default("Votre code NotifyAfrica est {code}")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  codes        OtpCode[]
+
+  @@map("otp_configs")
+}
+
+/// A single OTP code lifecycle. Only the hash is stored — never the
+/// plaintext code (same principle as password/API-key storage).
+model OtpCode {
+  id             String    @id @default(cuid())
+  configId       String
+  organizationId String
+  destination    String
+  codeHash       String
+  attempts       Int       @default(0)
+  status         OtpStatus @default(PENDING)
+  expiresAt      DateTime
+  transactionId  String?   @unique
+  createdAt      DateTime  @default(now())
+
+  config      OtpConfig    @relation(fields: [configId], references: [id], onDelete: Cascade)
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@map("otp_codes")
 }
 
 model Country {
