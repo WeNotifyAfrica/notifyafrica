@@ -101,6 +101,13 @@ enum LedgerEntryType {
   ADJUSTMENT
 }
 
+enum PaymentMethodFamily {
+  MOBILE_MONEY
+  CARD
+  BANK_TRANSFER
+  INVOICE
+}
+
 enum MessageStatus {
   QUEUED
   SENT
@@ -387,6 +394,26 @@ model Transaction {
   otpCode      OtpCode?
 
   @@map("transactions")
+}
+
+/// Payment methods catalog (02_Specifications_Backoffice §23,
+/// 03_Specifications_Console §9). `instant: false` methods (bank transfer,
+/// monthly invoicing) leave the resulting Transaction at PENDING until
+/// Admin confirms receipt — see /api/admin/transactions/[id]/confirm.
+model PaymentMethod {
+  id         String              @id @default(cuid())
+  name       String
+  family     PaymentMethodFamily
+  /// Eligible countries (ISO codes) — empty array means all countries.
+  countries  String[]
+  minAmount  Decimal?            @db.Decimal(18, 6)
+  maxAmount  Decimal?            @db.Decimal(18, 6)
+  feePercent Decimal             @default(0) @db.Decimal(9, 4)
+  instant    Boolean             @default(true)
+  status     String              @default("ACTIVE")
+  createdAt  DateTime            @default(now())
+
+  @@map("payment_methods")
 }
 
 /// SMS send record (03_Specifications_Console §10-13). One Transaction per

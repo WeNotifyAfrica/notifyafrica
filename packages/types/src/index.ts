@@ -10,3 +10,4 @@ export * from "./providers";
 export * from "./website";
 export * from "./quotes";
 export * from "./discounts";
+export * from "./payment-methods";

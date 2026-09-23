@@ -9,3 +9,4 @@ export * from "./otp";
 export * from "./providers";
 export * from "./quotes";
 export * from "./discounts";
+export * from "./payment-methods";

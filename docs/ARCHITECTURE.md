@@ -290,6 +290,46 @@ as a legacy alias), but the community JSON schema editors use to validate
 a schema-validation error on a file that had zero real compiler errors.
 Switched to `"Node10"`.
 
+## Facturation & Moyens de paiement (Lots 15, 23)
+
+Admin could always credit a wallet manually, but nothing let a customer
+recharge their own — `PaymentMethod` didn't even exist as a model yet.
+Closed end-to-end:
+
+- New `PaymentMethod` model (`family`: MOBILE_MONEY/CARD/BANK_TRANSFER/
+  INVOICE, per-country eligibility, min/max amount, fee %, `instant`
+  flag) — migration `20260923082437_add_payment_methods`.
+- `GET /api/payment-methods` (Console session): methods eligible for the
+  org's country (03_Specifications_Console §9: "selon pays et
+  organisation").
+- `POST /api/wallet/topup` (Console session): validates eligibility/min/
+  max, runs a mock payment adapter
+  (`apps/core-api/src/lib/providers/mock-payment.ts`, same pattern as
+  mock-sms/mock-otp), creates a `Transaction` (`type: WALLET_TOPUP`).
+  **Instant** methods (Mobile Money, card) credit the wallet immediately.
+  **Non-instant** ones (bank transfer, monthly invoicing — "24 à 48 h" per
+  the reference mockup) leave the transaction at `PENDING` and do *not*
+  touch the wallet yet.
+- `POST /api/admin/transactions/:id/confirm`: the step that actually
+  credits a non-instant topup once funds are seen — refuses anything not
+  `WALLET_TOPUP`+`PENDING`, so a repeat confirm can't double-credit.
+- Console `/dashboard/billing`: balance + statement (now backed by a real
+  `GET /api/wallet/transactions`, Console's own view rather than Admin's)
+  + a recharge form.
+- Admin `/dashboard/payment-methods`: catalog CRUD. Admin
+  `/dashboard/transactions`: a "Confirmer" action appears next to any
+  `PENDING` topup.
+
+Verified end-to-end: registered a Togo org, wallet at 0 → instant Mobile
+Money recharge of 10,000 XOF credited immediately → non-instant bank
+transfer of 600,000 XOF (above its 500,000 minimum) created a `PENDING`
+transaction and left the wallet untouched at 10,000 → a 100,000 XOF bank
+transfer attempt was correctly rejected as below the minimum
+(`amount_below_minimum`) → Admin confirmed the pending transfer → wallet
+became 610,000 → **confirming the same transaction a second time correctly
+returned 409 and did not double-credit the wallet**. All apps build and
+typecheck clean.
+
 ## What's built vs. what's next
 
 Built:
@@ -326,6 +366,9 @@ Built:
 - **Discount Engine** (Lot 21 partial) — exclusive-by-default/opt-in-stacking
   rule resolution wired into the Pricing Engine, Admin CRUD, product-scoped
   targeting added to the schema (see above).
+- **Facturation & Moyens de paiement** (Lots 15, 23 partial) — self-service
+  recharge (instant + pending/confirm flows), Admin payment methods catalog
+  and pending-transaction confirmation (see above).
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -354,6 +397,8 @@ anonymous estimates still see the public tier and `quoteRequired: true` —
 no cross-org leakage. Separately: PERCENT/FIXED_AMOUNT/FIXED_PRICE discount
 rules confirmed for correct amount math, priority-based exclusivity,
 opt-in stacking, and date-window expiry (see Discount Engine above).
+Separately: instant vs. non-instant recharge, min/max amount validation,
+and the Admin-confirm double-credit guard (see Facturation above).
 
 Not built yet (tracked so it isn't silently dropped):
 - The other 19 design lots (Campaigns, WhatsApp, Email, Statistiques,
@@ -366,6 +411,8 @@ Not built yet (tracked so it isn't silently dropped):
 - Real provider adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox
   credentials yet (design handoff README §9 point 4); `mock-sms.ts` is the
   swap point.
+- PDF invoices/receipts (03_Specifications_Console §15 "Factures, reçus") —
+  the wallet statement (`/api/wallet/transactions`) covers "relevés" only.
 - Cross-app cache invalidation on publish (Website currently always fetches
   `no-store`, so it's correct but not optimized — 01_Specifications_Website §21).
 - Lots 26/27 (not designed yet) — see `docs/DECISIONS.md`.

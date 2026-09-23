@@ -7,6 +7,7 @@ import type {
   Operator,
   OtpCodeSummary,
   OtpConfig,
+  PaymentMethod,
   PricingEstimateRequest,
   PricingEstimateResult,
   Provider,
@@ -106,6 +107,13 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
 
     // --- Console endpoints (require an authenticated org session) ---
     getWallet: () => request<{ wallet: Wallet }>("/api/wallet"),
+    listPaymentMethods: () => request<{ methods: PaymentMethod[] }>("/api/payment-methods"),
+    topupWallet: (payload: unknown) =>
+      request<{ transaction: Transaction; wallet: Wallet | null }>("/api/wallet/topup", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    listWalletTransactions: () => request<{ transactions: Transaction[] }>("/api/wallet/transactions"),
     sendSms: (payload: unknown) =>
       request<{ message: Message; transaction: Transaction; estimate: PricingEstimateResult }>(
         "/api/sms/send",
@@ -203,6 +211,16 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         body: JSON.stringify(payload),
       }),
     listTransactions: () => request<{ transactions: Transaction[] }>("/api/admin/transactions"),
+    confirmTransaction: (id: string) =>
+      request<{ transaction: Transaction; wallet: Wallet }>(`/api/admin/transactions/${id}/confirm`, {
+        method: "POST",
+      }),
+    listAdminPaymentMethods: () => request<{ methods: PaymentMethod[] }>("/api/admin/payment-methods"),
+    createPaymentMethod: (payload: unknown) =>
+      request<{ method: PaymentMethod }>("/api/admin/payment-methods", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     listOperators: () => request<{ operators: Operator[] }>("/api/admin/operators"),
     createOperator: (payload: unknown) =>
       request<{ operator: Operator }>("/api/admin/operators", { method: "POST", body: JSON.stringify(payload) }),
