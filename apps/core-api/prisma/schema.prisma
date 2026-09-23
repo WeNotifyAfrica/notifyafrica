@@ -302,6 +302,10 @@ model PricingRule {
 model DiscountRule {
   id             String       @id @default(cuid())
   type           DiscountType
+  /// Product targeting is orthogonal to `scope`/`scopeId` (country/org/
+  /// project) — same pattern as PricingRule.countryCode alongside
+  /// customerScope/organizationId. Null = applies to every product.
+  productKey     String?
   scope          ConfigScope
   scopeId        String?
   value          Decimal      @db.Decimal(18, 6)

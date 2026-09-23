@@ -1,13 +1,15 @@
 import { prisma } from "./db";
 import { seedPricingRules } from "@notifyafrica/config-seed";
+import { resolveDiscounts } from "./discounts";
 import type { PricingEstimateRequest, PricingEstimateResult } from "@notifyafrica/types";
 
 /**
  * Central Pricing Engine (04_Prompt §14, design handoff invariant #1).
  * Immutable order: base cost -> tier -> discount -> markup -> tax. Discounts
- * and taxes are wired to Discount Engine / tax rules in a later phase; this
- * minimal version resolves the base tier + markup so no product hardcodes a
- * price (04_Prompt §5) while Phase B builds out the rest on the same shape.
+ * are now wired (see resolveDiscounts in ./discounts.ts); tax rules remain
+ * for a later phase — no tax authority/rate has been validated yet
+ * (design handoff README §8: "taux de taxe... à faire valider par un
+ * conseil fiscal").
  *
  * Rule selection also implements the first two steps of
  * 00_Contexte_Global §11's priority order ("1. prix contractuel client;
@@ -61,23 +63,37 @@ export async function estimatePricing(
   const markupValue = Number(tier.markupValue ?? 0);
   const markupType = tier.markupType ?? "PERCENT";
 
-  const unitPrice =
+  const tierUnitPrice =
     baseCost !== null && markupValue > 0
       ? markupType === "PERCENT"
         ? baseCost * (1 + markupValue / 100)
         : baseCost + markupValue
       : basePrice;
 
-  const subtotal = unitPrice * input.quantity;
+  const subtotal = tierUnitPrice * input.quantity;
   const ruleVersion = "version" in tier ? String(tier.version) : "seed";
   const quoteRequired = Boolean(tier.quoteRequired);
+
+  const { discounts, discountAmount, overrideUnitPrice } = await resolveDiscounts(
+    input,
+    subtotal,
+    tierUnitPrice,
+    input.quantity,
+  );
+
+  // discountAmount already equals (subtotal - overridden subtotal) when a
+  // FIXED_PRICE rule fired (see resolveDiscounts), so `subtotal -
+  // discountAmount` lands on the right total either way — no branching
+  // needed between the two discount shapes.
+  const unitPrice = overrideUnitPrice ?? tierUnitPrice;
+  const total = Math.max(0, subtotal - discountAmount);
 
   return {
     unitPrice,
     subtotal,
-    discounts: [],
+    discounts,
     taxes: [],
-    total: subtotal,
+    total,
     currency: input.currency,
     ruleVersion,
     quoteRequired,

@@ -27,6 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <NavLink href="/dashboard">Pilotage</NavLink>
           <NavLink href="/dashboard/catalog">Catalogue</NavLink>
           <NavLink href="/dashboard/pricing">Moteur de prix</NavLink>
+          <NavLink href="/dashboard/discounts">Remises</NavLink>
           <NavLink href="/dashboard/providers">Providers &amp; Routage</NavLink>
           <NavLink href="/dashboard/quotes">Devis</NavLink>
           <NavLink href="/dashboard/organizations">Organisations</NavLink>

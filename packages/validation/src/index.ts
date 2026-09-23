@@ -8,3 +8,4 @@ export * from "./team";
 export * from "./otp";
 export * from "./providers";
 export * from "./quotes";
+export * from "./discounts";

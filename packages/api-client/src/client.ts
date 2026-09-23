@@ -1,6 +1,7 @@
 import type {
   ApiKeySummary,
   CatalogProduct,
+  DiscountRule,
   Invitation,
   Message,
   Operator,
@@ -217,6 +218,12 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
     createRoute: (payload: unknown) =>
       request<{ route: unknown }>("/api/admin/routes", { method: "POST", body: JSON.stringify(payload) }),
     listAdminQuotes: () => request<{ quotes: Quote[] }>("/api/admin/quotes"),
+    listDiscountRules: () => request<{ rules: DiscountRule[] }>("/api/admin/discounts"),
+    createDiscountRule: (payload: unknown) =>
+      request<{ rule: DiscountRule }>("/api/admin/discounts", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     updateQuoteStatus: (id: string, payload: unknown) =>
       request<{ quote: Quote; pricingRuleId: string | null }>(`/api/admin/quotes/${id}/status`, {
         method: "POST",

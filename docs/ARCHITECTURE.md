@@ -235,6 +235,61 @@ quantity=100 too) — while an anonymous/other-org estimate at the same
 500,000 quantity still correctly returns the public tier
 (`unitPrice: 6.8, quoteRequired: true`). No cross-org leakage.
 
+## Discount Engine (02_Specifications_Backoffice §13)
+
+`DiscountRule` had sat unused since Phase A too — `estimatePricing` always
+returned `discounts: []`, and the Tarifs page's example invoice already had
+a "Remise" line waiting for a non-zero value. Wired up in
+`apps/core-api/src/lib/discounts.ts` (`resolveDiscounts`), inserted into the
+pricing pipeline between tier resolution and the final total, matching
+design handoff invariant #1's order (base → tier → discount → markup →
+tax) and its exclusivity rule ("remise exclusive, la priorité la plus haute
+l'emporte"): the highest-priority matching rule wins alone unless it (and
+whichever others) are marked `stackable`, in which case only the stackable
+ones combine.
+
+Found and fixed a real schema gap while wiring this: `DiscountRule.scope`
+only covered `GLOBAL`/`COUNTRY`/`ORGANIZATION`/`PROJECT` (`ConfigScope`) —
+but 02_Specifications_Backoffice §13 explicitly lists "produit" as a
+discount scope, and there was no column for it. Added `productKey: String?`
+as an orthogonal targeting dimension (same pattern as `PricingRule.
+countryCode` sitting alongside `customerScope`/`organizationId`) rather than
+overloading `ConfigScope` with a meaning it wasn't designed for
+(migration `20260923071508_add_discount_rule_product_key`).
+
+`FIXED_PRICE` is handled as a full override (sets the effective unit price
+directly, not an amount subtracted from the subtotal) and is never combined
+with other rules, matching "prix fixe" semantics. `PERCENT`/`FIXED_AMOUNT`/
+`UNIT_DISCOUNT` compute a numeric amount, each capped at its own
+`maxDiscount` if set. `PROMO`/`BONUS` are matched the same way as
+`PERCENT`/`FIXED_AMOUNT` (scope-based, no code check) as a documented
+simplification — a real promo-code redemption flow isn't built, so this
+isn't silently skipped, just not code-gated yet. The SMS-send and
+OTP-generate wallet debits needed zero changes to become discount-aware —
+they already computed `amountMinor` from `estimate.total`, not from
+`unitPrice * quantity` by hand.
+
+Verified end-to-end: a 10% global PERCENT discount cut a 65,000 XOF
+subtotal to 58,500 — then a higher-priority, non-stackable 5,000 XOF
+FIXED_AMOUNT discount replaced it entirely (exclusivity confirmed: not both
+applied) — then a still-higher-priority *stackable* 1,000 XOF discount
+applied alone too, since the only other active rules weren't stackable —
+then a FIXED_PRICE override at 5.0 XOF/SMS took over unconditionally — and
+a fifth rule at the highest priority of all (999) but with `endAt` in the
+past was correctly ignored by the date-window filter despite outranking
+everything else. Admin `/dashboard/discounts` list/create form confirmed
+working; all five apps (including the worker, after the `tsconfig.json`
+fix below) build and typecheck clean.
+
+## Fixed: worker `tsconfig.json` showing a false error in editors
+
+`moduleResolution: "Node"` compiles fine under `tsc` (TypeScript keeps it
+as a legacy alias), but the community JSON schema editors use to validate
+`tsconfig.json` (schemastore.org) deprecated that exact string in favor of
+`"Node10"` — same behavior, different accepted spelling — so VS Code showed
+a schema-validation error on a file that had zero real compiler errors.
+Switched to `"Node10"`.
+
 ## What's built vs. what's next
 
 Built:
@@ -268,6 +323,9 @@ Built:
 - **Quotes** (Lots 14, 19-20, 22 partial) — Console request + list, Admin
   pipeline with status transitions, accepted offers become a binding
   organization-scoped pricing rule the engine actually honors (see above).
+- **Discount Engine** (Lot 21 partial) — exclusive-by-default/opt-in-stacking
+  rule resolution wired into the Pricing Engine, Admin CRUD, product-scoped
+  targeting added to the schema (see above).
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -293,14 +351,18 @@ just the source file. Separately: requested a 500,000-SMS quote (above the
 public tier) → Admin accepted it with a negotiated price → the requesting
 org's estimates now use that price at any volume, while other orgs and
 anonymous estimates still see the public tier and `quoteRequired: true` —
-no cross-org leakage.
+no cross-org leakage. Separately: PERCENT/FIXED_AMOUNT/FIXED_PRICE discount
+rules confirmed for correct amount math, priority-based exclusivity,
+opt-in stacking, and date-window expiry (see Discount Engine above).
 
 Not built yet (tracked so it isn't silently dropped):
 - The other 19 design lots (Campaigns, WhatsApp, Email, Statistiques,
   Settings, Support, and Back-office lots 19, 24-25 — Pricing admin (Lot 21)
   and Devis interne (Lot 22) each have a minimal slice).
-- Bulk SMS / Campaigns (only single-message send exists), Discount Engine,
-  tax rules.
+- Bulk SMS / Campaigns (only single-message send exists), tax rules, a real
+  promo-code redemption flow (PROMO/BONUS discount types are matched by
+  scope only, not gated behind a code input yet), usage-limit enforcement
+  on discount rules (the `usageLimit` column exists but isn't checked).
 - Real provider adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox
   credentials yet (design handoff README §9 point 4); `mock-sms.ts` is the
   swap point.
