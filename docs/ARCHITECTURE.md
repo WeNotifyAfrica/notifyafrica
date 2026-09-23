@@ -416,6 +416,78 @@ wallet debited precisely (9,967 → 9,947), all 3 `Message` rows correctly
 linked to the campaign. All five apps (Website, Console, Admin, Core API,
 Worker) build and typecheck clean.
 
+## WhatsApp Business (Lot 10)
+
+WhatsApp's pricing is fundamentally different from SMS/OTP: Meta charges
+per **conversation category** (utility/authentication/marketing), not a
+flat per-message rate, and only an approved message *template* can be sent
+outside a user-initiated 24h window. Both of those are business invariants,
+not UI details, so they had to reach the Pricing Engine and the data model,
+not just the Console form.
+
+**Two real bugs fixed in already-shipped code, found while building this.**
+`PricingEstimateRequest.category` had existed in the type since Phase A but
+the Pricing Engine's Prisma query never referenced it — every WhatsApp
+estimate silently ignored category and matched whichever rule happened to
+win on productKey/country/currency alone. Fixed in
+`apps/core-api/src/lib/pricing-engine.ts` by adding `category` to both the
+published-rule query and the seed-fallback filter (`{ OR: [{ category:
+input.category }, { category: null }] }`, so non-WhatsApp products with no
+category keep matching `category: null` rules exactly as before).
+
+The second bug was caught *before* it could ship a wrong price: the Admin
+pricing-rules "publish" endpoint archives the previously-ACTIVE rule that
+overlaps the new one on productKey/country/currency/volume range — but
+didn't match on category. WhatsApp needed three simultaneously-ACTIVE rules
+(one per category) at the identical volume range, so publishing
+`authentication` after `utility` would have wrongly archived `utility`.
+Fixed by adding `category: input.category` to the overlap query in
+`apps/core-api/src/app/api/admin/pricing-rules/route.ts`. Also replaced the
+Phase A placeholder WhatsApp rule (a made-up 1.4 XOF/message flat rate)
+with the design handoff's actual three category prices (utility 24,
+authentication 28, marketing 46 XOF) and bumped `SEED_VERSION` to 3.
+
+**Data model.** Two new tables: `WhatsAppNumber` (a business number a Console
+org registers, `PENDING`/`VERIFIED`/`REJECTED` — verification is a stand-in,
+no real Meta Business API integration exists yet) and `WhatsAppTemplate`
+(`name`, `category`, `language`, `bodyText`, `DRAFT`/`PENDING_REVIEW`/
+`APPROVED`/`REJECTED`, `rejectionReason`). `Message` got a nullable
+`whatsappTemplateId` so a sent WhatsApp message links back to the exact
+template/category it billed against.
+
+**The flow:**
+- Console submits a template → always created `PENDING_REVIEW` regardless
+  of who submits it — approval is never self-service, mirroring how Meta's
+  real template review works.
+- Admin's `/dashboard/whatsapp-templates` review queue (pending vs.
+  history sections) approves or rejects with a required reason on reject.
+- `POST /api/whatsapp/send` refuses anything but an `APPROVED` template
+  (`422 template_not_approved`) — the same estimate → hold → mock-send →
+  capture/release sequence every other product uses, with
+  `category: template.category.toLowerCase()` passed into the Pricing
+  Engine so the right one of the three rules resolves.
+- Console `/dashboard/whatsapp` — one page for numbers, templates, the send
+  form, and history, reusing the `CoreApiError` code-mapping pattern from
+  the SMS send action.
+
+Verified end-to-end against local Postgres/Redis with the real dev stack:
+confirmed all three category rules resolve independently and correctly
+(`pricing/estimate` with `category: utility/authentication/marketing` →
+24/28/46 XOF respectively, matching the mockup exactly) and that publishing
+all three left all three `ACTIVE` with only the old 1.4 XOF placeholder
+archived once (not repeatedly — proof the overlap-query fix works). Then a
+full lifecycle: registered an org, credited its wallet, added a WhatsApp
+number (`VERIFIED`), submitted a utility-category template → send correctly
+blocked with `template_not_approved` (HTTP 422) while `PENDING_REVIEW` →
+Admin approved it → send succeeded, wallet debited exactly 24 XOF
+(1000 → 976), the `Message` row carries `product: "WHATSAPP"`,
+`whatsappTemplateId` set to the approved template, and a `pricingSnapshot`
+recording `category: "UTILITY"`/`unitPrice: 24` → the `Transaction` row
+confirmed directly via the Admin API as `type: "WHATSAPP_SEND"`,
+`status: "CAPTURED"`, `amountMinor: 24` → Admin's review queue correctly
+shows the template as `APPROVED` under history. All five apps (Website,
+Console, Admin, Core API, Worker) typecheck and production-build clean.
+
 ## What's built vs. what's next
 
 Built:
@@ -459,6 +531,10 @@ Built:
   the Worker's first real job processor, shared `packages/domain`/
   `packages/queue` so Core API and Worker never drift on business logic or
   queue names (see above).
+- **WhatsApp Business** (Lot 10 partial) — category-based pricing
+  (utility/authentication/marketing) reaching the Pricing Engine, number
+  registration, template submit/review/approve, send gated on an
+  `APPROVED` template (see above). No real Meta Business API integration.
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -493,12 +569,16 @@ Separately: launched a real campaign through the real Worker process (not
 mocked/skipped) — 5-for-5 sent, wallet held/captured exactly right, then
 re-verified after the BigInt serialization fix with a fresh 3-destination
 campaign, checking the Transaction, Message rows, and wallet balance
-directly (see Campaigns above).
+directly (see Campaigns above). Separately: WhatsApp's three category
+prices confirmed independently correct, a template blocked from sending
+until Admin-approved, then sent with the wallet debited the exact
+category price and the Transaction/Message rows checked directly (see
+WhatsApp above).
 
 Not built yet (tracked so it isn't silently dropped):
-- The other 18 design lots (WhatsApp, Email, Statistiques, Settings,
-  Support, and Back-office lots 19, 24-25 — Pricing admin (Lot 21) and
-  Devis interne (Lot 22) each have a minimal slice).
+- The other 17 design lots (Email, Statistiques, Settings, Support, and
+  Back-office lots 19, 24-25 — Pricing admin (Lot 21) and Devis interne
+  (Lot 22) each have a minimal slice).
 - Campaign scheduling (`scheduledAt`) and mid-run cancellation — launch is
   immediate-only for now; audience is manual entry only, no CSV import or
   saved segments (03_Specifications_Console §11 lists CSV/contacts/segments

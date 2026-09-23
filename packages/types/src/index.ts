@@ -12,3 +12,4 @@ export * from "./quotes";
 export * from "./discounts";
 export * from "./payment-methods";
 export * from "./campaigns";
+export * from "./whatsapp";

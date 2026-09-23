@@ -28,15 +28,25 @@ export async function estimatePricing(
       status: "ACTIVE",
       currency: input.currency,
       OR: [{ countryCode: null }, { countryCode: input.country }],
-      AND: input.organizationId
-        ? [{ OR: [{ organizationId: input.organizationId }, { organizationId: null }] }]
-        : [{ organizationId: null }],
+      AND: [
+        input.organizationId
+          ? { OR: [{ organizationId: input.organizationId }, { organizationId: null }] }
+          : { organizationId: null },
+        // Category-scoped rules (e.g. WhatsApp utility/authentication/
+        // marketing, each priced differently by Meta) only match a request
+        // for that exact category; category-agnostic rules (category: null)
+        // match any request, same null-means-wildcard pattern as country.
+        input.category ? { OR: [{ category: input.category }, { category: null }] } : { category: null },
+      ],
     },
     orderBy: [{ priority: "desc" }, { version: "desc" }],
   });
 
   const source = published.length > 0 ? published : seedPricingRules.filter(
-    (r) => r.productKey === input.product && r.currency === input.currency,
+    (r) =>
+      r.productKey === input.product &&
+      r.currency === input.currency &&
+      (r.category === input.category || r.category === null),
   );
 
   const tier = source.find((r) => {

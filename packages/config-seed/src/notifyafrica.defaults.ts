@@ -14,7 +14,7 @@
  * "import seed" action (04_Prompt §7) stays idempotent and auditable.
  */
 
-export const SEED_VERSION = 2;
+export const SEED_VERSION = 3;
 
 /**
  * Catalog copy (description/features/billingUnit) mirrors the reference
@@ -164,17 +164,52 @@ export const seedPricingRules = [
     quoteRequired: true,
     priority: 0,
   },
+  // WhatsApp: baseCost holds the Meta official cost per category (each
+  // category has its own official Meta rate), markup is the configurable
+  // NotifyAfrica margin (+40% initial seed) applied on top. Target prices
+  // (24/28/46 XOF) match design_handoff_notifyafrica's own reference
+  // catalog data exactly — this replaces an earlier placeholder single
+  // rule (1.4 XOF, no category distinction) that predated a full read of
+  // that content and didn't match it.
   {
-    // WhatsApp: baseCost holds the Meta official cost, markup is the
-    // configurable NotifyAfrica margin applied on top (+40% initial seed).
     productKey: "WHATSAPP",
     countryCode: null,
     category: "utility",
     volumeMin: 0,
     volumeMax: null,
     currency: "XOF",
-    baseCost: 1,
-    basePrice: 1.4,
+    baseCost: 17.14,
+    basePrice: 24,
+    markupType: "PERCENT" as const,
+    markupValue: 40,
+    publicVisible: true,
+    quoteRequired: false,
+    priority: 0,
+  },
+  {
+    productKey: "WHATSAPP",
+    countryCode: null,
+    category: "authentication",
+    volumeMin: 0,
+    volumeMax: null,
+    currency: "XOF",
+    baseCost: 20,
+    basePrice: 28,
+    markupType: "PERCENT" as const,
+    markupValue: 40,
+    publicVisible: true,
+    quoteRequired: false,
+    priority: 0,
+  },
+  {
+    productKey: "WHATSAPP",
+    countryCode: null,
+    category: "marketing",
+    volumeMin: 0,
+    volumeMax: null,
+    currency: "XOF",
+    baseCost: 32.86,
+    basePrice: 46,
     markupType: "PERCENT" as const,
     markupValue: 40,
     publicVisible: true,

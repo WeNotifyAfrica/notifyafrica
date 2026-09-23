@@ -18,6 +18,8 @@ import type {
   TeamMember,
   Transaction,
   Wallet,
+  WhatsAppNumber,
+  WhatsAppTemplate,
 } from "@notifyafrica/types";
 
 export interface CoreApiClientOptions {
@@ -127,6 +129,24 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
       request<{ campaign: Campaign }>(`/api/campaigns/${id}/launch`, { method: "POST" }),
     cancelCampaign: (id: string) =>
       request<{ campaign: Campaign }>(`/api/campaigns/${id}/cancel`, { method: "POST" }),
+    listWhatsAppNumbers: () => request<{ numbers: WhatsAppNumber[] }>("/api/whatsapp/numbers"),
+    createWhatsAppNumber: (payload: unknown) =>
+      request<{ number: WhatsAppNumber }>("/api/whatsapp/numbers", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    listWhatsAppTemplates: () => request<{ templates: WhatsAppTemplate[] }>("/api/whatsapp/templates"),
+    createWhatsAppTemplate: (payload: unknown) =>
+      request<{ template: WhatsAppTemplate }>("/api/whatsapp/templates", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    sendWhatsApp: (payload: unknown) =>
+      request<{ message: Message; estimate: PricingEstimateResult }>("/api/whatsapp/send", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    listWhatsAppHistory: () => request<{ messages: Message[] }>("/api/whatsapp/history"),
     sendSms: (payload: unknown) =>
       request<{ message: Message; transaction: Transaction; estimate: PricingEstimateResult }>(
         "/api/sms/send",
@@ -249,6 +269,12 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
     createRoute: (payload: unknown) =>
       request<{ route: unknown }>("/api/admin/routes", { method: "POST", body: JSON.stringify(payload) }),
     listAdminQuotes: () => request<{ quotes: Quote[] }>("/api/admin/quotes"),
+    listAdminWhatsAppTemplates: () => request<{ templates: WhatsAppTemplate[] }>("/api/admin/whatsapp/templates"),
+    reviewWhatsAppTemplate: (id: string, payload: unknown) =>
+      request<{ template: WhatsAppTemplate }>(`/api/admin/whatsapp/templates/${id}/review`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     listDiscountRules: () => request<{ rules: DiscountRule[] }>("/api/admin/discounts"),
     createDiscountRule: (payload: unknown) =>
       request<{ rule: DiscountRule }>("/api/admin/discounts", {

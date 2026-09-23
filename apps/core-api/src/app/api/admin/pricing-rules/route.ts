@@ -44,6 +44,10 @@ export async function POST(req: Request) {
     where: {
       productKey: input.productKey,
       countryCode: input.countryCode,
+      // WhatsApp's three categories (utility/authentication/marketing) each
+      // have their own rule at the same volume range — without matching on
+      // category too, publishing one would wrongly archive another.
+      category: input.category,
       currency: input.currency,
       status: "ACTIVE",
       volumeMin: input.volumeMin,

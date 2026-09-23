@@ -108,6 +108,25 @@ enum PaymentMethodFamily {
   INVOICE
 }
 
+enum WhatsAppTemplateCategory {
+  UTILITY
+  AUTHENTICATION
+  MARKETING
+}
+
+enum WhatsAppTemplateStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum WhatsAppNumberStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
 enum CampaignStatus {
   DRAFT
   SCHEDULED
@@ -161,6 +180,8 @@ model Organization {
   invitations  Invitation[]
   otpConfigs   OtpConfig[]
   campaigns    Campaign[]
+  whatsappNumbers   WhatsAppNumber[]
+  whatsappTemplates WhatsAppTemplate[]
 
   @@map("organizations")
 }
@@ -192,6 +213,8 @@ model Project {
   messages     Message[]
   otpConfigs   OtpConfig[]
   campaigns    Campaign[]
+  whatsappNumbers   WhatsAppNumber[]
+  whatsappTemplates WhatsAppTemplate[]
 
   @@map("projects")
 }
@@ -451,12 +474,15 @@ model Message {
   /// Message never has one. Campaigns don't create a Transaction per
   /// message (only one, for the whole batch, on Campaign.transactionId).
   campaignId      String?
+  /// Set only for WhatsApp sends — the approved template used.
+  whatsappTemplateId String?
   createdAt       DateTime      @default(now())
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  transaction  Transaction? @relation(fields: [transactionId], references: [id])
-  campaign     Campaign?    @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  transaction      Transaction?      @relation(fields: [transactionId], references: [id])
+  campaign         Campaign?         @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  whatsappTemplate WhatsAppTemplate? @relation(fields: [whatsappTemplateId], references: [id], onDelete: SetNull)
 
   @@index([organizationId, createdAt])
   @@index([campaignId])
@@ -497,6 +523,50 @@ model Campaign {
 
   @@index([organizationId, createdAt])
   @@map("campaigns")
+}
+
+/// WhatsApp Business sender numbers (03_Specifications_Console §16). No
+/// real Meta number-verification flow is wired yet (design handoff README
+/// §9 point 4) — a number is created directly as VERIFIED, since there's
+/// no real pending-verification process to model honestly.
+model WhatsAppNumber {
+  id             String                @id @default(cuid())
+  organizationId String
+  projectId      String
+  phoneNumber    String
+  displayName    String
+  status         WhatsAppNumberStatus  @default(VERIFIED)
+  createdAt      DateTime              @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("whatsapp_numbers")
+}
+
+/// WhatsApp message templates require Meta approval before they can be
+/// used to initiate a business conversation. Console drafts and submits;
+/// Admin approves/rejects (standing in for the real Meta review — Lot 26
+/// "Revue des modèles WhatsApp avant soumission à Meta" isn't designed
+/// yet, but Lot 10 itself needs *some* approval gate before send).
+model WhatsAppTemplate {
+  id             String                   @id @default(cuid())
+  organizationId String
+  projectId      String
+  name           String
+  category       WhatsAppTemplateCategory
+  language       String                   @default("fr")
+  bodyText       String
+  status         WhatsAppTemplateStatus   @default(DRAFT)
+  rejectionReason String?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  messages     Message[]
+
+  @@map("whatsapp_templates")
 }
 
 enum OtpStatus {
