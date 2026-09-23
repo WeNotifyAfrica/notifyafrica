@@ -3,11 +3,14 @@ import type {
   CatalogProduct,
   Invitation,
   Message,
+  Operator,
   OtpCodeSummary,
   OtpConfig,
   PricingEstimateRequest,
   PricingEstimateResult,
+  Provider,
   ResolvedConfig,
+  RouteSummary,
   TeamMember,
   Transaction,
   Wallet,
@@ -195,6 +198,20 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         body: JSON.stringify(payload),
       }),
     listTransactions: () => request<{ transactions: Transaction[] }>("/api/admin/transactions"),
+    listOperators: () => request<{ operators: Operator[] }>("/api/admin/operators"),
+    createOperator: (payload: unknown) =>
+      request<{ operator: Operator }>("/api/admin/operators", { method: "POST", body: JSON.stringify(payload) }),
+    listProviders: () => request<{ providers: Provider[] }>("/api/admin/providers"),
+    createProvider: (payload: unknown) =>
+      request<{ provider: Provider }>("/api/admin/providers", { method: "POST", body: JSON.stringify(payload) }),
+    createProviderEndpoint: (providerId: string, payload: unknown) =>
+      request<{ endpoint: unknown }>(`/api/admin/providers/${providerId}/endpoints`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    listRoutes: () => request<{ routes: RouteSummary[] }>("/api/admin/routes"),
+    createRoute: (payload: unknown) =>
+      request<{ route: unknown }>("/api/admin/routes", { method: "POST", body: JSON.stringify(payload) }),
   };
 }
 

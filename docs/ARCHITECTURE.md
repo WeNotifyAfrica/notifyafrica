@@ -138,6 +138,20 @@ own (OTP's `{destination, channel, message}` did). The logger now applies
 clobber them; the OTP payload field was also renamed to `content` to avoid
 the collision in the first place.
 
+## Providers & Routing (Lot 20)
+
+Configuration storage for `Operator`, `Provider`, `ProviderEndpoint` and
+`Route` — Prisma models that existed since Phase A (04_Prompt §16 "prepare
+the models") but had no CRUD until now. Admin's `/dashboard/providers`
+declares operators, providers (name/type/country), their endpoints
+(base URL, path, method, a declared `authType`, timeout), and routes
+(product + country + operator → provider, priority, strategy). This is
+still just an approved-destination catalog, not a live gateway
+(04_Prompt §17: "ne crée pas un proxy arbitraire non sécurisé") — no code
+path actually calls out to any of these endpoints yet, and `authType` is a
+label, not a stored credential (a Credentials Vault, 02_Specifications
+Backoffice §24, isn't built).
+
 ## What's built vs. what's next
 
 Built:
@@ -163,6 +177,9 @@ Built:
 - **OTP** (Lot 9 partial) — per-app config, generate (wallet-gated) and
   verify with server-enforced expiry/attempts, history log. Bulk/fallback
   channel logic and analytics aren't built.
+- **Providers & Routing** (Lot 20 partial) — Admin CRUD for Operators,
+  Providers, ProviderEndpoints, Routes. Configuration only, no live gateway
+  or Credentials Vault yet.
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
@@ -179,11 +196,14 @@ revoke it; invite a team member → accept via the token → new member shows
 up in `/api/team/members` with a working session. Separately: publish an
 OTP pricing rule → generate a code (wallet debited) → wrong code rejected
 with attempts remaining → correct code verified → shows up in history.
+Separately: created an operator, a provider with an endpoint, and a route
+tying them to a product/country — all three list endpoints reflect it with
+the right nested relations.
 
 Not built yet (tracked so it isn't silently dropped):
-- The other 20 design lots (Campaigns, WhatsApp, Email, Statistiques,
-  Settings, Support, and all Back-office lots 19-20, 22, 24-25 — Providers/
-  Routing (Lot 20) and Pricing admin (Lot 21) have a minimal slice each).
+- The other 19 design lots (Campaigns, WhatsApp, Email, Statistiques,
+  Settings, Support, and Back-office lots 19, 22, 24-25 — Pricing admin
+  (Lot 21) has a minimal slice).
 - Bulk SMS / Campaigns (only single-message send exists), Discount Engine,
   tax rules, Quote workflow logic.
 - Real provider adapters (SMPP/Meta WhatsApp/Mobile Money) — no sandbox
