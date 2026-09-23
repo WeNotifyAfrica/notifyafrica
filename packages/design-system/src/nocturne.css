@@ -242,6 +242,38 @@ textarea.input { min-height: 90px; resize: vertical; }
 .nav a { color: inherit; text-decoration: none; font-size: 14px; }
 .nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
 
+/* — app shell (Console/Admin sidebar) — design handoff Lots 5-6 §3: the
+   sidebar's nav buttons aren't in the prototype's static CSS (their
+   active/hover states are prototype JS), so this is the production
+   interpretation, built from the same tokens as everything else. */
+.shell {
+  display: grid; grid-template-columns: minmax(0, 232px) minmax(0, 1fr);
+  min-height: 100vh; background: var(--color-bg);
+}
+.shell-sidebar {
+  display: flex; flex-direction: column; gap: var(--space-4);
+  padding: var(--space-6) var(--space-4); background: var(--color-surface);
+  border-right: 1px solid var(--color-divider);
+}
+.shell-nav { display: flex; flex-direction: column; gap: 2px; }
+.shell-link {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+  font-size: 13.5px; color: color-mix(in srgb, var(--color-text) 80%, transparent);
+  text-decoration: none;
+}
+.shell-link:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); color: var(--color-text); }
+.shell-link[aria-current='page'] {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-accent-300);
+}
+.shell-topbar {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-4) var(--space-6); background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider); flex-wrap: wrap;
+}
+.shell-main { padding: var(--space-8) var(--space-6) calc(var(--space-8) * 2); min-width: 0; }
+
 /* — tables — */
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .table th {

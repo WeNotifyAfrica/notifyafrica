@@ -286,10 +286,16 @@ importers:
       '@notifyafrica/design-system':
         specifier: workspace:*
         version: link:../design-system
+      '@notifyafrica/types':
+        specifier: workspace:*
+        version: link:../types
     devDependencies:
       '@types/react':
         specifier: ^19.0.0
         version: 19.3.0
+      next:
+        specifier: ^15.0.0
+        version: 15.5.26(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react:
         specifier: ^19.0.0
         version: 19.3.0

@@ -1,7 +1,10 @@
 import type {
+  AdminDashboardSummary,
   ApiKeySummary,
   Campaign,
   CatalogProduct,
+  Currency,
+  DashboardSummary,
   DiscountRule,
   Invitation,
   Message,
@@ -77,6 +80,7 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
       return request<ResolvedConfig<T>>(`/api/config/${encodeURIComponent(key)}${qs}`);
     },
     listCatalog: () => request<{ products: CatalogProduct[]; source: "admin" | "seed" }>("/api/catalog"),
+    listCurrencies: () => request<ResolvedConfig<Currency[]>>("/api/config/catalog.currencies"),
     listPricingTiers: (product: string, currency = "XOF") =>
       request<{
         source: "admin" | "seed";
@@ -109,6 +113,7 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
       }>("/api/auth/session"),
 
     // --- Console endpoints (require an authenticated org session) ---
+    getDashboardSummary: () => request<DashboardSummary>("/api/dashboard/summary"),
     getWallet: () => request<{ wallet: Wallet }>("/api/wallet"),
     listPaymentMethods: () => request<{ methods: PaymentMethod[] }>("/api/payment-methods"),
     topupWallet: (payload: unknown) =>
@@ -206,6 +211,7 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         method: "POST",
         body: JSON.stringify(payload),
       }),
+    getAdminDashboardSummary: () => request<AdminDashboardSummary>("/api/admin/dashboard/summary"),
     listNotifications: () => request<{ notifications: unknown[] }>("/api/admin/notifications"),
     markNotificationRead: (id: string) =>
       request<{ notification: unknown }>("/api/admin/notifications", {

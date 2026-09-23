@@ -488,6 +488,97 @@ confirmed directly via the Admin API as `type: "WHATSAPP_SEND"`,
 shows the template as `APPROVED` under history. All five apps (Website,
 Console, Admin, Core API, Worker) typecheck and production-build clean.
 
+## Console & Admin design-fidelity pass — shell + dashboards (Lots 5-6, 19)
+
+Every Console and Admin page up to this point was functional but visually
+bare: plain `<div>`s with ad-hoc inline grid styles, not the actual shell
+the design handoff specifies. The handoff's own instructions (README §3)
+are explicit about how to read the 25 lot mockups: lots 7→25 render each
+module as a "specification page" (lot header, screen tabs, spec-only I/J/L/N
+cards) — **in production, those tabs become sub-routes living inside one
+shared shell** (Lots 5-6: sidebar, topbar, org/project identity). The I/J/L/N
+cards are business-rule documentation, not UI, and were never meant to be
+rendered. This is the first of several passes correcting that gap, starting
+with the highest-leverage piece — the shell every page inherits — plus the
+one page every user sees first, the overview/pilotage dashboard.
+
+**Shell.** Added `.shell`/`.shell-sidebar`/`.shell-nav`/`.shell-link`/
+`.shell-topbar`/`.shell-main` to `packages/design-system/src/nocturne.css`
+(the mockup's sidebar buttons use prototype-only inline JS styles for their
+active state, not a reusable CSS class — this is the production
+interpretation, built from the same tokens as everything else) and a new
+`packages/ui/src/components/Shell.tsx` (`Shell`, `ShellSidebar`, `ShellNav`,
+`ShellTopbar`, `ShellPageTitle`, `ShellMain`). `ShellNav`/`ShellPageTitle`
+are client components (`usePathname`) since the layout that renders them is
+a server component with no reliable way to read the route its children are
+about to render.
+
+Console's shell (`apps/console/src/app/(app)/layout.tsx`) matches the
+mockup's sidebar (brand, nav, wallet balance card with a real "Recharger"
+link) and topbar (page title, user avatar). The mockup's org/project
+*switcher* and Live/Test environment toggle are deliberately rendered as
+static labels, not interactive controls: there is only ever one
+organization and one default project per account today (Phase C), and no
+sandbox environment exists in the data model, so a working switcher would
+be theater, not a feature. Documented here rather than faked.
+
+Admin's shell (`apps/admin/src/app/(app)/layout.tsx`) reuses the same
+components minus the wallet card and org switcher — those are client-account
+concepts, meaningless for an internal Ops/Finance/Support user. Its topbar
+shows the internal user's identity as a `tag-accent` badge ("Interne
+NotifyAfrica · email · role"), matching Lot 19's header pattern.
+
+**Dashboards, real data only.** Both overview pages previously showed
+almost nothing (Console: org ID and role in two bare cards; Admin: a seed
+import button and a notification list). Added `GET /api/dashboard/summary`
+(Console, org-scoped) and `GET /api/admin/dashboard/summary` (Admin,
+internal-role-gated), both querying real Prisma aggregates — no fixture
+data anywhere:
+- Console: wallet balance, messages sent this month grouped by product,
+  active campaign count, pending quote count, and an 8-item activity feed
+  merging recent Messages and Transactions by timestamp.
+- Admin: organization count, revenue captured this month (grouped by
+  currency, since orgs bill in different ones), pending quotes/WhatsApp
+  template reviews/transactions-to-reconcile counts, recent notifications,
+  and the last 8 `AuditLog` entries as "journal des actions internes" (one
+  of Lot 19's five screens).
+
+Both intentionally skip the mockup's 14-day bar chart and Lot 19's
+revenue/supplier-cost/margin chart: the latter needs a `SupplierCost` model
+that doesn't exist yet (Lot 20/25 territory — see "Not built yet" below),
+so rendering it would mean fabricating numbers. A real "consommation par
+produit" breakdown (Console) answers the same "where is spend/volume going"
+question without inventing data.
+
+Also added, reusable everywhere: `formatMoney()` in `packages/ui` (uses the
+real decimals/symbol from `catalog.currencies` — e.g. XOF's 0 decimals — via
+a new `listCurrencies()` API-client method, never a hardcoded per-currency
+assumption) and a `Currency` type in `packages/types`.
+
+Verified end-to-end against the real dev stack (after discovering and
+cleaning up ~60 leaked `pnpm dev` process trees from earlier sessions that
+were never killed between turns — the actual cause of a false "500 error"
+during this verification, which disappeared once a single clean dev stack
+was restarted; a reminder to kill stale background dev servers before
+trusting a "bug"): both summary endpoints return real aggregates matching
+direct Prisma queries exactly (Console: wallet 976 XOF, 1 WhatsApp message
+this month, matching the Lot 10 verification above; Admin: 9 organizations,
+610 101 XOF revenue this month, 8 audit log entries). Both rendered pages
+return 200 with the `.shell`/`.shell-sidebar`/`.shell-nav`/`.shell-topbar`/
+`.shell-main` structure present and `formatMoney` producing correctly
+grouped output ("610 101 FCFA", "976 FCFA"). Spot-checked that existing
+pages (Console SMS, Admin Pricing) still render 200 inside the new shell.
+All five apps typecheck and production-build clean.
+
+**Still ahead in this pass** (tracked, not silently dropped): the 25
+remaining Console/Admin product pages (SMS, OTP, Campaigns, WhatsApp,
+Quotes, Pricing, Billing, Developers, Team on Console; Catalog, Pricing,
+Discounts, Providers, Quotes, WhatsApp templates, Payment methods,
+Organizations, Users, Transactions on Admin) still use the pre-shell
+ad-hoc layout for their own content area and haven't been individually
+matched against their design handoff lot yet — only the shell wrapping them
+changed in this pass. Continuing lot by lot.
+
 ## What's built vs. what's next
 
 Built:

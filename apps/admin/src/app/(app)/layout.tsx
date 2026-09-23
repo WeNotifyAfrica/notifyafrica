@@ -2,7 +2,39 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
-import { Nav, NavLink } from "@notifyafrica/ui";
+import {
+  Shell,
+  ShellSidebar,
+  ShellBrand,
+  ShellNav,
+  ShellTopbar,
+  ShellPageTitle,
+  ShellMain,
+  Tag,
+  type ShellNavItem,
+} from "@notifyafrica/ui";
+
+/**
+ * Back-office shell — same shell pattern as the Console (design handoff
+ * §3), minus the org/project switcher and wallet card: those are
+ * client-account concepts, meaningless for an internal Ops/Finance/Support
+ * user. Lot 19's mockup shows the internal user's identity as a
+ * `tag-accent` badge ("Interne NotifyAfrica · Aïcha B. · Ops") in the page
+ * header — reproduced here from the real session email + internal role.
+ */
+const NAV_ITEMS: ShellNavItem[] = [
+  { href: "/dashboard", label: "Pilotage" },
+  { href: "/dashboard/catalog", label: "Catalogue" },
+  { href: "/dashboard/pricing", label: "Moteur de prix" },
+  { href: "/dashboard/discounts", label: "Remises" },
+  { href: "/dashboard/providers", label: "Providers & Routage" },
+  { href: "/dashboard/quotes", label: "Devis" },
+  { href: "/dashboard/whatsapp-templates", label: "Modèles WhatsApp" },
+  { href: "/dashboard/payment-methods", label: "Moyens de paiement" },
+  { href: "/dashboard/organizations", label: "Organisations" },
+  { href: "/dashboard/users", label: "Utilisateurs" },
+  { href: "/dashboard/transactions", label: "Transactions" },
+];
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
@@ -18,31 +50,27 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!session.internalRole) redirect("/login");
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", minHeight: "100vh" }}>
-      <aside style={{ borderRight: "1px solid var(--color-divider)", padding: "var(--space-4)" }}>
-        <div className="nav-brand" style={{ marginBottom: 24 }}>
-          NotifyAfrica Admin
+    <Shell>
+      <ShellSidebar>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+          <ShellBrand>NotifyAfrica Admin</ShellBrand>
+          <span className="text-muted" style={{ fontSize: 11 }}>
+            Back-office interne
+          </span>
         </div>
-        <nav style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <NavLink href="/dashboard">Pilotage</NavLink>
-          <NavLink href="/dashboard/catalog">Catalogue</NavLink>
-          <NavLink href="/dashboard/pricing">Moteur de prix</NavLink>
-          <NavLink href="/dashboard/discounts">Remises</NavLink>
-          <NavLink href="/dashboard/providers">Providers &amp; Routage</NavLink>
-          <NavLink href="/dashboard/quotes">Devis</NavLink>
-          <NavLink href="/dashboard/whatsapp-templates">Modèles WhatsApp</NavLink>
-          <NavLink href="/dashboard/payment-methods">Moyens de paiement</NavLink>
-          <NavLink href="/dashboard/organizations">Organisations</NavLink>
-          <NavLink href="/dashboard/users">Utilisateurs</NavLink>
-          <NavLink href="/dashboard/transactions">Transactions</NavLink>
-        </nav>
-      </aside>
-      <div>
-        <Nav>
-          <span className="text-muted">{session.email}</span>
-        </Nav>
-        <main style={{ padding: "var(--space-6)" }}>{children}</main>
+        <ShellNav items={NAV_ITEMS} />
+      </ShellSidebar>
+
+      <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+        <ShellTopbar>
+          <ShellPageTitle items={NAV_ITEMS} fallback="Back-office" />
+          <Tag variant="accent" style={{ marginLeft: "auto" }}>
+            Interne NotifyAfrica · {session.email} · {session.internalRole}
+          </Tag>
+        </ShellTopbar>
+
+        <ShellMain>{children}</ShellMain>
       </div>
-    </div>
+    </Shell>
   );
 }

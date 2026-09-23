@@ -6,3 +6,5 @@ export * from "./components/Table";
 export * from "./components/Nav";
 export * from "./components/Dialog";
 export * from "./components/Seg";
+export * from "./format";
+export * from "./components/Shell";

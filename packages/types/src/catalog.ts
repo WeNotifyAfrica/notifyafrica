@@ -2,6 +2,12 @@ export type ProductStatus = "ACTIVE" | "BETA" | "COMING_SOON" | "PRIVATE" | "DIS
 
 export type ProductKey = "SMS" | "OTP" | "WHATSAPP" | "EMAIL" | "PAYMENT_COLLECTION" | "PAYOUT";
 
+export interface Currency {
+  code: string;
+  symbol: string;
+  decimals: number;
+}
+
 export interface CatalogProduct {
   id: string;
   key: ProductKey | string;
