@@ -669,19 +669,35 @@ import time — App Router requires that dynamic-with-no-ssr to live in a
 Client Component, not a Server Component, which the first build attempt
 caught).
 
-**Registered so far (proof of concept, 6 of ~57 routes):** Auth
-(register/login/session) and Wallet (get/topup/transactions,
-admin-credit). The remaining routes get registered the same way, lot by
-lot (SMS/OTP/WhatsApp/Campaigns/Quotes next, then the rest of Admin),
-following the same incremental pattern as the rest of this build.
+**Coverage: all 57 route files, every exported method — 100 %, zero gaps.**
+After the proof of concept (Auth + Wallet) was confirmed, every remaining
+route got registered the same way in one pass, grouped by tag (Auth,
+Catalog, Wallet, SMS, OTP, WhatsApp, Campaigns, Quotes, Developers, Team,
+Dashboard, Admin). Response schemas mirror what the route handlers
+actually return (`packages/types`' shapes, not the internal Prisma model)
+— minor-unit BigInt amounts stay strings, matching the real wire format.
 
-Verified: production build compiles clean, `/api/openapi.json` returns a
-valid OpenAPI 3.0 document with real examples (checked live against the
-dev stack), the `/docs` page's JS bundle contains the actual
-`swagger-ui-react` code (confirmed by inspecting the compiled chunk — no
-headless browser available in this environment to screenshot the
-rendered UI, so visual confirmation in an actual browser is still worth
-doing).
+Verified two ways, not just "it typechecks":
+1. **Coverage script** — walked every `route.ts` under `apps/core-api/src/
+   app/api`, extracted its exported HTTP methods via regex, and diffed
+   against the generated spec's `paths`. Zero routes missing, zero method
+   mismatches (no route with an undocumented GET or POST) — confirmed
+   against the live `/api/openapi.json`, not just the registry source.
+2. **Build + runtime** — production build compiles clean, `/api/openapi.json`
+   returns a valid OpenAPI 3.0 document (57 paths, 70 operations) with real
+   examples, `/docs` returns 200 and its compiled JS bundle contains the
+   actual `swagger-ui-react` code. No headless browser available in this
+   environment to screenshot the rendered UI, so a manual check in an
+   actual browser is still worth doing.
+
+Also fixed along the way: `swagger-ui-react`'s internal `ModelCollapse`
+component still uses the legacy `UNSAFE_componentWillReceiveProps`
+lifecycle (an upstream issue, not fixable from here) — React's Strict Mode
+surfaced it as a console warning on every render. Since Core API's only
+client-rendered React is this one `/docs` page, disabled
+`reactStrictMode` for the whole app (`next.config.mjs`) rather than
+leaving a noisy, unactionable warning — there's no other interactive
+logic here StrictMode would be protecting.
 
 ## What's built vs. what's next
 

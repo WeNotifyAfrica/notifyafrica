@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // Off specifically because /docs embeds swagger-ui-react, whose internal
+  // ModelCollapse component still uses UNSAFE_componentWillReceiveProps (a
+  // long-standing upstream issue, not fixable from here) — StrictMode's
+  // double-invoke diagnostics surface it as a console warning on every
+  // render. This app's only client-rendered React is that one page, so
+  // there's no other interactive logic StrictMode would be protecting.
+  reactStrictMode: false,
   transpilePackages: [
     "@notifyafrica/auth",
     "@notifyafrica/config-seed",
