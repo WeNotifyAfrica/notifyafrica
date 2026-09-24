@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 
 async function tokenOrRedirect() {
@@ -29,9 +30,10 @@ export async function createApiKeyAction(
   formData: FormData,
 ): Promise<CreateApiKeyState> {
   const token = await tokenOrRedirect();
+  const environment = await getCurrentEnvironment();
 
   try {
-    const { secret, key } = await coreApi(token).createApiKey({
+    const { secret, key } = await coreApi(token, environment).createApiKey({
       name: String(formData.get("name") ?? ""),
       environment: String(formData.get("environment") ?? "sandbox"),
       scopes: [],

@@ -5,6 +5,7 @@ import { estimatePricing } from "@/lib/pricing-engine";
 import { holdFunds, InsufficientBalanceError, releaseFunds, toMinorUnits } from "@/lib/wallet";
 import { generateOtpCode, hashOtpCode } from "@/lib/otp";
 import { sendOtpViaMockChannel } from "@/lib/providers/mock-otp";
+import { getEnvironmentFromRequest, resolveProject } from "@/lib/project";
 import { consoleRoleHasPermission } from "@notifyafrica/auth";
 import type { ConsoleRole } from "@notifyafrica/design-system";
 import { generateOtpSchema } from "@notifyafrica/validation";
@@ -36,12 +37,35 @@ export async function POST(req: Request) {
   }
   const input = parsed.data;
 
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   const [organization, config] = await Promise.all([
     prisma.organization.findUnique({ where: { id: session.organizationId } }),
-    prisma.otpConfig.findFirst({ where: { id: input.configId, organizationId: session.organizationId } }),
+    prisma.otpConfig.findFirst({
+      where: { id: input.configId, organizationId: session.organizationId, projectId: project?.id },
+      include: { project: true },
+    }),
   ]);
   if (!organization || !config) {
     return Response.json({ error: "not_found" }, { status: 404 });
+  }
+
+  // Test project (design handoff Lots 5-6 env toggle): no pricing, no
+  // hold — the code still has to be generated and verified for real so
+  // integration testing works, it just never touches the wallet.
+  if (config.project.environment === "sandbox") {
+    const code = generateOtpCode(config.length);
+    const content = config.template.replace("{code}", code);
+    await sendOtpViaMockChannel({ destination: input.destination, channel: config.channel, content });
+    const otpCode = await prisma.otpCode.create({
+      data: {
+        configId: config.id,
+        organizationId: organization.id,
+        destination: input.destination,
+        codeHash: hashOtpCode(code),
+        expiresAt: new Date(Date.now() + config.expirySeconds * 1000),
+      },
+    });
+    return Response.json({ otpId: otpCode.id, destination: otpCode.destination, expiresAt: otpCode.expiresAt, sandbox: true });
   }
 
   const estimate = await estimatePricing({

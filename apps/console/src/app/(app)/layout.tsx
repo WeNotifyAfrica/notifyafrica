@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
+import { setEnvironmentAction } from "./actions";
 import { SESSION_COOKIE } from "@/lib/env";
 import {
   Button,
@@ -19,11 +21,13 @@ import {
  * Console shell — sidebar/topbar + org/project identity (design handoff
  * Lots 5-6). Every product module (SMS, Campaigns, OTP, ...) renders inside
  * this shell as a sub-route (§3: "les onglets deviennent des sous-routes").
- * The mockup's org/project *switcher* and Live/Test environment toggle are
- * shown as static labels, not interactive controls — there is only ever one
- * org and one default project per account today (Phase C), and no sandbox
- * environment exists in the data model, so a working switcher would be
- * theater. Documented in docs/ARCHITECTURE.md rather than faked.
+ * The mockup's org/project *switcher* is still a static label — there's
+ * only ever one org per account today (Phase C). The Live/Test environment
+ * toggle is real: every org now gets a Live (production) and Test
+ * (sandbox) Project at registration (apps/core-api/src/app/api/auth/
+ * register/route.ts), the selection lives in a cookie
+ * (apps/console/src/lib/env.ts ENV_COOKIE), and every project-scoped Core
+ * API route resolves against it (apps/core-api/src/lib/project.ts).
  */
 const NAV_ITEMS: ShellNavItem[] = [
   { href: "/dashboard", label: "Vue d'ensemble" },
@@ -43,7 +47,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) redirect("/login");
 
-  const api = coreApi(token);
+  const environment = await getCurrentEnvironment();
+  const api = coreApi(token, environment);
   let session;
   try {
     ({ session } = await api.getSession());
@@ -66,6 +71,53 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <span className="text-muted" style={{ fontSize: 11 }}>
             Console client
           </span>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+          <span className="text-muted" style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+            Environnement
+          </span>
+          <div className="seg" style={{ width: "100%" }}>
+            <form action={setEnvironmentAction} style={{ flex: 1 }}>
+              <input type="hidden" name="environment" value="production" />
+              <button
+                type="submit"
+                className="seg-opt"
+                style={{
+                  width: "100%",
+                  justifyContent: "center",
+                  border: "none",
+                  cursor: "pointer",
+                  color: environment === "production" ? "var(--color-accent)" : "inherit",
+                  boxShadow: environment === "production" ? "inset 0 0 0 1px var(--color-accent)" : "none",
+                }}
+              >
+                Live
+              </button>
+            </form>
+            <form action={setEnvironmentAction} style={{ flex: 1 }}>
+              <input type="hidden" name="environment" value="sandbox" />
+              <button
+                type="submit"
+                className="seg-opt"
+                style={{
+                  width: "100%",
+                  justifyContent: "center",
+                  border: "none",
+                  cursor: "pointer",
+                  color: environment === "sandbox" ? "var(--color-accent)" : "inherit",
+                  boxShadow: environment === "sandbox" ? "inset 0 0 0 1px var(--color-accent)" : "none",
+                }}
+              >
+                Test
+              </button>
+            </form>
+          </div>
+          {environment === "sandbox" ? (
+            <span className="text-muted" style={{ fontSize: 11 }}>
+              Envois gratuits, aucun débit.
+            </span>
+          ) : null}
         </div>
 
         <ShellNav items={NAV_ITEMS} />

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest, requireOrgSession } from "@/lib/session";
 import { releaseExpiredOtpHolds } from "@/lib/otp";
+import { getEnvironmentFromRequest, resolveProject } from "@/lib/project";
 
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
@@ -10,8 +11,9 @@ export async function GET(req: Request) {
 
   await releaseExpiredOtpHolds(session.organizationId);
 
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   const codes = await prisma.otpCode.findMany({
-    where: { organizationId: session.organizationId },
+    where: { organizationId: session.organizationId, config: { projectId: project?.id } },
     orderBy: { createdAt: "desc" },
     take: 50,
     select: {

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { createWhatsAppNumberAction, createWhatsAppTemplateAction, sendWhatsAppAction } from "./actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Textarea, Table, Tag } from "@notifyafrica/ui";
@@ -39,12 +40,12 @@ const MESSAGE_STATUS_LABEL: Record<string, string> = {
 export default async function WhatsAppPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; error?: string; free?: string }>;
+  searchParams: Promise<{ sent?: string; error?: string; free?: string; sandbox?: string }>;
 }) {
   const params = await searchParams;
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const api = coreApi(token);
+  const api = coreApi(token, await getCurrentEnvironment());
 
   const [{ numbers }, { templates }, { messages }] = await Promise.all([
     api.listWhatsAppNumbers(),
@@ -62,9 +63,11 @@ export default async function WhatsAppPage({
           <Card elevation="sm" accentBorder style={{ marginBottom: 16 }}>
             <CardBody>
               Message envoyé.{" "}
-              {params.free
-                ? "Gratuit — une conversation était déjà ouverte avec ce destinataire (fenêtre de 24 h)."
-                : "Facturé au tarif de la catégorie — ouvre une fenêtre de 24 h : les prochains envois à ce destinataire seront gratuits."}
+              {params.sandbox
+                ? "Environnement Test — envoi gratuit, aucun solde débité."
+                : params.free
+                  ? "Gratuit — une conversation était déjà ouverte avec ce destinataire (fenêtre de 24 h)."
+                  : "Facturé au tarif de la catégorie — ouvre une fenêtre de 24 h : les prochains envois à ce destinataire seront gratuits."}
             </CardBody>
           </Card>
         ) : null}

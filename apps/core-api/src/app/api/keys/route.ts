@@ -2,18 +2,21 @@ import { prisma } from "@/lib/db";
 import { getSessionFromRequest, requireOrgSession } from "@/lib/session";
 import { generateApiKey } from "@/lib/api-keys";
 import { recordAudit } from "@/lib/audit";
+import { getEnvironmentFromRequest, resolveProject } from "@/lib/project";
 import { consoleRoleHasPermission } from "@notifyafrica/auth";
 import type { ConsoleRole } from "@notifyafrica/design-system";
 import { createApiKeySchema } from "@notifyafrica/validation";
 
-/** Developers - API Keys (03_Specifications_Console §22). */
+/** Developers - API Keys (03_Specifications_Console §22). Scoped to the
+ * caller's current Live/Test project — a key created under Test doesn't
+ * show up (or authenticate as) Live. */
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!requireOrgSession(session)) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const project = await prisma.project.findFirst({ where: { organizationId: session.organizationId } });
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   if (!project) return Response.json({ keys: [] });
 
   const keys = await prisma.apiKey.findMany({
@@ -50,7 +53,7 @@ export async function POST(req: Request) {
   }
   const input = parsed.data;
 
-  const project = await prisma.project.findFirst({ where: { organizationId: session.organizationId } });
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   if (!project) {
     return Response.json({ error: "project_not_found" }, { status: 404 });
   }

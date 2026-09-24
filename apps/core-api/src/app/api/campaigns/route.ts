@@ -1,21 +1,25 @@
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest, requireOrgSession } from "@/lib/session";
 import { campaignJson } from "@/lib/serialize";
+import { getEnvironmentFromRequest, resolveProject } from "@/lib/project";
 import { createCampaignSchema } from "@notifyafrica/validation";
 
 /**
  * Campaigns (03_Specifications_Console §12): Draft -> Channel -> Audience
  * -> Content -> Estimate -> Schedule -> Review -> Reserve Funds -> Run ->
  * Report. This route only handles the Draft step — no funds are touched
- * until /launch.
+ * until /launch. Scoped to the caller's current Live/Test project (design
+ * handoff Lots 5-6 shell env toggle) — a Test campaign never shows up
+ * while viewing Live, and vice versa.
  */
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!requireOrgSession(session)) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   const campaigns = await prisma.campaign.findMany({
-    where: { organizationId: session.organizationId },
+    where: { organizationId: session.organizationId, projectId: project?.id },
     orderBy: { createdAt: "desc" },
   });
   return Response.json({ campaigns: campaigns.map(campaignJson) });
@@ -34,7 +38,7 @@ export async function POST(req: Request) {
   }
   const input = parsed.data;
 
-  const project = await prisma.project.findFirst({ where: { organizationId: session.organizationId } });
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   if (!project) {
     return Response.json({ error: "project_not_found" }, { status: 404 });
   }

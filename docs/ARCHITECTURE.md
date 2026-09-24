@@ -858,6 +858,83 @@ doesn't exist), Meta's quality-rating and sending-limit states, template
 reclassification mid-flight, and a real Conversations screen showing the
 open-window list itself rather than just tagging messages after the fact.
 
+## Live/Test environment switch (Lots 5-6 shell)
+
+The Console shell's mockup shows a Live/Test toggle in the sidebar (design
+handoff Lots 5-6: "sélecteurs org/projet, environnement test/live"); until
+now it was a static, non-functional label, documented as such in the
+first design-fidelity pass. This makes it real, end to end.
+
+**Data model.** The schema already had `Project.environment` (`sandbox` |
+`production`) — it just wasn't used meaningfully: every org (confirmed
+directly against the dev DB) had exactly one Project, named "Default",
+`environment: sandbox`, and every project-scoped route picked it with an
+unconditional `project.findFirst({ where: { organizationId } })`.
+Registration now creates **two** — "Live" (production) and "Test"
+(sandbox) — and a one-time backfill script gave the same to all 10
+pre-existing dev-DB orgs (renaming their original "Default" project to
+"Test", adding a new "Live" one).
+
+**How the selection travels.** Console's choice lives in a cookie
+(`apps/console/src/lib/env.ts` `ENV_COOKIE`, default `sandbox` — the safe
+choice: it matches every pre-existing org's only project, so a visitor
+who's never touched the toggle behaves exactly as before this feature
+existed). `coreApi(token, environment)` (`packages/api-client`) forwards
+it as an `X-Environment` header on every request. Core API's new
+`apps/core-api/src/lib/project.ts` reads that header
+(`getEnvironmentFromRequest`, defaulting to `sandbox` when absent — same
+safe-default reasoning) and resolves the right Project
+(`resolveProject`), falling back to *any* project for the org rather than
+hard-failing if the specific environment one is somehow missing.
+
+**What actually changes per environment.** Every project-scoped resource
+is now isolated by it — SMS/WhatsApp history, sender names, WhatsApp
+numbers/templates, OTP configs/history, campaigns, API keys: a Test
+WhatsApp number doesn't show up while viewing Live, matching how Meta's
+real WhatsApp Business API keeps test numbers as entirely separate
+objects from production ones, not a NotifyAfrica-only simplification.
+More importantly, **Test never spends real money**: SMS send, OTP
+generate, WhatsApp send, and Campaign estimate/launch all check the
+resolved project's environment and skip the Pricing Engine/wallet hold-
+capture entirely under sandbox — the send/message/campaign still happens
+for real (so integration testing exercises the real code path end to
+end), it just never touches `availableMinor`/`reservedMinor`. Campaigns
+specifically: `estimate` returns a zeroed quote for sandbox, and `launch`
+skips holding funds and creating a `Transaction` — which the Worker's
+existing capture/release logic (already conditional on "is there
+something to act on") handles as a no-op with no changes needed there.
+
+**Console UI.** The sidebar's Live/Test control is two small `<form
+action={setEnvironmentAction}>` buttons styled with the mockup's own
+`.seg`/`.seg-opt` classes (not the mockup's literal markup — this is a
+prototype-only client-state toggle there; production needs an actual
+server round trip to change a cookie). Submitting sets the cookie and
+calls `revalidatePath("/", "layout")` — no redirect, the current page
+just re-renders with the new environment's data. A note under the toggle
+("Envois gratuits, aucun débit.") appears only in Test.
+
+Verified end-to-end against the real dev stack, checking actual wallet
+movements, not just response flags: registered a fresh org, credited its
+wallet 1000 XOF. Sent SMS with no `X-Environment` header (the default) →
+`sandbox: true`, wallet unchanged at 1000. Sent again with
+`X-Environment: production` → charged 7 XOF (1000→993), real
+`Transaction` returned. `GET /api/sms/history` under each header shows
+only that environment's message — full isolation confirmed both via API
+and by fetching the actual Console pages with `na_env=sandbox` vs.
+`na_env=production` cookies (each rendered only its own message).
+Generated an OTP code under sandbox → free, wallet unchanged; the same
+config's id rejected with 404 when called under `X-Environment:
+production` — cross-environment access correctly blocked, not just
+hidden from listings. All five apps typecheck and production-build
+clean.
+
+**Known UX overlap, not resolved here:** `ApiKey.environment`
+(sandbox/production, chosen per-key at creation — a pre-existing field
+for which auth scope a key carries) is a different concept from the
+Console-wide Live/Test toggle (which project a key belongs to). Both
+exist on the Developers page now; worth reconciling in a future pass
+rather than conflating them under time pressure here.
+
 ## What's built vs. what's next
 
 Built:

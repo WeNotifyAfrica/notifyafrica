@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { revokeApiKeyAction } from "./actions";
 import { CreateApiKeyForm } from "./CreateApiKeyForm";
@@ -14,7 +15,7 @@ const ENV_LABELS: Record<string, string> = {
 export default async function DevelopersPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const { keys } = await coreApi(token).listApiKeys();
+  const { keys } = await coreApi(token, await getCurrentEnvironment()).listApiKeys();
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 24 }}>

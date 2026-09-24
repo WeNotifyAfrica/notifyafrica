@@ -31,6 +31,12 @@ export interface CoreApiClientOptions {
   baseUrl: string;
   /** Bearer session token, when the calling app has an authenticated user. */
   sessionToken?: string;
+  /** Console's Live/Test switch (design handoff Lots 5-6 shell) — forwarded
+   * as an `X-Environment` header so every project-scoped route (sends,
+   * history, sender names, WhatsApp numbers/templates, API keys...)
+   * resolves against the right one. Core API defaults to "sandbox" when
+   * this is absent, so omitting it is always the safe choice. */
+  environment?: "production" | "sandbox";
 }
 
 /** Thrown on any non-2xx response, with the parsed JSON error body attached
@@ -52,13 +58,14 @@ export class CoreApiError extends Error {
  * Admin) goes through this instead of hand-rolling fetch calls, so the
  * request/response shapes stay in one place (04_Prompt §20).
  */
-export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOptions) {
+export function createCoreApiClient({ baseUrl, sessionToken, environment }: CoreApiClientOptions) {
   async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const res = await fetch(`${baseUrl}${path}`, {
       ...init,
       headers: {
         "content-type": "application/json",
         ...(sessionToken ? { authorization: `Bearer ${sessionToken}` } : {}),
+        ...(environment ? { "x-environment": environment } : {}),
         ...init?.headers,
       },
       cache: init?.cache ?? "no-store",
@@ -129,9 +136,10 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
       request<{ campaign: Campaign }>("/api/campaigns", { method: "POST", body: JSON.stringify(payload) }),
     getCampaign: (id: string) => request<{ campaign: Campaign }>(`/api/campaigns/${id}`),
     estimateCampaign: (id: string) =>
-      request<{ campaign: Campaign; estimate: PricingEstimateResult }>(`/api/campaigns/${id}/estimate`, {
-        method: "POST",
-      }),
+      request<{ campaign: Campaign; estimate: PricingEstimateResult; sandbox?: boolean }>(
+        `/api/campaigns/${id}/estimate`,
+        { method: "POST" },
+      ),
     launchCampaign: (id: string) =>
       request<{ campaign: Campaign }>(`/api/campaigns/${id}/launch`, { method: "POST" }),
     cancelCampaign: (id: string) =>
@@ -149,13 +157,13 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         body: JSON.stringify(payload),
       }),
     sendWhatsApp: (payload: unknown) =>
-      request<{ message: Message; estimate: PricingEstimateResult; freeWithinConversation?: boolean }>(
+      request<{ message: Message; estimate: PricingEstimateResult; freeWithinConversation?: boolean; sandbox?: boolean }>(
         "/api/whatsapp/send",
         { method: "POST", body: JSON.stringify(payload) },
       ),
     listWhatsAppHistory: () => request<{ messages: Message[] }>("/api/whatsapp/history"),
     sendSms: (payload: unknown) =>
-      request<{ message: Message; transaction: Transaction; estimate: PricingEstimateResult }>(
+      request<{ message: Message; transaction: Transaction | null; estimate: PricingEstimateResult; sandbox?: boolean }>(
         "/api/sms/send",
         { method: "POST", body: JSON.stringify(payload) },
       ),
@@ -202,7 +210,7 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
     createOtpConfig: (payload: unknown) =>
       request<{ config: OtpConfig }>("/api/otp/configs", { method: "POST", body: JSON.stringify(payload) }),
     generateOtp: (payload: unknown) =>
-      request<{ otpId: string; destination: string; expiresAt: string }>("/api/otp/generate", {
+      request<{ otpId: string; destination: string; expiresAt: string; sandbox?: boolean }>("/api/otp/generate", {
         method: "POST",
         body: JSON.stringify(payload),
       }),

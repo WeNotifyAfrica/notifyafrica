@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { createOtpConfigAction, generateOtpAction, verifyOtpAction } from "./actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Table, Tag } from "@notifyafrica/ui";
@@ -36,7 +37,7 @@ export default async function OtpPage({
   const params = await searchParams;
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const api = coreApi(token);
+  const api = coreApi(token, await getCurrentEnvironment());
 
   const [{ configs }, { codes }] = await Promise.all([api.listOtpConfigs(), api.listOtpHistory()]);
 

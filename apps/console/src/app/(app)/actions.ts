@@ -2,8 +2,10 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { coreApi } from "@/lib/api";
-import { SESSION_COOKIE } from "@/lib/env";
+import { getCurrentEnvironment } from "@/lib/environment";
+import { SESSION_COOKIE, ENV_COOKIE } from "@/lib/env";
 import { CoreApiError } from "@notifyafrica/api-client";
 
 async function tokenOrRedirect() {
@@ -11,6 +13,18 @@ async function tokenOrRedirect() {
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) redirect("/login");
   return token;
+}
+
+/** Live/Test switch (design handoff Lots 5-6 shell). Sets the cookie every
+ * project-scoped page/action reads via getCurrentEnvironment(), then
+ * revalidates the whole app shell so the current page re-renders with
+ * the new environment's data — no redirect needed, stays on the same
+ * screen. */
+export async function setEnvironmentAction(formData: FormData) {
+  const environment = formData.get("environment") === "production" ? "production" : "sandbox";
+  const cookieStore = await cookies();
+  cookieStore.set(ENV_COOKIE, environment, { path: "/", httpOnly: false, sameSite: "lax" });
+  revalidatePath("/", "layout");
 }
 
 /**
@@ -22,9 +36,10 @@ async function tokenOrRedirect() {
  */
 export async function sendSmsAction(formData: FormData) {
   const token = await tokenOrRedirect();
+  const environment = await getCurrentEnvironment();
 
   try {
-    await coreApi(token).sendSms({
+    await coreApi(token, environment).sendSms({
       destination: String(formData.get("destination") ?? ""),
       content: String(formData.get("content") ?? ""),
       senderId: formData.get("senderId") ? String(formData.get("senderId")) : null,
@@ -42,9 +57,10 @@ export async function sendSmsAction(formData: FormData) {
  * approves/rejects before it's offered as a validated option. */
 export async function requestSenderNameAction(formData: FormData) {
   const token = await tokenOrRedirect();
+  const environment = await getCurrentEnvironment();
 
   try {
-    await coreApi(token).createSenderName({
+    await coreApi(token, environment).createSenderName({
       name: String(formData.get("name") ?? ""),
       country: String(formData.get("country") ?? ""),
       usage: String(formData.get("usage") ?? "TRANSACTIONAL"),
@@ -61,9 +77,10 @@ export async function requestSenderNameAction(formData: FormData) {
  * reusable drafts. */
 export async function createSmsTemplateAction(formData: FormData) {
   const token = await tokenOrRedirect();
+  const environment = await getCurrentEnvironment();
 
   try {
-    await coreApi(token).createSmsTemplate({
+    await coreApi(token, environment).createSmsTemplate({
       name: String(formData.get("name") ?? ""),
       usage: String(formData.get("usage") ?? "TRANSACTIONAL"),
       bodyText: String(formData.get("bodyText") ?? ""),

@@ -1,19 +1,22 @@
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest, requireOrgSession } from "@/lib/session";
 import { recordAudit } from "@/lib/audit";
+import { getEnvironmentFromRequest, resolveProject } from "@/lib/project";
 import { consoleRoleHasPermission } from "@notifyafrica/auth";
 import type { ConsoleRole } from "@notifyafrica/design-system";
 import { createOtpConfigSchema } from "@notifyafrica/validation";
 
-/** OTP - configuration (03_Specifications_Console §15). */
+/** OTP - configuration (03_Specifications_Console §15). Scoped to the
+ * caller's current Live/Test project, same as every other resource. */
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!requireOrgSession(session)) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   const configs = await prisma.otpConfig.findMany({
-    where: { organizationId: session.organizationId },
+    where: { organizationId: session.organizationId, projectId: project?.id },
     orderBy: { createdAt: "desc" },
   });
 
@@ -36,7 +39,7 @@ export async function POST(req: Request) {
   }
   const input = parsed.data;
 
-  const project = await prisma.project.findFirst({ where: { organizationId: session.organizationId } });
+  const project = await resolveProject(session.organizationId, getEnvironmentFromRequest(req));
   if (!project) {
     return Response.json({ error: "project_not_found" }, { status: 404 });
   }

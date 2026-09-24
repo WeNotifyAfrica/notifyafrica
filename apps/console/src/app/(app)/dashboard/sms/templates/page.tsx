@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { createSmsTemplateAction } from "../../../actions";
 import { SmsSubNav } from "../SmsSubNav";
@@ -26,7 +27,7 @@ export default async function SmsTemplatesPage({
   const params = await searchParams;
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const { templates } = await coreApi(token).listSmsTemplates();
+  const { templates } = await coreApi(token, await getCurrentEnvironment()).listSmsTemplates();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>

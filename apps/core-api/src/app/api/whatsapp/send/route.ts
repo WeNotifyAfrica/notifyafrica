@@ -4,6 +4,7 @@ import { getSessionFromRequest, requireOrgSession } from "@/lib/session";
 import { estimatePricing } from "@/lib/pricing-engine";
 import { captureFunds, holdFunds, InsufficientBalanceError, releaseFunds, toMinorUnits } from "@/lib/wallet";
 import { sendViaMockProvider } from "@/lib/providers/mock-sms";
+import { getEnvironmentFromRequest, resolveProject } from "@/lib/project";
 import { consoleRoleHasPermission } from "@notifyafrica/auth";
 import type { ConsoleRole } from "@notifyafrica/design-system";
 import { sendWhatsAppSchema } from "@notifyafrica/validation";
@@ -12,16 +13,12 @@ const CONVERSATION_WINDOW_HOURS = 24;
 
 /**
  * WhatsApp send (03_Specifications_Console §16) — priced per **24h
- * conversation window with a contact, not per message** (design handoff
- * Lot 10 §I: "La facturation est par conversation de 24 h... les réponses
- * dans la fenêtre sont gratuites. La catégorie du premier message sortant
- * fixe le prix de la fenêtre.") — this mirrors Meta's real WhatsApp
- * Business Platform billing, not a design-only detail. A non-expired
- * WhatsAppConversation row for (org, destination) means the window is
- * still open: the send goes through with no pricing/wallet/Transaction at
- * all. No open window means this send opens one: same estimate -> hold ->
- * deliver -> capture/release sequence as SMS, then a new
- * WhatsAppConversation row for the next 24h.
+ * conversation window with a contact, not per message** under the Live
+ * project (design handoff Lot 10 §I: "La facturation est par conversation
+ * de 24 h... les réponses dans la fenêtre sont gratuites."). Under Test
+ * (design handoff Lots 5-6 env toggle), every send is free and no
+ * conversation window is tracked at all — sandbox never spends real money
+ * or needs the billing concept that exists to meter it.
  */
 export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
@@ -39,18 +36,46 @@ export async function POST(req: Request) {
   }
   const input = parsed.data;
 
-  const [organization, project, template] = await Promise.all([
+  const [organization, project] = await Promise.all([
     prisma.organization.findUnique({ where: { id: session.organizationId } }),
-    prisma.project.findFirst({ where: { organizationId: session.organizationId } }),
-    prisma.whatsAppTemplate.findFirst({
-      where: { id: input.templateId, organizationId: session.organizationId },
-    }),
+    resolveProject(session.organizationId, getEnvironmentFromRequest(req)),
   ]);
-  if (!organization || !project || !template) {
+  if (!organization || !project) {
+    return Response.json({ error: "not_found" }, { status: 404 });
+  }
+  const template = await prisma.whatsAppTemplate.findFirst({
+    where: { id: input.templateId, organizationId: organization.id, projectId: project.id },
+  });
+  if (!template) {
     return Response.json({ error: "not_found" }, { status: 404 });
   }
   if (template.status !== "APPROVED") {
     return Response.json({ error: "template_not_approved" }, { status: 422 });
+  }
+
+  if (project.environment === "sandbox") {
+    const deliveryStatus = await sendViaMockProvider({ destination: input.destination, content: template.bodyText });
+    if (deliveryStatus === "FAILED") {
+      return Response.json({ error: "provider_failed" }, { status: 502 });
+    }
+    const message = await prisma.message.create({
+      data: {
+        organizationId: organization.id,
+        projectId: project.id,
+        product: "WHATSAPP",
+        destination: input.destination,
+        content: template.bodyText,
+        status: "SENT",
+        pricingSnapshot: { sandbox: true },
+        whatsappTemplateId: template.id,
+      },
+    });
+    return Response.json({
+      message,
+      estimate: { unitPrice: 0, subtotal: 0, discounts: [], taxes: [], total: 0, currency: organization.currency, ruleVersion: "sandbox", quoteRequired: false },
+      sandbox: true,
+      freeWithinConversation: false,
+    });
   }
 
   const openConversation = await prisma.whatsAppConversation.findFirst({

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { CoreApiError } from "@notifyafrica/api-client";
 
@@ -16,7 +17,8 @@ async function tokenOrRedirect() {
 
 export async function createOtpConfigAction(formData: FormData) {
   const token = await tokenOrRedirect();
-  await coreApi(token).createOtpConfig({
+  const environment = await getCurrentEnvironment();
+  await coreApi(token, environment).createOtpConfig({
     name: String(formData.get("name") ?? ""),
     length: Number(formData.get("length") ?? 6),
     expirySeconds: Number(formData.get("expirySeconds") ?? 300),
@@ -31,8 +33,9 @@ export async function createOtpConfigAction(formData: FormData) {
 
 export async function generateOtpAction(formData: FormData) {
   const token = await tokenOrRedirect();
+  const environment = await getCurrentEnvironment();
   try {
-    const result = await coreApi(token).generateOtp({
+    const result = await coreApi(token, environment).generateOtp({
       configId: String(formData.get("configId") ?? ""),
       destination: String(formData.get("destination") ?? ""),
     });

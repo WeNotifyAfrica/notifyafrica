@@ -23,6 +23,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const campaign = await prisma.campaign.findFirst({
     where: { id, organizationId: session.organizationId },
+    include: { project: true },
   });
   if (!campaign) {
     return Response.json({ error: "not_found" }, { status: 404 });
@@ -32,6 +33,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
   if (campaign.unitPrice === null || campaign.currency === null || campaign.estimatedTotal === null) {
     return Response.json({ error: "estimate_required" }, { status: 422 });
+  }
+
+  // Sandbox campaigns were estimated free (see .../estimate) — launching
+  // one holds nothing and creates no Transaction, so the Worker's capture/
+  // release logic (which only acts when there's something to act on) is a
+  // no-op for it, exactly like every other product's sandbox send.
+  if (campaign.project.environment === "sandbox") {
+    const updated = await prisma.campaign.update({
+      where: { id },
+      data: { status: "QUEUED", heldAmountMinor: 0n },
+    });
+    await enqueueCampaignJob(campaign.id);
+    return Response.json({ campaign: campaignJson(updated) });
   }
 
   const amountMinor = await toMinorUnits(Number(campaign.estimatedTotal), campaign.currency);

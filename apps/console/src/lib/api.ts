@@ -1,6 +1,6 @@
 import { createCoreApiClient } from "@notifyafrica/api-client";
-import { env } from "./env";
+import { env, type ConsoleEnvironment } from "./env";
 
-export function coreApi(sessionToken?: string) {
-  return createCoreApiClient({ baseUrl: env.coreApiUrl, sessionToken });
+export function coreApi(sessionToken?: string, environment?: ConsoleEnvironment) {
+  return createCoreApiClient({ baseUrl: env.coreApiUrl, sessionToken, environment });
 }

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { CoreApiError } from "@notifyafrica/api-client";
 
@@ -23,7 +24,7 @@ export async function createCampaignAction(formData: FormData) {
     .map((d) => d.trim())
     .filter(Boolean);
 
-  const { campaign } = await coreApi(token).createCampaign({
+  const { campaign } = await coreApi(token, await getCurrentEnvironment()).createCampaign({
     name: String(formData.get("name")),
     productKey: "SMS",
     senderId: formData.get("senderId") ? String(formData.get("senderId")) : null,

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { sendSmsAction } from "../../actions";
 import { SmsSubNav } from "./SmsSubNav";
@@ -25,7 +26,7 @@ export default async function SmsPage({
   const params = await searchParams;
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const api = coreApi(token);
+  const api = coreApi(token, await getCurrentEnvironment());
 
   const [{ wallet }, { messages }, currenciesConfig, { senderNames }, { templates }] = await Promise.all([
     api.getWallet(),

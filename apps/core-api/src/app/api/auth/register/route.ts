@@ -9,9 +9,11 @@ const AUTH_SECRET = process.env.AUTH_SECRET ?? "";
 
 /**
  * Console registration (03_Specifications_Console §4). Creates the user,
- * organization, membership (OWNER) and a default sandbox project, then
- * fires USER_REGISTERED so the Admin notification center picks it up
- * (04_Prompt §13) without Console knowing anything about Admin routing.
+ * organization, membership (OWNER), Live + Test projects (design handoff
+ * Lots 5-6 shell: the env toggle needs one of each — see apps/core-api/
+ * src/lib/project.ts), and the org's wallet, then fires USER_REGISTERED
+ * so the Admin notification center picks it up (04_Prompt §13) without
+ * Console knowing anything about Admin routing.
  */
 export async function POST(req: Request) {
   const body = await req.json();
@@ -40,8 +42,11 @@ export async function POST(req: Request) {
     data: { userId: user.id, organizationId: organization.id, role: "OWNER" },
   });
 
-  await prisma.project.create({
-    data: { organizationId: organization.id, name: "Default", environment: "sandbox" },
+  await prisma.project.createMany({
+    data: [
+      { organizationId: organization.id, name: "Live", environment: "production" },
+      { organizationId: organization.id, name: "Test", environment: "sandbox" },
+    ],
   });
 
   await ensureWallet(organization.id, input.currency);

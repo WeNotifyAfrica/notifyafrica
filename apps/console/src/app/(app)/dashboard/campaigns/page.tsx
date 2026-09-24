@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { coreApi } from "@/lib/api";
+import { getCurrentEnvironment } from "@/lib/environment";
 import { SESSION_COOKIE } from "@/lib/env";
 import { createCampaignAction } from "./actions";
 import { Button, Card, CardTitle, CardBody, Field, Input, Textarea, Table, Tag } from "@notifyafrica/ui";
@@ -34,7 +35,7 @@ const STATUS_LABELS: Record<string, string> = {
 export default async function CampaignsPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)!.value;
-  const { campaigns } = await coreApi(token).listCampaigns();
+  const { campaigns } = await coreApi(token, await getCurrentEnvironment()).listCampaigns();
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 24 }}>

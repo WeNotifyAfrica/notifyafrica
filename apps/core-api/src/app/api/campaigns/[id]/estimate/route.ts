@@ -8,7 +8,9 @@ import { campaignJson } from "@/lib/serialize";
  * campaign naturally lands on the right volume tier (or `quoteRequired`)
  * from the same Pricing Engine single sends use. Stores the result on the
  * campaign for /launch to hold funds against; doesn't touch the wallet
- * itself.
+ * itself. A campaign drafted under the Test project (design handoff Lots
+ * 5-6 env toggle) always estimates free — sandbox never spends real
+ * money, matching every other send route's sandbox behavior.
  */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSessionFromRequest(req);
@@ -18,7 +20,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
 
   const [campaign, organization] = await Promise.all([
-    prisma.campaign.findFirst({ where: { id, organizationId: session.organizationId } }),
+    prisma.campaign.findFirst({ where: { id, organizationId: session.organizationId }, include: { project: true } }),
     prisma.organization.findUnique({ where: { id: session.organizationId } }),
   ]);
   if (!campaign || !organization) {
@@ -26,6 +28,27 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
   if (campaign.status !== "DRAFT") {
     return Response.json({ error: "not_editable" }, { status: 409 });
+  }
+
+  if (campaign.project.environment === "sandbox") {
+    const updated = await prisma.campaign.update({
+      where: { id },
+      data: { unitPrice: 0, currency: organization.currency, estimatedTotal: 0 },
+    });
+    return Response.json({
+      campaign: campaignJson(updated),
+      estimate: {
+        unitPrice: 0,
+        subtotal: 0,
+        discounts: [],
+        taxes: [],
+        total: 0,
+        currency: organization.currency,
+        ruleVersion: "sandbox",
+        quoteRequired: false,
+      },
+      sandbox: true,
+    });
   }
 
   const estimate = await estimatePricing({
@@ -48,5 +71,5 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     },
   });
 
-  return Response.json({ campaign: campaignJson(updated), estimate });
+  return Response.json({ campaign: campaignJson(updated), estimate, sandbox: false });
 }
