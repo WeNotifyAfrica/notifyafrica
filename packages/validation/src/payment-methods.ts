@@ -13,8 +13,10 @@ export const createPaymentMethodSchema = z.object({
 });
 export type CreatePaymentMethodInput = z.infer<typeof createPaymentMethodSchema>;
 
-export const walletTopupSchema = z.object({
-  paymentMethodId: z.string().min(1),
-  amount: z.number().positive(),
-});
+export const walletTopupSchema = z
+  .object({
+    paymentMethodId: z.string().min(1).openapi({ example: "cm...paymentmethodid" }),
+    amount: z.number().positive().openapi({ example: 5000, description: "Major currency units." }),
+  })
+  .openapi("WalletTopupRequest");
 export type WalletTopupInput = z.infer<typeof walletTopupSchema>;

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "zod": "^3.24.0",
+    "@asteasolutions/zod-to-openapi": "^7.3.0",
     "@notifyafrica/design-system": "workspace:*"
   }
 }

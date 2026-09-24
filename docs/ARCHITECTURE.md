@@ -643,6 +643,46 @@ Verified live across all of Console and Admin against a clean dev stack
 (pages return 200, French labels render instead of raw enum strings); all
 five apps typecheck and production-build clean.
 
+## API documentation — self-hosted Swagger (OpenAPI)
+
+The Core API now serves its own interactive API reference at `/docs`
+(Swagger UI), backed by `GET /api/openapi.json` — both on the Core API's
+own domain, no third-party account (SwaggerHub etc.) involved.
+
+**Generated from the real Zod schemas, not hand-written.** A hand-
+maintained OpenAPI YAML would drift from what the route handlers actually
+validate — the same class of problem as every other "duplicated business
+data" bug fixed this session. Instead, `@asteasolutions/zod-to-openapi`
+extends Zod (`packages/validation/src/zod-setup.ts`, imported first via a
+side-effect import in `index.ts` so every schema file sees the same
+already-extended `z` singleton) so the *same* schemas the routes call
+`.safeParse()` against can carry `.openapi()` metadata (examples,
+descriptions) and be dropped straight into the spec.
+
+`apps/core-api/src/lib/openapi-registry.ts` is the single place routes get
+registered — method, path, request schema, response schema(s) per status
+code, tag. `GET /api/openapi.json` calls `generateOpenApiDocument()` on
+every request (never a static file, so it can't go stale), and `/docs`
+renders it with `swagger-ui-react` (a client component loaded via
+`next/dynamic(..., { ssr: false })`, since the library touches `window` at
+import time — App Router requires that dynamic-with-no-ssr to live in a
+Client Component, not a Server Component, which the first build attempt
+caught).
+
+**Registered so far (proof of concept, 6 of ~57 routes):** Auth
+(register/login/session) and Wallet (get/topup/transactions,
+admin-credit). The remaining routes get registered the same way, lot by
+lot (SMS/OTP/WhatsApp/Campaigns/Quotes next, then the rest of Admin),
+following the same incremental pattern as the rest of this build.
+
+Verified: production build compiles clean, `/api/openapi.json` returns a
+valid OpenAPI 3.0 document with real examples (checked live against the
+dev stack), the `/docs` page's JS bundle contains the actual
+`swagger-ui-react` code (confirmed by inspecting the compiled chunk — no
+headless browser available in this environment to screenshot the
+rendered UI, so visual confirmation in an actual browser is still worth
+doing).
+
 ## What's built vs. what's next
 
 Built:
