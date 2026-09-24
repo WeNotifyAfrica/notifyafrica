@@ -33,6 +33,12 @@ export interface Message {
     ruleVersion?: string;
     category?: string;
     capturedAt?: string;
+    /** WhatsApp only — set when this send reused an already-open 24h
+     * conversation window instead of being priced/billed (design handoff
+     * Lot 10 §I). */
+    freeWithinConversation?: boolean;
+    conversationCategory?: string;
+    conversationExpiresAt?: string;
   };
 }
 

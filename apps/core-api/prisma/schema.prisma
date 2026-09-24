@@ -195,10 +195,11 @@ model Organization {
   invitations  Invitation[]
   otpConfigs   OtpConfig[]
   campaigns    Campaign[]
-  whatsappNumbers   WhatsAppNumber[]
-  whatsappTemplates WhatsAppTemplate[]
-  senderNames       SenderName[]
-  smsTemplates      SmsTemplate[]
+  whatsappNumbers      WhatsAppNumber[]
+  whatsappTemplates    WhatsAppTemplate[]
+  whatsappConversations WhatsAppConversation[]
+  senderNames          SenderName[]
+  smsTemplates         SmsTemplate[]
 
   @@map("organizations")
 }
@@ -230,10 +231,11 @@ model Project {
   messages     Message[]
   otpConfigs   OtpConfig[]
   campaigns    Campaign[]
-  whatsappNumbers   WhatsAppNumber[]
-  whatsappTemplates WhatsAppTemplate[]
-  senderNames       SenderName[]
-  smsTemplates      SmsTemplate[]
+  whatsappNumbers      WhatsAppNumber[]
+  whatsappTemplates    WhatsAppTemplate[]
+  whatsappConversations WhatsAppConversation[]
+  senderNames          SenderName[]
+  smsTemplates         SmsTemplate[]
 
   @@map("projects")
 }
@@ -589,6 +591,33 @@ model WhatsAppTemplate {
   messages     Message[]
 
   @@map("whatsapp_templates")
+}
+
+/// WhatsApp Business is billed **per 24h conversation window with a
+/// contact, not per message** (design handoff Lot 10 §I: "La facturation
+/// est par conversation de 24 h, pas par message : les réponses dans la
+/// fenêtre sont gratuites. La catégorie du premier message sortant fixe
+/// le prix de la fenêtre.") — this mirrors Meta's own real WhatsApp
+/// Business Platform billing model, not a design-only simplification.
+/// One row per window actually opened (not upserted in place), so this
+/// doubles as a real conversation history for analytics. A send checks
+/// for a non-expired row for (organizationId, destination); if found, the
+/// send is free and reuses that window's category; if not, the send is
+/// priced normally and opens a new 24h window here.
+model WhatsAppConversation {
+  id             String                   @id @default(cuid())
+  organizationId String
+  projectId      String
+  destination    String
+  category       WhatsAppTemplateCategory
+  openedAt       DateTime                 @default(now())
+  expiresAt      DateTime
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, destination, expiresAt])
+  @@map("whatsapp_conversations")
 }
 
 /// SMS sender names must be validated per-country by each operator (design

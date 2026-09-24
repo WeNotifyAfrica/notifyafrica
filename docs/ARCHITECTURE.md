@@ -808,6 +808,56 @@ code vérifié, pas à la tentative d'envoi...") — this is a business rule
 worth surfacing to the person generating codes, not just a code comment.
 All five apps typecheck and production-build clean.
 
+## WhatsApp billing fix: per 24h conversation window, not per message (Lot 10)
+
+Same screen-by-screen pass, same class of finding as OTP: Lot 10's "I ·
+Règles métier" states **"La facturation est par conversation de 24 h, pas
+par message : les réponses dans la fenêtre sont gratuites. La catégorie
+du premier message sortant fixe le prix de la fenêtre."** This isn't a
+design-only simplification — it's how Meta's real WhatsApp Business
+Platform actually bills. `/api/whatsapp/send` charged every single send
+at the template's category rate, with no concept of a conversation window
+at all — a customer receiving 5 messages in an hour would be billed 5
+times instead of once.
+
+Fixed with a new `WhatsAppConversation` model — one row per window
+actually opened (not upserted in place, so it doubles as real conversation
+history), keyed by `(organizationId, destination)` with a category and
+`expiresAt`. Send logic now branches on whether a non-expired window
+exists for that destination:
+- **Open window found** → send goes through for free: no Pricing Engine
+  call, no wallet hold/capture, no `Transaction` row at all.
+  `Message.transactionId` stays `null`, and `pricingSnapshot` records
+  `freeWithinConversation: true` plus which category/window it rode on.
+- **No open window** → priced and billed exactly as before (estimate →
+  hold → capture), and opens a new 24h window for that destination.
+
+Console surfaces the distinction rather than hiding it: the send
+confirmation banner says whether this specific send was free (window
+reused) or opened a new billed window, and the WhatsApp journal got a new
+"Facturation" column tagging each message Facturé/Gratuit.
+
+Verified end-to-end against real wallet movements: send #1 to a new
+number → charged 24 XOF (964→940 available), `freeWithinConversation:
+false`. Send #2 to the **same** number → `freeWithinConversation: true`,
+wallet completely unchanged (940→940), message's `transactionId: null`.
+Send #3 to a **different** number → charged again (940→916), confirming
+window isolation is per-destination, not global to the organization. All
+five apps typecheck and production-build clean; migration applied
+without conflicts. (Also re-learned: after `prisma migrate dev` +
+`generate`, the *already-running* dev server process still holds the old
+`@prisma/client` in its Node module cache — Next's fast-refresh
+recompiles changed route code but doesn't reload node_modules packages,
+so a schema change always needs a full dev-stack restart, not just a
+rebuild, to actually take effect.)
+
+**Deliberately not built** (documented gaps, Lot 10 names these
+explicitly): consent/opt-in tracking for contacts ("un contact sans
+consentement WhatsApp est exclu" needs a Contact/consent model that
+doesn't exist), Meta's quality-rating and sending-limit states, template
+reclassification mid-flight, and a real Conversations screen showing the
+open-window list itself rather than just tagging messages after the fact.
+
 ## What's built vs. what's next
 
 Built:

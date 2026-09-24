@@ -149,10 +149,10 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         body: JSON.stringify(payload),
       }),
     sendWhatsApp: (payload: unknown) =>
-      request<{ message: Message; estimate: PricingEstimateResult }>("/api/whatsapp/send", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      }),
+      request<{ message: Message; estimate: PricingEstimateResult; freeWithinConversation?: boolean }>(
+        "/api/whatsapp/send",
+        { method: "POST", body: JSON.stringify(payload) },
+      ),
     listWhatsAppHistory: () => request<{ messages: Message[] }>("/api/whatsapp/history"),
     sendSms: (payload: unknown) =>
       request<{ message: Message; transaction: Transaction; estimate: PricingEstimateResult }>(

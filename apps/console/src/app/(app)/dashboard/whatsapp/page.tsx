@@ -39,7 +39,7 @@ const MESSAGE_STATUS_LABEL: Record<string, string> = {
 export default async function WhatsAppPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; error?: string }>;
+  searchParams: Promise<{ sent?: string; error?: string; free?: string }>;
 }) {
   const params = await searchParams;
   const cookieStore = await cookies();
@@ -60,7 +60,12 @@ export default async function WhatsAppPage({
 
         {params.sent ? (
           <Card elevation="sm" accentBorder style={{ marginBottom: 16 }}>
-            <CardBody>Message envoyé.</CardBody>
+            <CardBody>
+              Message envoyé.{" "}
+              {params.free
+                ? "Gratuit — une conversation était déjà ouverte avec ce destinataire (fenêtre de 24 h)."
+                : "Facturé au tarif de la catégorie — ouvre une fenêtre de 24 h : les prochains envois à ce destinataire seront gratuits."}
+            </CardBody>
           </Card>
         ) : null}
         {params.error ? (
@@ -144,6 +149,7 @@ export default async function WhatsAppPage({
               <tr>
                 <th>Destination</th>
                 <th>Statut</th>
+                <th>Facturation</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -156,12 +162,19 @@ export default async function WhatsAppPage({
                       {MESSAGE_STATUS_LABEL[m.status] ?? m.status}
                     </Tag>
                   </td>
+                  <td>
+                    {m.pricingSnapshot?.freeWithinConversation ? (
+                      <Tag variant="outline">Gratuit · fenêtre ouverte</Tag>
+                    ) : (
+                      <Tag variant="neutral">Facturé</Tag>
+                    )}
+                  </td>
                   <td className="num">{new Date(m.createdAt).toLocaleString("fr-FR")}</td>
                 </tr>
               ))}
               {messages.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="text-muted">
+                  <td colSpan={4} className="text-muted">
                     Aucun envoi pour l&apos;instant.
                   </td>
                 </tr>

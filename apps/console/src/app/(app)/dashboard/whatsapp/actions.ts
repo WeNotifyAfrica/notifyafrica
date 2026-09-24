@@ -36,15 +36,17 @@ export async function createWhatsAppTemplateAction(formData: FormData) {
 
 export async function sendWhatsAppAction(formData: FormData) {
   const token = await tokenOrRedirect();
+  let freeWithinConversation = false;
   try {
-    await coreApi(token).sendWhatsApp({
+    const result = await coreApi(token).sendWhatsApp({
       templateId: String(formData.get("templateId")),
       destination: String(formData.get("destination")),
     });
+    freeWithinConversation = result.freeWithinConversation ?? false;
   } catch (err) {
     const code = err instanceof CoreApiError ? (err.body?.error ?? "send_failed") : "send_failed";
     redirect(`/dashboard/whatsapp?error=${code}`);
   }
   revalidatePath("/dashboard/whatsapp");
-  redirect("/dashboard/whatsapp?sent=1");
+  redirect(`/dashboard/whatsapp?sent=1${freeWithinConversation ? "&free=1" : ""}`);
 }
