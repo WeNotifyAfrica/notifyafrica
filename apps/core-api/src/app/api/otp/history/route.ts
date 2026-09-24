@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest, requireOrgSession } from "@/lib/session";
+import { releaseExpiredOtpHolds } from "@/lib/otp";
 
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!requireOrgSession(session)) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  await releaseExpiredOtpHolds(session.organizationId);
 
   const codes = await prisma.otpCode.findMany({
     where: { organizationId: session.organizationId },

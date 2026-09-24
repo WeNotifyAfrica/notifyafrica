@@ -759,6 +759,55 @@ message detail page shows the real Transaction amount, rule version, and
 status. All five apps typecheck and production-build clean; a fresh
 `prisma migrate dev` applied without conflicts.
 
+## OTP billing fix: charge the verified code, not the send attempt (Lot 9)
+
+Reading Lot 9's mockup closely (continuing the same screen-by-screen pass
+as the SMS lot) surfaced a real business-logic bug, not a visual gap: its
+"I · Règles métier" section states plainly — **"Facturation au code
+vérifié : un code envoyé mais non vérifié n'est pas facturé"** — and the
+mockup's own overview KPIs, funnel, and cost breakdown all key off
+*verified* codes, never sent ones. `/api/otp/generate` had followed the
+same estimate → hold → deliver → **capture** sequence as SMS/WhatsApp send
+— billing immediately on delivery, before anyone had typed anything.
+Every code, verified or not, cost the organization money — directly
+contradicting the lot's headline invariant.
+
+Fixed by splitting where hold and capture happen:
+- `/api/otp/generate` still estimates and **holds** funds (so an org
+  without enough balance still can't generate codes it can't pay for) but
+  creates the `Transaction` at `PENDING`, not `CAPTURED`.
+- `/api/otp/verify` is where the hold actually settles: a correct code
+  **captures** it (`status: CAPTURED`); an expired code or exhausted
+  attempts **releases** it (`status: CANCELLED`) — a code sent but never
+  verified now costs nothing, exactly as designed.
+- **New gap this created and closed in the same pass**: a code the caller
+  never calls `/verify` on again after it expires would otherwise leave
+  its hold "stuck" in `reservedMinor` forever — nothing was watching for
+  that. Added `releaseExpiredOtpHolds()` (`apps/core-api/src/lib/otp.ts`)
+  and call it from the two read paths most likely to be hit before the
+  org would notice a discrepancy: `GET /api/otp/history` and `GET /api/
+  wallet` itself. No cron/scheduler exists for this yet, so it's a lazy
+  self-heal-on-next-read, not real-time — a documented, bounded gap
+  rather than a real-time sweep.
+
+Verified end-to-end against the real dev stack with three separate paths,
+each checked against actual wallet movements (not just response bodies):
+1. **Generate → hold**: available 969→964 XOF, reserved 0→5 XOF,
+   Transaction stays `PENDING` — confirmed nothing was captured yet.
+2. **Verify success → capture**: reserved 5→0 XOF, available stays 964
+   XOF (the spend is now real), Transaction flips to `CAPTURED`.
+3. **Expire without verify → release**: a second code with a 30-second
+   config, left unverified past expiry, checked via `GET /api/wallet`
+   (which triggers the lazy sweep) — available correctly returned to 964
+   XOF, reserved back to 0, Transaction flips to `CANCELLED`, OtpCode to
+   `EXPIRED`. Cross-checked directly against Admin's transaction list:
+   one `OTP_SEND` at `CAPTURED`, one at `CANCELLED`, both 5 XOF.
+
+Also added a visible note to the Console OTP page itself ("Facturé au
+code vérifié, pas à la tentative d'envoi...") — this is a business rule
+worth surfacing to the person generating codes, not just a code comment.
+All five apps typecheck and production-build clean.
+
 ## What's built vs. what's next
 
 Built:

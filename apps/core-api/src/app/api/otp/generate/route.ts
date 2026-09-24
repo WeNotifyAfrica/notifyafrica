@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest, requireOrgSession } from "@/lib/session";
 import { estimatePricing } from "@/lib/pricing-engine";
-import { captureFunds, holdFunds, InsufficientBalanceError, releaseFunds, toMinorUnits } from "@/lib/wallet";
+import { holdFunds, InsufficientBalanceError, releaseFunds, toMinorUnits } from "@/lib/wallet";
 import { generateOtpCode, hashOtpCode } from "@/lib/otp";
 import { sendOtpViaMockChannel } from "@/lib/providers/mock-otp";
 import { consoleRoleHasPermission } from "@notifyafrica/auth";
@@ -10,9 +10,15 @@ import type { ConsoleRole } from "@notifyafrica/design-system";
 import { generateOtpSchema } from "@notifyafrica/validation";
 
 /**
- * OTP generation follows the same estimate -> hold -> deliver ->
- * capture/release sequence as SMS send (04_Prompt §15) — OTP is a billed
- * product in the Catalog like any other (00_Contexte_Global §2).
+ * OTP generation estimates and HOLDS funds but never captures them here —
+ * design handoff Lot 9's own stated invariant: "Facturation au code
+ * vérifié : un code envoyé mais non vérifié n'est pas facturé." Unlike
+ * SMS/WhatsApp send (which captures immediately on successful delivery),
+ * OTP only captures in /api/otp/verify on a successful match. A code that
+ * expires or exhausts its attempts releases the hold instead — see
+ * apps/core-api/src/app/api/otp/verify/route.ts and
+ * apps/core-api/src/app/api/otp/history/route.ts (lazy release for codes
+ * that expire without the caller ever calling verify again).
  */
 export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
@@ -87,8 +93,8 @@ export async function POST(req: Request) {
     return Response.json({ error: "delivery_failed" }, { status: 502 });
   }
 
-  await captureFunds(organization.id, amountMinor, "OTP generate");
-
+  // PENDING, not CAPTURED — the hold is only realized as spend on a
+  // successful verify. This is the "code envoyé, pas encore facturé" state.
   const transaction = await prisma.transaction.create({
     data: {
       organizationId: organization.id,
@@ -97,7 +103,7 @@ export async function POST(req: Request) {
       amountMinor,
       currency: estimate.currency,
       pricingSnapshot,
-      status: "CAPTURED",
+      status: "PENDING",
       idempotencyKey: randomUUID(),
     },
   });

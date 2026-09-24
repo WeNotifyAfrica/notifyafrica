@@ -18,10 +18,15 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 /**
- * OTP (03_Specifications_Console §15). No real channel is wired yet
- * (design handoff README §9 point 4) — generated codes are logged
- * server-side ("otp.intended_delivery") instead of actually sent, so this
- * page's demo mode note tells you where to find the value while testing.
+ * OTP (03_Specifications_Console §15, design handoff Lot 9). Billed on
+ * the *verified* code, not the send attempt (Lot 9's own stated
+ * invariant) — /api/otp/generate holds funds, /api/otp/verify captures
+ * them on a match or releases them on expiry/exhausted attempts, so a
+ * code sent but never verified costs nothing (see apps/core-api/src/app/
+ * api/otp/verify/route.ts). No real channel is wired yet (design handoff
+ * README §9 point 4) — generated codes are logged server-side
+ * ("otp.intended_delivery") instead of actually sent, so this page's demo
+ * mode note tells you where to find the value while testing.
  */
 export default async function OtpPage({
   searchParams,
@@ -168,6 +173,10 @@ export default async function OtpPage({
 
         <Card elevation="sm">
           <CardTitle>Générer un code</CardTitle>
+          <CardBody>
+            Facturé au code vérifié, pas à la tentative d&apos;envoi : le montant est réservé maintenant, débité
+            seulement si le code est vérifié à temps.
+          </CardBody>
           <form action={generateOtpAction} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Field label="Configuration">
               <select name="configId" className="input" required>
