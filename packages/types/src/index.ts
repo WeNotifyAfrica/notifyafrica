@@ -14,3 +14,4 @@ export * from "./payment-methods";
 export * from "./campaigns";
 export * from "./whatsapp";
 export * from "./dashboard";
+export * from "./sms";

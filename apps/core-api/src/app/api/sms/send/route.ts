@@ -110,8 +110,16 @@ export async function POST(req: Request) {
       status: "SENT",
       pricingSnapshot,
       transactionId: transaction.id,
+      smsTemplateId: input.smsTemplateId,
     },
   });
+
+  if (input.smsTemplateId) {
+    await prisma.smsTemplate.updateMany({
+      where: { id: input.smsTemplateId, organizationId: organization.id },
+      data: { usageCount: { increment: 1 } },
+    });
+  }
 
   if (isFirstMessage) {
     await recordEvent("FIRST_MESSAGE_SENT", {

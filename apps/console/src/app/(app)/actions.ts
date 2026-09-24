@@ -28,6 +28,7 @@ export async function sendSmsAction(formData: FormData) {
       destination: String(formData.get("destination") ?? ""),
       content: String(formData.get("content") ?? ""),
       senderId: formData.get("senderId") ? String(formData.get("senderId")) : null,
+      smsTemplateId: formData.get("smsTemplateId") ? String(formData.get("smsTemplateId")) : null,
     });
   } catch (err) {
     const code = err instanceof CoreApiError ? (err.body?.error ?? "send_failed") : "send_failed";
@@ -35,4 +36,42 @@ export async function sendSmsAction(formData: FormData) {
   }
 
   redirect("/dashboard/sms?sent=1");
+}
+
+/** Noms d'expéditeur (design handoff Lot 7) — created PENDING, Admin
+ * approves/rejects before it's offered as a validated option. */
+export async function requestSenderNameAction(formData: FormData) {
+  const token = await tokenOrRedirect();
+
+  try {
+    await coreApi(token).createSenderName({
+      name: String(formData.get("name") ?? ""),
+      country: String(formData.get("country") ?? ""),
+      usage: String(formData.get("usage") ?? "TRANSACTIONAL"),
+    });
+  } catch (err) {
+    const code = err instanceof CoreApiError ? (err.body?.error ?? "request_failed") : "request_failed";
+    redirect(`/dashboard/sms/senders?error=${code}`);
+  }
+
+  redirect("/dashboard/sms/senders?requested=1");
+}
+
+/** Modèles SMS (design handoff Lot 7) — no approval gate, an org's own
+ * reusable drafts. */
+export async function createSmsTemplateAction(formData: FormData) {
+  const token = await tokenOrRedirect();
+
+  try {
+    await coreApi(token).createSmsTemplate({
+      name: String(formData.get("name") ?? ""),
+      usage: String(formData.get("usage") ?? "TRANSACTIONAL"),
+      bodyText: String(formData.get("bodyText") ?? ""),
+    });
+  } catch (err) {
+    const code = err instanceof CoreApiError ? (err.body?.error ?? "create_failed") : "create_failed";
+    redirect(`/dashboard/sms/templates?error=${code}`);
+  }
+
+  redirect("/dashboard/sms/templates?created=1");
 }

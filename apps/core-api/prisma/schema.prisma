@@ -127,6 +127,21 @@ enum WhatsAppNumberStatus {
   REJECTED
 }
 
+/// SMS sender name / template usage (design handoff Lot 7 "Noms
+/// d'expéditeur"/"Modèles"): the message's intent, which drives which
+/// sender names an org can use and how templates are categorized.
+enum SmsMessageUsage {
+  TRANSACTIONAL
+  MARKETING
+  OTP
+}
+
+enum SenderNameStatus {
+  PENDING
+  VALIDATED
+  REJECTED
+}
+
 enum CampaignStatus {
   DRAFT
   SCHEDULED
@@ -182,6 +197,8 @@ model Organization {
   campaigns    Campaign[]
   whatsappNumbers   WhatsAppNumber[]
   whatsappTemplates WhatsAppTemplate[]
+  senderNames       SenderName[]
+  smsTemplates      SmsTemplate[]
 
   @@map("organizations")
 }
@@ -215,6 +232,8 @@ model Project {
   campaigns    Campaign[]
   whatsappNumbers   WhatsAppNumber[]
   whatsappTemplates WhatsAppTemplate[]
+  senderNames       SenderName[]
+  smsTemplates      SmsTemplate[]
 
   @@map("projects")
 }
@@ -476,6 +495,8 @@ model Message {
   campaignId      String?
   /// Set only for WhatsApp sends — the approved template used.
   whatsappTemplateId String?
+  /// Set only when an SMS send referenced an SmsTemplate — bumps its usageCount.
+  smsTemplateId   String?
   createdAt       DateTime      @default(now())
 
   organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -483,6 +504,7 @@ model Message {
   transaction      Transaction?      @relation(fields: [transactionId], references: [id])
   campaign         Campaign?         @relation(fields: [campaignId], references: [id], onDelete: SetNull)
   whatsappTemplate WhatsAppTemplate? @relation(fields: [whatsappTemplateId], references: [id], onDelete: SetNull)
+  smsTemplate      SmsTemplate?      @relation(fields: [smsTemplateId], references: [id], onDelete: SetNull)
 
   @@index([organizationId, createdAt])
   @@index([campaignId])
@@ -567,6 +589,54 @@ model WhatsAppTemplate {
   messages     Message[]
 
   @@map("whatsapp_templates")
+}
+
+/// SMS sender names must be validated per-country by each operator (design
+/// handoff Lot 7 "Noms d'expéditeur") — modeled the same way WhatsApp
+/// templates model Meta's review (Console submits, Admin approves/rejects),
+/// since there's no real per-operator validation channel to integrate with
+/// yet. `senderId` on Message/Campaign stays a free-text field: a rejected
+/// or not-yet-validated name doesn't block sending (falls back to the
+/// shared default), it just isn't offered as a *validated* option in the
+/// Console picker.
+model SenderName {
+  id              String            @id @default(cuid())
+  organizationId  String
+  projectId       String
+  name            String
+  country         String
+  usage           SmsMessageUsage   @default(TRANSACTIONAL)
+  status          SenderNameStatus  @default(PENDING)
+  rejectionReason String?
+  createdAt       DateTime          @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("sender_names")
+}
+
+/// Reusable SMS message bodies with `{variable}` placeholders (design
+/// handoff Lot 7 "Modèles"). No approval gate, unlike sender names/WhatsApp
+/// templates — these are an org's own internal drafts, nothing external
+/// reviews them. `usageCount` increments each time a send references one
+/// (apps/core-api/src/app/api/sms/send/route.ts), a real counter rather
+/// than the mockup's illustrative numbers.
+model SmsTemplate {
+  id             String          @id @default(cuid())
+  organizationId String
+  projectId      String
+  name           String
+  usage          SmsMessageUsage @default(TRANSACTIONAL)
+  bodyText       String
+  usageCount     Int             @default(0)
+  createdAt      DateTime        @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  messages     Message[]
+
+  @@map("sms_templates")
 }
 
 enum OtpStatus {

@@ -18,6 +18,8 @@ import type {
   Quote,
   ResolvedConfig,
   RouteSummary,
+  SenderName,
+  SmsTemplate,
   TeamMember,
   Transaction,
   Wallet,
@@ -158,6 +160,19 @@ export function createCoreApiClient({ baseUrl, sessionToken }: CoreApiClientOpti
         { method: "POST", body: JSON.stringify(payload) },
       ),
     listSmsHistory: () => request<{ messages: Message[] }>("/api/sms/history"),
+    getSmsMessage: (id: string) => request<{ message: Message; transaction: Transaction | null }>(`/api/sms/${id}`),
+    listSenderNames: () => request<{ senderNames: SenderName[] }>("/api/sms/sender-names"),
+    createSenderName: (payload: unknown) =>
+      request<{ senderName: SenderName }>("/api/sms/sender-names", { method: "POST", body: JSON.stringify(payload) }),
+    listSmsTemplates: () => request<{ templates: SmsTemplate[] }>("/api/sms/templates"),
+    createSmsTemplate: (payload: unknown) =>
+      request<{ template: SmsTemplate }>("/api/sms/templates", { method: "POST", body: JSON.stringify(payload) }),
+    listAdminSenderNames: () => request<{ senderNames: SenderName[] }>("/api/admin/sms/sender-names"),
+    reviewSenderName: (id: string, payload: unknown) =>
+      request<{ senderName: SenderName }>(`/api/admin/sms/sender-names/${id}/review`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     listApiKeys: () => request<{ keys: ApiKeySummary[] }>("/api/keys"),
     createApiKey: (payload: unknown) =>
       request<{ key: ApiKeySummary; secret: string }>("/api/keys", {

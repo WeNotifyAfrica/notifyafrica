@@ -20,6 +20,20 @@ export interface Message {
   content: string;
   status: MessageStatus;
   createdAt: string;
+  /** Present on routes that select the full row (e.g. message detail) —
+   * list endpoints may omit these for a lighter payload. */
+  transactionId?: string | null;
+  smsTemplateId?: string | null;
+  whatsappTemplateId?: string | null;
+  campaignId?: string | null;
+  pricingSnapshot?: {
+    unitPrice?: number;
+    tax?: number;
+    currency?: string;
+    ruleVersion?: string;
+    category?: string;
+    capturedAt?: string;
+  };
 }
 
 export interface Transaction {

@@ -699,6 +699,66 @@ client-rendered React is this one `/docs` page, disabled
 leaving a noisy, unactionable warning — there's no other interactive
 logic here StrictMode would be protecting.
 
+## SMS deep dive: Sender Names, Templates, Message Detail (Lot 7)
+
+The earlier design-fidelity passes matched Console/Admin pages to the
+mockups' component vocabulary and shell, but hadn't gone screen-by-screen
+against any single lot's actual content. Lot 7's own mockup states it
+plainly: "Sept écrans" — Send, Bulk, History, Detail, Sender Names,
+Templates, Scheduled — of which only Send + History existed. This pass
+closes three of the remaining five with real data models and APIs, not
+just UI:
+
+- **Sender Names** (`SenderName` model + `SenderNameStatus`) — a name
+  must be validated per-country by each operator; modeled the same way
+  WhatsApp templates model Meta's review (Console submits at `PENDING`,
+  Admin approves/rejects at `/dashboard/sms-sender-names`, mirroring the
+  WhatsApp template queue's exact pattern) since there's no real
+  per-operator channel to integrate with. `Message.senderId` stays a
+  free-text field on purpose — a rejected or pending name doesn't block
+  sending, it just isn't offered as a *validated* option in the Console's
+  sender picker, which falls back to free text ("partagé par défaut")
+  when no validated name exists yet.
+- **Templates** (`SmsTemplate` model) — reusable bodies with
+  `{variable}` placeholders, no approval gate (an org's own drafts, not
+  reviewed by anyone). "Utiliser" on the templates page links back to
+  Send with `?template=<id>`, which pre-fills the textarea server-side —
+  no client state needed, same convention the rest of the app uses for
+  banners. `usageCount` isn't the mockup's illustrative number: `/api/
+  sms/send` now accepts an optional `smsTemplateId` and increments it for
+  real when a send references one — verified live (0 → 1 after one send).
+- **Message Detail** (`GET /api/sms/[id]`, `/dashboard/sms/[id]`) — the
+  mockup's 5-step delivery timeline (accepted → debited → transmitted →
+  operator ack → delivered) assumes provider-level delivery receipts that
+  don't exist (no real SMPP/HTTP provider wired — design handoff README
+  §9 point 4). Shows the 3 steps that are real instead of fabricating the
+  other two: created, debited (from the linked Transaction), final
+  status — plus the full billing breakdown from the message's frozen
+  `pricingSnapshot`.
+
+Each mockup tab became a real sub-route, per the design handoff's own
+instruction (README §3: "les onglets deviennent des sous-routes") —
+`/dashboard/sms`, `/dashboard/sms/senders`, `/dashboard/sms/templates`,
+`/dashboard/sms/[id]`, linked by a small `SmsSubNav` component.
+
+**Deliberately not built** (documented, not silently dropped): bulk
+send/CSV import and scheduled sends. Bulk send already exists as
+Campaigns (`product: "SMS"` already does audience → estimate → reserve
+funds → background run) — duplicating that engine behind a separate CSV
+pipeline would drift the two apart, so the SMS page's "Envoi en masse"
+links straight to Campaigns instead. Scheduled sends need a real
+time-based trigger (a `scheduledAt` field plus a delayed BullMQ job) that
+doesn't exist yet — a bounded, legitimate follow-up, not attempted here.
+
+Verified end-to-end against the real dev stack, not just typechecked:
+requested a sender name → blocked from the validated picker while
+`PENDING` → Admin-approved → appeared in the Console send form's select
+→ created a template → sent an SMS referencing both → wallet debited
+the real Pricing Engine rate → template `usageCount` incremented 0→1 →
+message detail page shows the real Transaction amount, rule version, and
+status. All five apps typecheck and production-build clean; a fresh
+`prisma migrate dev` applied without conflicts.
+
 ## What's built vs. what's next
 
 Built:

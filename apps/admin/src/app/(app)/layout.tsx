@@ -30,6 +30,7 @@ const NAV_ITEMS: ShellNavItem[] = [
   { href: "/dashboard/providers", label: "Providers & Routage" },
   { href: "/dashboard/quotes", label: "Devis" },
   { href: "/dashboard/whatsapp-templates", label: "Modèles WhatsApp" },
+  { href: "/dashboard/sms-sender-names", label: "Noms d'expéditeur SMS" },
   { href: "/dashboard/payment-methods", label: "Moyens de paiement" },
   { href: "/dashboard/organizations", label: "Organisations" },
   { href: "/dashboard/users", label: "Utilisateurs" },
