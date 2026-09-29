@@ -13,6 +13,14 @@ COPY --from=pruner /repo/out/json/ .
 RUN pnpm install --frozen-lockfile
 COPY --from=pruner /repo/out/full/ .
 COPY --from=pruner /repo/tsconfig.base.json ./tsconfig.base.json
+# @notifyafrica/domain imports the generated Prisma client, but the schema
+# lives in apps/core-api (not one of the worker's pruned workspace deps).
+# Copying it under apps/worker/prisma (rather than apps/core-api/prisma, which
+# has no package.json in this pruned tree) keeps it inside the worker's own
+# project root so the local `prisma` devDependency resolves it directly
+# instead of Prisma's CLI falling back to an auto-install of a different major version.
+COPY --from=pruner /repo/apps/core-api/prisma/schema.prisma ./apps/worker/prisma/schema.prisma
+RUN pnpm --filter @notifyafrica/worker exec prisma generate --schema=prisma/schema.prisma
 RUN pnpm turbo run build --filter=@notifyafrica/worker
 
 FROM base AS runner
