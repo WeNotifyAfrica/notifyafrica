@@ -12,6 +12,7 @@ WORKDIR /repo
 COPY --from=pruner /repo/out/json/ .
 RUN pnpm install --frozen-lockfile
 COPY --from=pruner /repo/out/full/ .
+COPY --from=pruner /repo/tsconfig.base.json ./tsconfig.base.json
 RUN pnpm turbo run build --filter=@notifyafrica/admin
 
 FROM base AS runner
