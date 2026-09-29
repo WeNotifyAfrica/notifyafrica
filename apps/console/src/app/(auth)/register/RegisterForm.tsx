@@ -2,13 +2,14 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { loginAction, type AuthFormState } from "../actions";
+import { registerAction, type AuthFormState } from "../actions";
 import { Button, Card, CardBody, Field, Input } from "@notifyafrica/ui";
+import { SUPPORTED_COUNTRIES } from "@notifyafrica/design-system";
 
 const initialState: AuthFormState = { status: "idle" };
 
-export default function LoginPage() {
-  const [state, formAction, pending] = useActionState(loginAction, initialState);
+export function RegisterForm({ source, campaign }: { source: string; campaign: string }) {
+  const [state, formAction, pending] = useActionState(registerAction, initialState);
 
   return (
     <main
@@ -29,7 +30,10 @@ export default function LoginPage() {
 
         <Card elevation="md" style={{ padding: "var(--space-8)", gap: "var(--space-4)" }}>
           <div>
-            <h4 style={{ margin: 0 }}>Se connecter</h4>
+            <h4 style={{ margin: 0 }}>Créer votre compte</h4>
+            <p className="text-muted" style={{ margin: "4px 0 0", fontSize: 13 }}>
+              Sandbox gratuit, aucune carte requise.
+            </p>
           </div>
 
           {state.status === "error" ? (
@@ -39,19 +43,42 @@ export default function LoginPage() {
           ) : null}
 
           <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
-            <Field label="Email">
+            <input type="hidden" name="source" value={source} />
+            <input type="hidden" name="campaign" value={campaign} />
+
+            <Field label="Nom de l'organisation">
+              <Input type="text" name="organizationName" placeholder="MaBanque SA" required />
+            </Field>
+            <Field label="Email professionnel">
               <Input type="email" name="email" placeholder="vous@entreprise.com" autoComplete="email" required />
             </Field>
             <Field label="Mot de passe">
-              <Input type="password" name="password" placeholder="••••••••••" autoComplete="current-password" required />
+              <Input
+                type="password"
+                name="password"
+                placeholder="10 caractères minimum"
+                minLength={10}
+                autoComplete="new-password"
+                required
+              />
             </Field>
+            <Field label="Pays">
+              <select name="country" className="input" defaultValue={SUPPORTED_COUNTRIES[0].code} required>
+                {SUPPORTED_COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
             <Button type="submit" variant="primary" block disabled={pending}>
-              {pending ? "Connexion…" : "Se connecter"}
+              {pending ? "Création du compte…" : "Créer mon compte"}
             </Button>
           </form>
 
           <p className="text-muted" style={{ margin: 0, fontSize: 13, textAlign: "center" }}>
-            Pas encore de compte ? <Link href="/register">Créer un compte</Link>
+            Déjà un compte ? <Link href="/login">Se connecter</Link>
           </p>
         </Card>
       </div>

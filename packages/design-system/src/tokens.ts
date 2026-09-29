@@ -71,6 +71,17 @@ export const SUPPORTED_CURRENCIES = [
 
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
+/** Countries actually open for registration today (design lot 27's "Pays,
+ * devises & taxes": Ouvert/Pilote, not En préparation/Fermé) — lets
+ * registration show real country names with the currency implied, instead
+ * of asking a new signup to type raw ISO country/currency codes by hand. */
+export const SUPPORTED_COUNTRIES = [
+  { code: "TG", name: "Togo", currency: "XOF" },
+  { code: "BJ", name: "Bénin", currency: "XOF" },
+  { code: "CI", name: "Côte d’Ivoire", currency: "XOF" },
+  { code: "BF", name: "Burkina Faso", currency: "XOF" },
+] as const;
+
 /** Console-side RBAC roles (handoff §5 invariant 8). */
 export const CONSOLE_ROLES = [
   "OWNER",
