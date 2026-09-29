@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 17 · Paramètres</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Togo · XOF</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Paramètres</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Six écrans de configuration. Le principe : chaque réglage indique explicitement sa portée — organisation ou projet — et ce qu'il casse s'il change. Un paramètre de facturation ou de sécurité modifié par erreur coûte plus cher qu'une campagne ratée.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isOrg }}" hint-placeholder-val="{{ true }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Organisation</span><div class="card-title" style="font-size:18px">Identité et facturation</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Raison sociale</label><input class="input" type="text" value="MaBanque SA"></div>
+        <div class="field"><label>Nom affiché</label><input class="input" type="text" value="MaBanque"></div>
+        <div class="field"><label>Secteur</label><select class="input"><option>Banque et finance</option><option>Assurance</option><option>Fintech</option><option>Commerce</option></select></div>
+        <div class="field"><label>Pays de facturation</label><select class="input"><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option></select></div>
+        <div class="field"><label>Numéro de contribuable</label><input class="input num" type="text" value="TG-1002458841"></div>
+        <div class="field"><label>Devise de facturation</label><select class="input"><option>XOF (FCFA)</option><option>EUR</option><option>USD</option></select></div>
+      </div>
+      <div class="field"><label>Adresse de facturation</label><textarea class="input" style="min-height:70px">Boulevard du 13 Janvier, Immeuble Kara, 4e étage
+BP 2841, Lomé, Togo</textarea></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Fuseau horaire</label><select class="input"><option>Afrique/Lomé (GMT)</option><option>Afrique/Abidjan (GMT)</option><option>Afrique/Lagos (GMT+1)</option></select></div>
+        <div class="field"><label>Langue de l'interface</label><select class="input"><option>Français</option><option>English</option></select></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Enregistrer</button><button type="button" class="btn btn-ghost">Annuler</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Effet sur la facturation</span><p class="card-body" style="margin:0">Changer le pays ou la devise de facturation ne peut prendre effet qu'au premier jour d'un mois, pour ne pas couper une période de facturation en deux régimes fiscaux.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Logo et identité</span><p class="card-body" style="margin:0">Le logo apparaît sur les factures, les reçus et les emails transactionnels envoyés depuis votre compte.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Téléverser un logo</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Zone sensible</span><p class="card-body" style="margin:0">Transférer la propriété ou supprimer l'organisation sont réservés à l'Owner et exigent une confirmation par mot de passe et double authentification.</p><a href="#" style="font-size:13px">Ouvrir la zone sensible</a></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isProjects }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Un projet est l'unité d'isolation : clés, environnements, listes de contacts, statistiques et imputation comptable. Les membres peuvent être restreints à un seul projet.</p>
+      <button type="button" class="btn btn-primary">Créer un projet</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:15.5px">{{ p.name }}</span><span class="{{ p.tagCls }}">{{ p.tag }}</span></div>
+          <p class="card-body" style="margin:0; font-size:13px">{{ p.desc }}</p>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Canaux activés</span><span style="font-size:12px">{{ p.channels }}</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Volume / mois</span><span class="num" style="font-size:12px">{{ p.volume }}</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Membres</span><span class="num" style="font-size:12px">{{ p.members }}</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Code d'imputation</span><span class="num" style="font-size:12px">{{ p.code }}</span></div>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Configurer</button><button type="button" class="btn btn-ghost">Archiver</button></div>
+        </div>
+      </sc-for>
+    </div>
+    <div class="card elev-sm"><span class="card-kicker">Archivage plutôt que suppression</span><p class="card-body" style="margin:0">Un projet archivé n'accepte plus d'envoi mais conserve ses statistiques, ses factures et son journal. La suppression définitive n'est possible qu'après la fin de la période de conservation comptable.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLimits }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Limites et garde-fous</span><div class="card-title" style="font-size:18px">Éviter l'envoi ou la dépense accidentels</div></div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <sc-for list="{{ limits }}" as="l" hint-placeholder-count="5">
+          <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap">
+              <span style="font-size:14px">{{ l.label }}</span>
+              <span class="num" style="font-size:14px; color:var(--color-accent-300)">{{ l.value }}</span>
+            </div>
+            <input type="range" min="{{ l.min }}" max="{{ l.max }}" step="{{ l.step }}" value="{{ l.raw }}" onInput="{{ l.onInput }}" style="width:100%; accent-color:var(--color-accent)">
+            <span class="text-muted" style="font-size:11.5px">{{ l.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+        <span class="card-kicker">Fenêtre d'envoi autorisée</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+          <div class="field"><label>Début</label><select class="input"><option>07:00</option><option>08:00</option></select></div>
+          <div class="field"><label>Fin</label><select class="input"><option>20:00</option><option>21:00</option></select></div>
+          <div class="field"><label>Envois le dimanche</label><select class="input"><option>Transactionnels uniquement</option><option>Autorisés</option><option>Interdits</option></select></div>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:11.5px">Les messages transactionnels et les codes de vérification ignorent cette fenêtre : un client qui se connecte à 23 h doit recevoir son code.</p>
+      </div>
+      <button type="button" class="btn btn-primary" style="align-self:flex-start">Enregistrer les limites</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Effet des réglages actuels</span>
+        <p class="card-body" style="margin:0">{{ limitsSummary }}</p>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Double validation</span><p class="card-body" style="margin:0">Au-delà du plafond par envoi, l'exécution demande l'accord d'un second membre habilité. La demande expire au bout de 2 heures pour ne pas laisser traîner une campagne à moitié engagée.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Portée</span><p class="card-body" style="margin:0">Ces limites s'appliquent à l'organisation. Un projet peut avoir des plafonds plus stricts, jamais plus permissifs.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSecurity }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Sécurité</span><div class="card-title" style="font-size:18px">Accès et authentification</div></div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <sc-for list="{{ toggles }}" as="g" hint-placeholder-count="5">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); padding-bottom:var(--space-4); border-bottom:1px solid var(--color-divider)">
+            <div style="display:flex; flex-direction:column; gap:2px">
+              <span style="font-size:14px">{{ g.label }}</span>
+              <span class="text-muted" style="font-size:12px">{{ g.note }}</span>
+            </div>
+            <button type="button" onClick="{{ g.onClick }}" style="{{ g.style }}">{{ g.state }}</button>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Durée maximale d'une session</label><select class="input"><option>8 heures</option><option>12 heures</option><option>24 heures</option><option>7 jours</option></select></div>
+        <div class="field"><label>Expiration du mot de passe</label><select class="input"><option>Jamais</option><option>90 jours</option><option>180 jours</option></select></div>
+      </div>
+      <div class="field"><label>Adresses IP autorisées pour la console (optionnel)</label><textarea class="input" style="min-height:60px" placeholder="41.207.0.0/24">41.207.12.0/24</textarea></div>
+      <button type="button" class="btn btn-primary" style="align-self:flex-start">Enregistrer</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Rendre la 2FA obligatoire</span><p class="card-body" style="margin:0">3 membres ne l'ont pas activée. En rendant la double authentification obligatoire, ils devront la configurer à leur prochaine connexion — sans perdre l'accès, mais sans pouvoir agir avant.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Authentification unique</span><p class="card-body" style="margin:0">SAML et OpenID Connect sont attendus par les clients bancaires pour raccorder la console à leur annuaire interne. Prévu, à cadrer.</p><span class="tag tag-neutral" style="align-self:flex-start">À cadrer</span></div>
+      <div class="card elev-sm"><span class="card-kicker">Conservation des données</span><p class="card-body" style="margin:0">Contenu des messages conservé 90 jours, métadonnées 24 mois, journal d'actions 24 mois. Ces durées sont ajustables par contrat selon les exigences locales.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSessions }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Toutes les sessions ouvertes sur votre compte. Une session inconnue se révoque immédiatement — et l'action est journalisée.</p>
+      <button type="button" class="btn btn-secondary">Déconnecter toutes les autres sessions</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:860px">
+        <thead><tr><th>Appareil</th><th>Navigateur</th><th>Lieu</th><th>Adresse IP</th><th>Dernière activité</th><th></th></tr></thead>
+        <tbody>
+          <sc-for list="{{ sessions }}" as="s" hint-placeholder-count="5">
+            <tr>
+              <td><strong>{{ s.device }}</strong><div class="text-muted" style="font-size:11.5px">{{ s.note }}</div></td>
+              <td class="text-muted" style="font-size:12.5px">{{ s.browser }}</td>
+              <td class="text-muted" style="font-size:12.5px">{{ s.place }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ s.ip }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ s.seen }}</td>
+              <td>{{ s.action }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Session suspecte</span><p class="card-body" style="margin:0">Une session ouverte depuis Lagos le 11 septembre sur un appareil non reconnu. Si ce n'est pas vous, révoquez-la et changez votre mot de passe : les clés API de production devraient aussi être renouvelées.</p><div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Révoquer et sécuriser</button><button type="button" class="btn btn-ghost">C'était moi</button></div></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isNotifs }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">Quelles alertes, par quel canal, pour qui. Les alertes de solde et d'incident sont volontairement non désactivables : leur absence a déjà interrompu des services en production.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:840px">
+        <thead><tr><th>Alerte</th><th style="text-align:center">Email</th><th style="text-align:center">SMS</th><th style="text-align:center">Console</th><th style="text-align:center">Webhook</th><th>Destinataires</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="8">
+            <tr>
+              <td style="font-size:12.5px">{{ n.label }}<div class="text-muted" style="font-size:11px">{{ n.note }}</div></td>
+              <sc-for list="{{ n.cells }}" as="c">
+                <td style="{{ c.style }}">{{ c.mark }}</td>
+              </sc-for>
+              <td class="text-muted" style="font-size:11.5px">{{ n.to }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Anti-saturation</span><p class="card-body" style="margin:0">Une même alerte n'est pas répétée plus d'une fois par heure, sauf aggravation du niveau. Un incident qui s'étend produit une seule notification de mise à jour, pas une par minute.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Non désactivables</span><p class="card-body" style="margin:0">Solde épuisé, incident majeur, échec de paiement et suspension de compte sont toujours notifiés à l'Owner, quels que soient les réglages.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Par rôle</span><p class="card-body" style="margin:0">Les destinataires par défaut suivent les rôles : facturation vers Billing Manager, technique vers Developer, campagnes vers Campaign Manager. Des adresses spécifiques peuvent être ajoutées.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Tout réglage indique sa portée : organisation ou projet. Un projet peut durcir une limite de l'organisation, jamais l'assouplir. Le pays et la devise de facturation ne changent qu'à une frontière de mois. Les messages transactionnels et les codes de vérification ignorent la fenêtre d'envoi. Certaines alertes critiques ne sont pas désactivables.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Réglage enregistré · en attente de validation par un second membre · refusé faute de droits · effet différé au 1<sup>er</sup> du mois. Projet actif · archivé · en cours de suppression. 2FA obligatoire non encore configurée par certains membres. Session active · révoquée · expirée · appareil non reconnu. Restriction IP susceptible de vous exclure vous-même.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Ajouter une restriction IP qui exclut l'adresse courante : l'enregistrement est bloqué avec avertissement explicite. Abaisser un plafond en dessous du coût d'une campagne déjà planifiée : la campagne est signalée et demande une validation. Archiver un projet qui a des envois planifiés : les envois sont annulés et les fonds réservés libérés, après confirmation nommée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">L'authentification unique (SAML / OIDC) est-elle dans le périmètre de cette phase ? Les clients bancaires la demandent systématiquement, mais elle ajoute un chantier complet. Les durées de conservation doivent-elles être configurables par le client ou fixées par contrat ? Recommandation : SSO en phase 2, conservation fixée par contrat avec options documentées.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 17 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 18 — Support &amp; état du service</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: 'org',
+      capSend: 500000,
+      capDay: 2000000,
+      capRecipients: 100000,
+      alert1: 1500000,
+      alert2: 400000,
+      sec: { mfa: false, ipLock: true, apiIp: true, alertLogin: true, singleSession: false }
+    };
+  }
+
+  fmt(n) { return n.toLocaleString('fr-FR').replace(/\u202f/g, ' '); }
+
+  renderVals() {
+    const tabs = [
+      ['org', 'Organisation'],
+      ['projects', 'Projets'],
+      ['limits', 'Limites'],
+      ['security', 'Sécurité'],
+      ['sessions', 'Sessions'],
+      ['notifs', 'Notifications']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const link = txt => React.createElement('a', { href: '#', style: { fontSize: '12px' } }, txt);
+    const s = this.state;
+
+    const cellStyles = {
+      y: { textAlign: 'center', color: 'var(--color-accent)' },
+      n: { textAlign: 'center', color: 'var(--color-neutral-600)' },
+      f: { textAlign: 'center', color: 'var(--color-accent)', opacity: 0.55 }
+    };
+    const marks = { y: '●', n: '—', f: '●' };
+    const cells = codes => codes.split('').map(c => ({ mark: marks[c], style: cellStyles[c] }));
+
+    const slider = (key, label, min, max, step, unit, note) => ({
+      label,
+      raw: s[key],
+      min, max, step,
+      value: this.fmt(s[key]) + ' ' + unit,
+      note,
+      onInput: e => this.setState({ [key]: parseInt(e.target.value, 10) })
+    });
+
+    const toggle = (key, label, note) => ({
+      label, note,
+      state: s.sec[key] ? 'Activé' : 'Désactivé',
+      onClick: () => this.setState({ sec: Object.assign({}, s.sec, { [key]: !s.sec[key] }) }),
+      style: {
+        cursor: 'pointer',
+        flex: 'none',
+        padding: '6px 14px',
+        fontSize: '12px',
+        borderRadius: 'var(--radius-sm)',
+        border: '1px solid ' + (s.sec[key] ? 'var(--color-accent)' : 'var(--color-divider)'),
+        background: s.sec[key] ? 'color-mix(in srgb, var(--color-accent) 14%, transparent)' : 'transparent',
+        color: s.sec[key] ? 'var(--color-accent)' : 'var(--color-text)'
+      }
+    });
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isOrg: t === 'org',
+      isProjects: t === 'projects',
+      isLimits: t === 'limits',
+      isSecurity: t === 'security',
+      isSessions: t === 'sessions',
+      isNotifs: t === 'notifs',
+
+      projects: [
+        { name:'Application mobile', desc:'Notifications transactionnelles, codes de vérification et campagnes de rappel.', channels:'SMS, OTP, WhatsApp, Email', volume:'412 800', members:'9', code:'CC-4410', tag:'Actif', tagCls:'tag tag-accent' },
+        { name:'Site web', desc:'Emails transactionnels du portail client et relances de panier abandonné.', channels:'Email', volume:'88 400', members:'4', code:'CC-4412', tag:'Actif', tagCls:'tag tag-accent' },
+        { name:'Agence — pilote', desc:'Test de notification SMS pour le réseau d\u2019agences physiques de Lomé.', channels:'SMS', volume:'0', members:'2', code:'CC-4420', tag:'En intégration', tagCls:'tag tag-outline' }
+      ],
+
+      limits: [
+        slider('capSend', "Plafond de coût par envoi", 50000, 2000000, 50000, 'FCFA', "Au-delà, une validation par un second membre habilité est requise."),
+        slider('capDay', "Plafond de dépense quotidienne", 200000, 10000000, 100000, 'FCFA', "Atteint, la plateforme suspend les nouveaux envois jusqu'au lendemain."),
+        slider('capRecipients', "Destinataires maximum par envoi", 1000, 500000, 1000, 'destinataires', "Au-delà, l'envoi doit être découpé ou passer en campagne planifiée."),
+        slider('alert1', "Premier seuil d'alerte de solde", 200000, 5000000, 100000, 'FCFA', "Notification email et console à l'Owner et au Billing Manager."),
+        slider('alert2', "Second seuil d'alerte de solde", 50000, 2000000, 50000, 'FCFA', "Notification urgente, incluant SMS si configuré.")
+      ],
+      limitsSummary: "Un envoi de plus de " + this.fmt(s.capSend) + " FCFA ou de plus de "
+        + this.fmt(s.capRecipients) + " destinataires demandera une validation. La dépense s'arrête à "
+        + this.fmt(s.capDay) + " FCFA par jour. Avec votre consommation actuelle (112 000 FCFA / jour), le premier seuil d'alerte à "
+        + this.fmt(s.alert1) + " FCFA laisse environ " + Math.round(s.alert1 / 112000) + " jours pour réagir.",
+
+      toggles: [
+        toggle('mfa', "Double authentification obligatoire", "Tous les membres doivent la configurer avant d'agir. 3 membres concernés aujourd'hui."),
+        toggle('ipLock', "Restreindre l'accès console par IP", "Seules les adresses listées ci-dessous peuvent ouvrir une session."),
+        toggle('apiIp', "Restreindre les clés de production par IP", "Un appel hors liste est refusé et journalisé, sans consommer de crédit."),
+        toggle('alertLogin', "Alerter sur connexion inhabituelle", "Nouvel appareil, nouveau pays ou adresse inconnue."),
+        toggle('singleSession', "Une seule session simultanée par membre", "Une nouvelle connexion ferme la précédente. Contraignant mais demandé par certains contrôles internes.")
+      ],
+
+      sessions: [
+        { device:'MacBook Pro', note:'Session courante', browser:'Chrome 128', place:'Lomé, Togo', ip:'41.207.12.44', seen:'maintenant', action: React.createElement('span', { className: 'tag tag-accent' }, 'Cet appareil') },
+        { device:'iPhone 14', note:'Application mobile console', browser:'Safari', place:'Lomé, Togo', ip:'41.207.12.88', seen:'il y a 3 h', action: link('Révoquer') },
+        { device:'Windows 11', note:'Poste bureau agence', browser:'Edge 127', place:'Kara, Togo', ip:'41.207.44.12', seen:'hier', action: link('Révoquer') },
+        { device:'Appareil non reconnu', note:'Aucun historique pour ce compte', browser:'Chrome 126', place:'Lagos, Nigeria', ip:'105.112.8.201', seen:'11/09 · 22:05', action: link('Révoquer') },
+        { device:'Android', note:'Session expirée automatiquement', browser:'Chrome 127', place:'Cotonou, Bénin', ip:'41.85.2.10', seen:'il y a 12 j', action: React.createElement('span', { className: 'text-muted', style: { fontSize: '12px' } }, 'Expirée') }
+      ],
+
+      notifs: [
+        { label:'Solde sous le premier seuil', note:'Non désactivable pour l\u2019Owner', cells: cells('yfyy'), to:'Owner, Billing Manager' },
+        { label:'Solde épuisé', note:'Non désactivable', cells: cells('yyyy'), to:'Owner, Billing Manager' },
+        { label:'Échec de paiement', note:'Non désactivable', cells: cells('yyyn'), to:'Billing Manager' },
+        { label:'Campagne terminée', note:'Résumé avec coût réel', cells: cells('ynyy'), to:'Campaign Manager, auteur' },
+        { label:'Validation de dépense demandée', note:'Expire au bout de 2 h', cells: cells('yyyn'), to:'Owner, Billing Manager' },
+        { label:'Incident opérateur ou plateforme', note:'Non désactivable', cells: cells('ynyy'), to:'Owner, Developer' },
+        { label:'Point de réception en échec', note:'Après 3 échecs consécutifs', cells: cells('ynyn'), to:'Developer' },
+        { label:'Connexion inhabituelle', note:'Nouvel appareil ou pays', cells: cells('ynyn'), to:'Membre concerné, Owner' },
+        { label:'Nouvelle facture émise', note:'Le 1er de chaque mois', cells: cells('ynyy'), to:'Billing Manager, comptabilité' },
+        { label:'Changement de tarif annoncé', note:'30 jours avant effet', cells: cells('ynyn'), to:'Owner, Billing Manager' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

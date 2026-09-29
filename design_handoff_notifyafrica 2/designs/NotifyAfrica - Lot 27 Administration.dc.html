@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 27 · Administration plateforme</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Super-admin · Mariam D.</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Administration plateforme</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Les réglages qui s'appliquent à toute la plateforme : qui travaille dans le back-office et avec quels droits, quels pays, devises et taxes sont ouverts, quels services sont activés, et la trace de tout ce qui a été modifié. Cinq écrans.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Chaque membre de l'équipe interne reçoit un rôle. Les droits d'un rôle sont fixés ici, une fois, et non personne par personne. La double authentification est obligatoire pour tout accès au back-office.</p>
+      <button type="button" class="btn btn-primary">Inviter un membre interne</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:880px">
+        <thead><tr><th>Membre</th><th>Rôle</th><th>Périmètre</th><th>2FA</th><th>Dernière connexion</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ staff }}" as="s" hint-placeholder-count="7">
+            <tr>
+              <td><strong>{{ s.name }}</strong><div class="text-muted" style="font-size:11.5px">{{ s.email }}</div></td>
+              <td style="font-size:12.5px">{{ s.role }}</td>
+              <td class="text-muted" style="font-size:12px">{{ s.scope }}</td>
+              <td class="text-muted" style="font-size:12px">{{ s.mfa }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ s.last }}</td>
+              <td><span class="{{ s.tagCls }}">{{ s.state }}</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3); overflow:auto">
+      <span class="card-kicker">Matrice des droits</span>
+      <table class="table" style="min-width:880px">
+        <thead><tr><th>Domaine</th><sc-for list="{{ roleCols }}" as="r"><th style="font-size:11.5px">{{ r }}</th></sc-for></tr></thead>
+        <tbody>
+          <sc-for list="{{ matrix }}" as="m" hint-placeholder-count="8">
+            <tr>
+              <td style="font-size:12.5px">{{ m.domain }}</td>
+              <sc-for list="{{ m.cells }}" as="c"><td style="{{ c.style }}">{{ c.v }}</td></sc-for>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      <p class="text-muted" style="margin:0; font-size:11.5px">L = lecture · É = écriture · V = validation (seconde signature). Un super-admin ne peut pas valider sa propre modification.</p>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isGeo }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Ouvrir un pays, c'est rendre possible l'envoi vers ce pays, la facturation dans sa devise et l'application de sa taxe. Un pays ne s'ouvre que si au moins un fournisseur y est configuré (lot 20) et une grille de prix existe (lot 21).</p>
+      <button type="button" class="btn btn-primary">Ouvrir un pays</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:960px">
+        <thead><tr><th>Pays</th><th>Indicatif</th><th>Devise</th><th>Taxe</th><th>Opérateurs couverts</th><th>Moyens de paiement</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ countries }}" as="c" hint-placeholder-count="8">
+            <tr>
+              <td><strong>{{ c.name }}</strong></td>
+              <td class="num text-muted">{{ c.code }}</td>
+              <td class="mono" style="font-size:12px">{{ c.cur }}</td>
+              <td class="num" style="font-size:12.5px">{{ c.tax }}</td>
+              <td class="text-muted" style="font-size:12px">{{ c.ops }}</td>
+              <td class="text-muted" style="font-size:12px">{{ c.pay }}</td>
+              <td><span class="{{ c.tagCls }}">{{ c.state }}</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:var(--space-3)">
+        <span class="card-kicker">Taux de change de référence</span>
+        <sc-for list="{{ fx }}" as="f" hint-placeholder-count="5">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:12.5px">{{ f.pair }}</span><span class="num text-muted" style="font-size:12.5px">{{ f.rate }}</span></div>
+        </sc-for>
+        <span class="text-muted" style="font-size:11.5px">Source : BCEAO / banques centrales · mis à jour chaque jour à 06:00 · XOF–EUR fixe</span>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Changement de taxe</span><p class="card-body" style="margin:0">Une modification de taux s'applique à une date d'effet, jamais rétroactivement. Les factures déjà émises gardent le taux de leur date. Les clients du pays sont prévenus 30 jours avant.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Fermer un pays</span><p class="card-body" style="margin:0">Les campagnes planifiées vers ce pays sont suspendues et les clients concernés prévenus. Les soldes restent utilisables pour les autres destinations.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isFlags }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div><span class="card-kicker">Services &amp; fonctionnalités</span><div class="card-title" style="font-size:18px">Activer, restreindre ou couper un service</div></div>
+      <sc-for list="{{ flags }}" as="f" hint-placeholder-count="8">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-4); padding-bottom:var(--space-3); border-bottom:1px solid var(--color-divider); flex-wrap:wrap">
+          <div style="display:flex; flex-direction:column; gap:2px; max-width:56ch"><span style="font-size:14px">{{ f.name }}</span><span class="text-muted" style="font-size:12px">{{ f.note }}</span></div>
+          <div style="display:flex; gap:var(--space-2); align-items:center"><span class="text-muted" style="font-size:11.5px">{{ f.scope }}</span><button type="button" class="btn" onClick="{{ f.onToggle }}" style="{{ f.btnStyle }}">{{ f.label }}</button></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <sc-if value="{{ pending }}">
+        <div class="card elev-md" style="border-left:2px solid var(--color-accent); gap:var(--space-2)">
+          <span class="card-kicker">Modification en attente de validation</span>
+          <p class="card-body" style="margin:0">{{ pendingText }}</p>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary" onClick="{{ cancelPending }}">Annuler</button><span class="text-muted" style="font-size:11.5px; align-self:center">Seconde signature requise : un autre super-admin</span></div>
+        </div>
+      </sc-if>
+      <div class="card elev-sm"><span class="card-kicker">Coupure d'urgence</span><p class="card-body" style="margin:0">Couper un service à l'échelle de la plateforme est la seule action possible sans seconde signature, pour réagir vite à un incident. Elle est notifiée immédiatement à toute l'équipe et doit être justifiée dans l'heure.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Déploiement progressif</span><p class="card-body" style="margin:0">Une nouvelle fonctionnalité peut s'ouvrir à une liste de clients pilotes, puis à un pays, puis à tous. Le client voit la fonctionnalité apparaître dans sa console sans changer de formule.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAudit }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-3)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Période</label><select class="input"><option>7 derniers jours</option><option>30 derniers jours</option></select></div>
+        <div class="field"><label>Domaine</label><select class="input"><option>Tous</option><option>Prix</option><option>Fournisseurs</option><option>Finance</option><option>Clients</option><option>Plateforme</option></select></div>
+        <div class="field"><label>Auteur</label><select class="input"><option>Tous</option><option>Mariam D.</option><option>Koffi B.</option></select></div>
+        <div class="field"><label>Recherche</label><input class="input" type="text" placeholder="Identifiant, organisation, règle"></div>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1040px">
+        <thead><tr><th>Date</th><th>Auteur</th><th>Domaine</th><th>Action</th><th>Avant → après</th><th>Validé par</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ audit }}" as="a" hint-placeholder-count="8">
+            <tr>
+              <td class="num text-muted" style="font-size:12px">{{ a.at }}</td>
+              <td style="font-size:12.5px">{{ a.who }}</td>
+              <td class="text-muted" style="font-size:12px">{{ a.domain }}</td>
+              <td style="font-size:12.5px">{{ a.action }}</td>
+              <td class="mono text-muted" style="font-size:11.5px">{{ a.diff }}</td>
+              <td style="font-size:12px">{{ a.by }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex; justify-content:space-between; gap:var(--space-4); flex-wrap:wrap; align-items:center">
+      <span class="text-muted" style="font-size:12px">Journal en ajout seul : aucune entrée ne peut être modifiée ni supprimée, y compris par un super-admin. Conservation 10 ans.</span>
+      <button type="button" class="btn btn-secondary">Exporter pour un audit</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isHealth }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ services }}" as="s" hint-placeholder-count="6">
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-2); align-items:center"><span class="card-kicker">{{ s.name }}</span><span class="{{ s.tagCls }}">{{ s.state }}</span></div>
+          <span class="num" style="font-size:22px">{{ s.value }}</span>
+          <span class="text-muted" style="font-size:12px">{{ s.note }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Maintenance planifiée</span><div class="card-title" style="font-size:17px">Annoncer une interruption</div></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+          <div class="field"><label>Début</label><input class="input num" type="text" value="28/09/2026 · 02:00 GMT"></div>
+          <div class="field"><label>Durée</label><select class="input"><option>30 minutes</option><option>1 heure</option><option>2 heures</option></select></div>
+          <div class="field"><label>Services touchés</label><select class="input"><option>Console et API de gestion</option><option>Tous les services</option></select></div>
+        </div>
+        <div class="field"><label>Message affiché aux clients</label><textarea class="input" style="min-height:64px">Maintenance de la console le 28 septembre de 02:00 à 02:30 GMT. Les envois SMS, OTP et WhatsApp ne sont pas interrompus.</textarea></div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Planifier et prévenir</button><span class="text-muted" style="font-size:11.5px; align-self:center">Préavis minimum : 72 h · email aux Owners + bandeau console</span></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Incident en cours</span><p class="card-body" style="margin:0">Yas Togo · accusés de livraison retardés de 4 min en moyenne depuis 09:40. Messages bien livrés. Page de statut publique mise à jour.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Page de statut publique</span><p class="card-body" style="margin:0">Chaque service et chaque opérateur y figure avec son état. Les incidents y sont publiés en moins de 15 minutes, et le compte rendu sous 5 jours ouvrés.</p><a href="#" style="font-size:12.5px">status.notifyafrica.com</a></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Les droits internes sont définis par rôle, jamais par personne ; 2FA obligatoire. Toute modification de plateforme (pays, taxe, service, rôle) exige une seconde signature d'un autre super-admin, sauf la coupure d'urgence d'un service. Un pays ne s'ouvre qu'avec un fournisseur et une grille de prix actifs. Les taxes s'appliquent à une date d'effet, sans rétroactivité. Le journal d'audit est en ajout seul.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Membre invité · actif · 2FA manquante (accès bloqué) · désactivé. Pays en préparation · ouvert · pilote · fermé. Service actif · pilote · restreint · coupé. Modification proposée · validée · refusée · expirée (48 h sans validation). Maintenance planifiée · en cours · terminée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Dernier super-admin qui tente de se retirer ses droits : refusé. Un seul super-admin disponible pour une modification urgente : procédure de secours avec validation a posteriori par la direction. Changement de taux de change en cours de facturation : la facture garde le taux du jour d'émission. Départ d'un membre interne : sessions coupées immédiatement, clés d'accès révoquées.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Combien de super-admins au lancement, et qui ? La seconde signature doit-elle s'appliquer aussi aux changements de prix mineurs, au risque de ralentir l'équipe commerciale ? Recommandation : 3 super-admins, et seconde signature réservée aux changements au-delà d'un seuil (5 % ou toute baisse sous le coût fournisseur).</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 27 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Dernier lot de la série</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'staff', flags: { sms:true, otp:true, wa:true, email:true, voice:false, rcs:false, selfserve:true, momo:true }, pending: null };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['staff', 'Équipe interne & rôles'],
+      ['geo', 'Pays, devises & taxes'],
+      ['flags', 'Services'],
+      ['audit', "Journal d'audit"],
+      ['health', 'Santé & maintenance']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const ok = 'tag tag-accent', warn = 'tag tag-outline', na = 'tag tag-neutral';
+
+    const roleCols = ['Super-admin','Direction','Finance','Commercial','Conformité','Support','Technique'];
+    const rows = [
+      ['Clients & KYC',       ['É','L','L','L','V','L','—']],
+      ['Moteur de prix',      ['V','V','L','É','—','—','—']],
+      ['Devis',               ['V','V','L','É','—','—','—']],
+      ['Fournisseurs & routes',['V','L','L','—','—','—','É']],
+      ['Finance & paiements', ['L','V','É','—','—','—','—']],
+      ['Conformité',          ['L','L','—','—','É','L','—']],
+      ['Accès support',       ['L','—','—','—','L','É','—']],
+      ['Plateforme',          ['É','L','—','—','—','—','L']]
+    ];
+    const cell = v => ({ v, style: { fontSize:'12.5px', textAlign:'center', color: v === 'V' ? 'var(--color-accent-300)' : v === '—' ? 'var(--color-neutral-500)' : 'var(--color-text)' } });
+
+    const F = this.state.flags;
+    const flagDefs = [
+      ['sms','SMS','Envoi direct, masse et campagnes','Tous pays'],
+      ['otp','Codes de vérification (OTP)','Génération et vérification de codes','Tous pays'],
+      ['wa','WhatsApp Business','Modèles, conversations, fenêtre de 24 h','TG, BJ, CI'],
+      ['email','Email transactionnel','Envoi par API et SMTP','Tous pays'],
+      ['voice','Appels vocaux (OTP vocal)','En préparation · fournisseur non signé','Pilote : 0 client'],
+      ['rcs','Messages enrichis (RCS)','Disponibilité opérateurs limitée','Désactivé'],
+      ['selfserve','Inscription en libre-service','Création de compte sans commercial','Tous pays'],
+      ['momo','Recharge par Mobile Money','Flooz, Mixx by Yas, MTN MoMo, Orange Money','TG, BJ, CI']
+    ];
+    const flags = flagDefs.map(([k, name, note, scope]) => ({
+      name, note, scope,
+      label: F[k] ? 'Actif' : 'Inactif',
+      btnStyle: F[k]
+        ? { color:'var(--color-accent)', borderColor:'var(--color-accent)', background:'color-mix(in srgb, var(--color-accent) 12%, transparent)', minWidth:'86px' }
+        : { color:'var(--color-text)', borderColor:'var(--color-divider)', background:'transparent', minWidth:'86px' },
+      onToggle: () => this.setState(s => ({
+        flags: { ...s.flags, [k]: !s.flags[k] },
+        pending: { name, on: !s.flags[k] }
+      }))
+    }));
+    const p = this.state.pending;
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isStaff: t === 'staff', isGeo: t === 'geo', isFlags: t === 'flags', isAudit: t === 'audit', isHealth: t === 'health',
+
+      staff: [
+        { name:'Mariam D.', email:'mariam.d@notifyafrica.com', role:'Super-admin', scope:'Plateforme', mfa:'Clé de sécurité', last:'aujourd\u2019hui 09:12', state:'Actif', tagCls: ok },
+        { name:'Koffi B.', email:'koffi.b@notifyafrica.com', role:'Super-admin', scope:'Plateforme', mfa:'Application', last:'aujourd\u2019hui 08:40', state:'Actif', tagCls: ok },
+        { name:'Ama S.', email:'ama.s@notifyafrica.com', role:'Finance', scope:'Tous pays', mfa:'Application', last:'hier 17:55', state:'Actif', tagCls: ok },
+        { name:'Serge K.', email:'serge.k@notifyafrica.com', role:'Commercial', scope:'Togo, Bénin', mfa:'Application', last:'aujourd\u2019hui 10:02', state:'Actif', tagCls: ok },
+        { name:'Nadia O.', email:'nadia.o@notifyafrica.com', role:'Conformité', scope:'Tous pays', mfa:'Application', last:'aujourd\u2019hui 07:30', state:'Actif', tagCls: ok },
+        { name:'Yawa T.', email:'yawa.t@notifyafrica.com', role:'Support', scope:'Togo', mfa:'SMS', last:'aujourd\u2019hui 10:18', state:'Actif', tagCls: ok },
+        { name:'Ibrahim N.', email:'ibrahim.n@notifyafrica.com', role:'Technique', scope:'Fournisseurs', mfa:'—', last:'jamais', state:'2FA manquante', tagCls: warn }
+      ],
+      roleCols,
+      matrix: rows.map(([domain, cells]) => ({ domain, cells: cells.map(cell) })),
+
+      countries: [
+        { name:'Togo', code:'+228', cur:'XOF', tax:'18 %', ops:'Moov, Yas', pay:'Flooz, Mixx by Yas, carte, virement', state:'Ouvert', tagCls: ok },
+        { name:'Bénin', code:'+229', cur:'XOF', tax:'18 %', ops:'MTN, Moov, Celtiis', pay:'MTN MoMo, Moov Money, carte', state:'Ouvert', tagCls: ok },
+        { name:'Côte d\u2019Ivoire', code:'+225', cur:'XOF', tax:'18 %', ops:'Orange, MTN, Moov', pay:'Orange Money, Wave, carte', state:'Ouvert', tagCls: ok },
+        { name:'Burkina Faso', code:'+226', cur:'XOF', tax:'18 %', ops:'Orange, Moov, Telecel', pay:'Orange Money, Moov Money', state:'Pilote', tagCls: na },
+        { name:'Cameroun', code:'+237', cur:'XAF', tax:'19,25 %', ops:'MTN, Orange', pay:'MTN MoMo, Orange Money', state:'En préparation', tagCls: warn },
+        { name:'Ghana', code:'+233', cur:'GHS', tax:'21,9 %', ops:'MTN, Telecel, AT', pay:'MTN MoMo, Telecel Cash', state:'En préparation', tagCls: warn },
+        { name:'Nigeria', code:'+234', cur:'NGN', tax:'7,5 %', ops:'—', pay:'—', state:'Fermé', tagCls: na },
+        { name:'Kenya', code:'+254', cur:'KES', tax:'16 %', ops:'—', pay:'—', state:'Fermé', tagCls: na }
+      ],
+      fx: [
+        { pair:'EUR → XOF', rate:'655,957 (fixe)' },
+        { pair:'USD → XOF', rate:'604,20' },
+        { pair:'XOF → XAF', rate:'1,000 (parité)' },
+        { pair:'USD → GHS', rate:'15,42' },
+        { pair:'USD → ZAR', rate:'17,86' }
+      ],
+
+      flags,
+      pending: !!p,
+      pendingText: p ? `« ${p.name} » ${p.on ? 'activé' : 'désactivé'} pour la plateforme. La modification s\u2019appliquera après validation.` : '',
+      cancelPending: () => this.setState(s => ({ flags: { ...s.flags, ...(() => { const k = flagDefs.find(d => d[1] === p.name)[0]; return { [k]: !p.on }; })() }, pending: null })),
+
+      audit: [
+        { at:'13/09 10:14', who:'Serge K.', domain:'Prix', action:'Remise client proposée', diff:'disc_mabanque_2026 : ∅ → −8,2 %', by:'En attente · Direction' },
+        { at:'13/09 09:02', who:'Mariam D.', domain:'Plateforme', action:'Pays passé en pilote', diff:'Burkina Faso : préparation → pilote', by:'Koffi B.' },
+        { at:'12/09 18:30', who:'Ama S.', domain:'Finance', action:'Remboursement approuvé', diff:'RB-2026-044 : 120 000 FCFA', by:'Direction · Afi G.' },
+        { at:'12/09 16:11', who:'Ibrahim N.', domain:'Fournisseurs', action:'Route secondaire ajoutée', diff:'Yas Togo : 1 → 2 routes', by:'Mariam D.' },
+        { at:'11/09 11:40', who:'Nadia O.', domain:'Conformité', action:'Nom d\u2019expéditeur refusé', diff:'INFO · EduNet Togo', by:'—' },
+        { at:'09/09 08:05', who:'Nadia O.', domain:'Clients', action:'Compte suspendu', diff:'Promo Flash CI : actif → suspendu', by:'Koffi B.' },
+        { at:'05/09 14:22', who:'Koffi B.', domain:'Plateforme', action:'Taux de taxe mis à jour', diff:'Ghana : 21,5 % → 21,9 % · effet 01/10', by:'Mariam D.' },
+        { at:'02/09 03:12', who:'Mariam D.', domain:'Plateforme', action:'Coupure d\u2019urgence', diff:'RCS : actif → coupé', by:'Urgence · justifié 03:40' }
+      ],
+
+      services: [
+        { name:'API d\u2019envoi', state:'Opérationnel', tagCls: ok, value:'99,98 %', note:'Disponibilité 30 j' },
+        { name:'Console', state:'Opérationnel', tagCls: ok, value:'99,95 %', note:'Disponibilité 30 j' },
+        { name:'Moteur de prix', state:'Opérationnel', tagCls: ok, value:'38 ms', note:'Temps de calcul médian' },
+        { name:'File d\u2019envoi', state:'Opérationnel', tagCls: ok, value:'1 240 /s', note:'Débit actuel · capacité 8 000 /s' },
+        { name:'Accusés Yas Togo', state:'Dégradé', tagCls: warn, value:'+ 4 min', note:'Retard moyen depuis 09:40' },
+        { name:'Paiements Mobile Money', state:'Opérationnel', tagCls: ok, value:'97,2 %', note:'Taux de succès 24 h' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

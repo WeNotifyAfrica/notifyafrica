@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 20 · Providers &amp; opérateurs</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Aïcha B. · Ops</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Providers &amp; opérateurs</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Le lot qui répond à votre exigence : déclarer un nouveau provider ou un nouvel opérateur — Moov, MTN, Yas, Telecel ou n'importe quel futur entrant — doit être une opération de configuration, jamais un développement. Six écrans : le catalogue, le formulaire de déclaration, le routage, la santé, les coûts d'achat et la connectivité.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isCatalog }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:60ch; font-size:13.5px">Le catalogue est la source unique : la console client, les sélecteurs de pays, le moteur de prix et les statistiques lisent tous cette liste. Ajouter une entrée ici la rend disponible partout.</p>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary" onClick="{{ goNew }}">Déclarer un opérateur</button><button type="button" class="btn btn-primary" onClick="{{ goNew }}">Déclarer un provider</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1020px">
+        <thead><tr><th>Entrée</th><th>Type</th><th>Pays couverts</th><th>Canaux</th><th>Connexion</th><th>Volume / mois</th><th>Santé</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ catalog }}" as="c" hint-placeholder-count="9">
+            <tr>
+              <td><strong>{{ c.name }}</strong><div class="text-muted mono" style="font-size:11px">{{ c.code }}</div></td>
+              <td class="text-muted" style="font-size:12px">{{ c.type }}</td>
+              <td class="text-muted" style="font-size:12px">{{ c.countries }}</td>
+              <td class="text-muted" style="font-size:12px">{{ c.channels }}</td>
+              <td class="text-muted mono" style="font-size:11.5px">{{ c.protocol }}</td>
+              <td class="num">{{ c.volume }}</td>
+              <td>{{ c.health }}</td>
+              <td>{{ c.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Deux notions distinctes</span><p class="card-body" style="margin:0">Un <strong>opérateur</strong> est une destination : Moov Togo, MTN Bénin. Un <strong>provider</strong> est un moyen d'y accéder : lien direct, agrégateur, API Meta. Une destination peut avoir plusieurs providers, c'est ce qui rend le secours possible.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Préfixes</span><p class="card-body" style="margin:0">Chaque opérateur porte ses préfixes de numérotation. C'est ce qui permet de deviner l'opérateur d'un numéro avant l'envoi et donc d'en calculer le prix — sans dépendre du fournisseur.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Nouveau marché</span><p class="card-body" style="margin:0">Ouvrir un pays entier revient à déclarer ses opérateurs, leurs préfixes, au moins un provider et une grille de coûts. Aucun déploiement de code n'est nécessaire.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isNew }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Déclaration</span><div class="card-title" style="font-size:18px">Nouveau provider</div></div>
+      <div class="field"><label>Type d'entrée</label>
+        <div class="seg" style="max-width:420px">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="kind" checked><span>Provider</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="kind"><span>Opérateur</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="kind"><span>Moyen de paiement</span></label>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Nom commercial</label><input class="input" type="text" value="Sahel Telecom Gateway"></div>
+        <div class="field"><label>Code interne</label><input class="input mono" type="text" value="prov_sahel_gw"></div>
+        <div class="field"><label>Catégorie</label><select class="input"><option>Agrégateur régional</option><option>Lien direct opérateur</option><option>API plateforme (Meta, RCS)</option><option>Passerelle email</option></select></div>
+      </div>
+      <div class="field"><label>Protocole de connexion</label>
+        <div class="seg" style="max-width:420px">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="proto" checked><span>SMPP</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="proto"><span>HTTP / REST</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="proto"><span>SMTP</span></label>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Hôte</label><input class="input mono" type="text" value="smpp.saheltelecom.net"></div>
+        <div class="field"><label>Port</label><input class="input mono num" type="text" value="2775"></div>
+        <div class="field"><label>Identifiant système</label><input class="input mono" type="text" value="notifyafr_01"></div>
+        <div class="field"><label>Mot de passe</label><input class="input mono" type="password" value="••••••••••••"></div>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div>
+        <span class="card-kicker">Couverture déclarée</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4); margin-top:var(--space-3)">
+          <div class="field"><label>Pays</label><select class="input" multiple size="4"><option selected>Mali</option><option selected>Burkina Faso</option><option selected>Niger</option><option>Sénégal</option><option>Mauritanie</option></select></div>
+          <div class="field"><label>Canaux</label><select class="input" multiple size="4"><option selected>SMS</option><option selected>OTP</option><option>Voix</option><option>WhatsApp</option></select></div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Devise de facturation</label><select class="input"><option>XOF (FCFA)</option><option>EUR</option><option>USD</option></select></div>
+        <div class="field"><label>Débit maximal</label><input class="input num" type="text" value="200 msg/s"></div>
+        <div class="field"><label>Accusés de livraison</label><select class="input"><option>Oui, temps réel</option><option>Oui, différés</option><option>Non fournis</option></select></div>
+      </div>
+      <div class="field"><label>Engagement de service contractuel</label><textarea class="input" style="min-height:70px">Disponibilité 99,5 % mensuelle, délai de remise médian < 10 s, support sous 4 h ouvrées. Pénalités contractuelles au-delà de 2 h d'interruption.</textarea></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Tester la connexion</button><button type="button" class="btn btn-primary">Enregistrer en mode test</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Mise en service progressive</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+            <div style="display:flex; gap:var(--space-3); align-items:baseline">
+              <span class="num" style="font-size:12px; color:var(--color-accent-300); min-width:14px">{{ s.n }}</span>
+              <div style="display:flex; flex-direction:column"><span style="font-size:13.5px">{{ s.label }}</span><span class="text-muted" style="font-size:12px">{{ s.detail }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Jamais directement en production</span><p class="card-body" style="margin:0">Un nouveau provider démarre toujours en mode test, puis reçoit un pourcentage croissant du trafic. Aucune bascule à 100 % sans 7 jours de mesure de délivrabilité réelle.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Grille de coûts</span><p class="card-body" style="margin:0">Un provider sans grille de coûts d'achat ne peut pas être activé : le moteur de prix serait incapable de calculer une marge, et les alertes seraient aveugles.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRouting }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">Pour chaque destination, une route principale et une ou plusieurs routes de secours, avec la règle de bascule. La bascule est automatique sur critère mesuré, jamais sur décision manuelle en pleine nuit.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1040px">
+        <thead><tr><th>Destination</th><th>Route principale</th><th>Part</th><th>Secours 1</th><th>Secours 2</th><th>Critère de bascule</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ routing }}" as="r" hint-placeholder-count="7">
+            <tr>
+              <td><strong>{{ r.dest }}</strong></td>
+              <td style="font-size:12.5px">{{ r.primary }}</td>
+              <td class="num">{{ r.share }}</td>
+              <td class="text-muted" style="font-size:12px">{{ r.backup1 }}</td>
+              <td class="text-muted" style="font-size:12px">{{ r.backup2 }}</td>
+              <td class="text-muted" style="font-size:11.5px">{{ r.rule }}</td>
+              <td>{{ r.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Règle de bascule</span><div class="card-title" style="font-size:17px">SMS · Togo — Yas</div></div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Délai médian déclencheur</span><span class="num" style="font-size:13px">15 s sur 5 min</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taux d'échec déclencheur</span><span class="num" style="font-size:13px">8 % sur 5 min</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Retour automatique</span><span style="font-size:13px">Après 30 min nominales</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Surcoût accepté</span><span class="num" style="font-size:13px">Jusqu'à + 40 %</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Au-delà du surcoût</span><span style="font-size:13px">Alerte, pas de bascule</span></div>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12px">Le surcoût d'une route de secours est absorbé par NotifyAfrica : le client paie son tarif contractuel. C'est une décision commerciale, encodée ici en paramètre plutôt qu'en principe implicite.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Bascule active</span><p class="card-body" style="margin:0">Yas Togo est sur secours depuis le 11/09 à 14 h 40. Surcoût cumulé absorbé : 1,84 M FCFA. Retour prévu après confirmation du correctif opérateur.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Forcer le retour</button></div>
+        <div class="card elev-sm"><span class="card-kicker">Répartition de charge</span><p class="card-body" style="margin:0">Deux providers d'une même destination peuvent se partager le trafic selon un pourcentage, utile pour tenir un engagement de volume contractuel ou comparer deux qualités en conditions réelles.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Sans route</span><p class="card-body" style="margin:0">Une destination sans route active refuse les envois avec un message explicite côté client — plutôt que d'accepter et d'échouer silencieusement.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isHealth }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Providers actifs</span><span class="num" style="font-size:25px">14</span><span class="text-muted" style="font-size:12px">sur 17 déclarés</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Nominaux</span><span class="num" style="font-size:25px">11</span><span class="text-muted" style="font-size:12px">dans leur engagement</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Dégradés</span><span class="num" style="font-size:25px">2</span><span class="text-muted" style="font-size:12px">Yas Togo, Lagos Net</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Engagements non tenus</span><span class="num" style="font-size:25px">3</span><span class="text-muted" style="font-size:12px">pénalités mobilisables</span></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1040px">
+        <thead><tr><th>Provider</th><th>Disponibilité 30 j</th><th>Engagement</th><th>Délai médian</th><th>Délivrabilité</th><th>Échecs techniques</th><th>Incidents</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ health }}" as="h" hint-placeholder-count="8">
+            <tr>
+              <td><strong>{{ h.name }}</strong></td>
+              <td class="num" style="{{ h.upStyle }}">{{ h.uptime }}</td>
+              <td class="num text-muted">{{ h.sla }}</td>
+              <td class="num text-muted">{{ h.delay }}</td>
+              <td class="num">{{ h.rate }}</td>
+              <td class="num text-muted">{{ h.errors }}</td>
+              <td class="num text-muted">{{ h.incidents }}</td>
+              <td>{{ h.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Pénalité mobilisable</span><p class="card-body" style="margin:0">Agrégateur Panafric est à 98,71 % contre 99,5 % contractuels : la clause de pénalité est activable. Le calcul du montant est pré-rempli d'après le volume et le contrat.</p><button type="button" class="btn btn-primary" style="align-self:flex-start">Préparer la réclamation</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Mesure propre</span><p class="card-body" style="margin:0">La disponibilité est mesurée par NotifyAfrica sur son propre trafic, pas déclarée par le fournisseur. C'est la seule mesure opposable dans une négociation.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Sonde</span><p class="card-body" style="margin:0">Un message de test est envoyé toutes les 5 minutes sur chaque route active vers un numéro de contrôle. Coût négligeable, détection en amont des clients.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isCosts }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:60ch; font-size:13.5px">Les coûts d'achat alimentent le calcul de marge du moteur de prix. Ils sont datés : un changement n'affecte jamais le prix figé d'un message déjà envoyé.</p>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Importer une grille (CSV)</button><button type="button" class="btn btn-primary">Ajouter un coût</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1020px">
+        <thead><tr><th>Provider · destination</th><th>Canal</th><th>Coût d'achat</th><th>Devise</th><th>En vigueur depuis</th><th>Précédent</th><th>Variation</th><th>Prix de vente</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ costs }}" as="c" hint-placeholder-count="8">
+            <tr>
+              <td style="font-size:12.5px">{{ c.scope }}</td>
+              <td class="text-muted" style="font-size:12px">{{ c.channel }}</td>
+              <td class="num">{{ c.cost }}</td>
+              <td class="text-muted num" style="font-size:12px">{{ c.currency }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ c.since }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ c.prev }}</td>
+              <td class="num" style="{{ c.varStyle }}">{{ c.variation }}</td>
+              <td class="num text-muted">{{ c.price }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Hausse à répercuter</span><p class="card-body" style="margin:0">Meta Marketing Bénin : + 5,2 % au 01/09, non répercuté. Marge tombée à 7,9 %. Répercussion possible au 15/10 avec le préavis de 30 jours déjà notifié aux clients concernés.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Devises</span><p class="card-body" style="margin:0">Un coût en USD ou EUR est converti au taux du jour de l'envoi pour le calcul de marge. Une variation de change peut donc dégrader une marge sans qu'aucun tarif n'ait bougé — c'est visible dans la colonne de variation.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Import en masse</span><p class="card-body" style="margin:0">Les grilles Meta et celles des agrégateurs arrivent en fichier. L'import affiche un rapport ligne à ligne et une simulation d'impact sur les marges avant validation.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isConn }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Connectivité · prov_panafric</span><div class="card-title" style="font-size:18px">Agrégateur Panafric</div></div>
+        <span class="tag tag-outline">Dégradé</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Sessions SMPP</span><span class="num" style="font-size:19px">4 / 6</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Débit utilisé</span><span class="num" style="font-size:19px">180 / 300 msg/s</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">File d'attente</span><span class="num" style="font-size:19px">2 840 msg</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Dernière reconnexion</span><span class="num" style="font-size:19px">il y a 12 min</span></div>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div>
+        <span class="card-kicker">Journal de connexion</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-3)">
+          <sc-for list="{{ connLog }}" as="l" hint-placeholder-count="6">
+            <div style="display:flex; gap:var(--space-4); align-items:baseline">
+              <span class="num text-muted mono" style="font-size:11.5px; min-width:66px">{{ l.at }}</span>
+              <span class="mono" style="font-size:11.5px; min-width:58px; {{ l.levelStyle }}">{{ l.level }}</span>
+              <span style="font-size:12.5px">{{ l.msg }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Relancer les sessions</button><button type="button" class="btn btn-secondary">Envoyer un message de test</button><button type="button" class="btn btn-ghost">Suspendre le provider</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Correspondance des codes d'erreur</span>
+        <p class="card-body" style="margin:0">Chaque fournisseur renvoie ses propres codes. La table de correspondance les traduit dans les motifs normalisés que voient les clients — c'est ce qui permet d'avoir un vocabulaire d'échec unique, quel que soit le provider.</p>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-2)">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:11.5px">0x000B</span><span class="text-muted" style="font-size:12px">Numéro inexistant</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:11.5px">0x0058</span><span class="text-muted" style="font-size:12px">Téléphone éteint</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:11.5px">0x00FF</span><span class="text-muted" style="font-size:12px">Opérateur indisponible</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="mono" style="font-size:11.5px">0x0451</span><span class="text-muted" style="font-size:12px">Contenu refusé</span></div>
+        </div>
+        <button type="button" class="btn btn-secondary" style="align-self:flex-start">Éditer la table</button>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Code non mappé</span><p class="card-body" style="margin:0">Deux codes inconnus reçus hier (0x08A2). Ils sont remontés comme « échec technique » et signalés ici : un code non mappé est une dette de configuration, pas un bug.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Facturation des échecs</span><p class="card-body" style="margin:0">La table indique aussi, par code, si l'échec est facturable. C'est la source de vérité qu'invoque le support face à une contestation client.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Déclarer un opérateur, un provider ou un moyen de paiement est une opération de configuration : aucun déploiement de code. Un provider sans grille de coûts ne peut pas être activé. Toute mise en service passe par le mode test puis une montée progressive du trafic. La bascule vers une route de secours est automatique sur critère mesuré, et son surcoût est absorbé par NotifyAfrica dans la limite paramétrée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Provider déclaré · en test · actif partiel · actif · dégradé · suspendu · retiré. Connexion établie · instable · rompue · authentification refusée · débit saturé. Route principale · secours active · aucune route disponible. Coût d'achat en vigueur · programmé · obsolète. Code d'erreur mappé · non mappé.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Retirer un provider qui porte la seule route d'une destination : bloqué, avec la liste des clients qui perdraient la couverture. Deux providers déclarant le même préfixe : conflit signalé, résolution par priorité explicite. Un coût d'achat supérieur au prix de vente : enregistrement autorisé mais alerte immédiate et blocage des nouvelles offres sur cette route. File d'attente saturée : l'envoi est refusé plutôt que mis en attente indéfiniment.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">La bascule automatique doit-elle pouvoir dégrader la marge sans limite en cas d'incident majeur, ou s'arrêter au plafond paramétré au risque de ne plus livrer ? Faut-il exposer l'état par provider aux clients, ou seulement par opérateur ? Recommandation : plafond de surcoût avec dérogation manuelle d'astreinte, et état exposé par opérateur uniquement — le choix du provider reste une affaire interne.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 20 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 21 — Moteur de prix &amp; remises</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'catalog' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['catalog', 'Catalogue'],
+      ['new', 'Déclarer une entrée'],
+      ['routing', 'Routage'],
+      ['health', 'Santé & engagements'],
+      ['costs', "Coûts d'achat"],
+      ['conn', 'Connectivité']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const warn = { color: 'var(--color-accent-300)' };
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isCatalog: t === 'catalog',
+      isNew: t === 'new',
+      isRouting: t === 'routing',
+      isHealth: t === 'health',
+      isCosts: t === 'costs',
+      isConn: t === 'conn',
+      goNew: () => this.setState({ tab: 'new' }),
+
+      catalog: [
+        { name:'Moov Africa Togo', code:'op_moov_tg', type:'Opérateur', countries:'Togo', channels:'SMS, OTP, Voix', protocol:'SMPP direct', volume:'8,42 M', health: tag('tag-accent','Nominale'), state: tag('tag-accent','Actif') },
+        { name:'Yas Togo', code:'op_yas_tg', type:'Opérateur', countries:'Togo', channels:'SMS, OTP', protocol:'SMPP direct', volume:'6,94 M', health: tag('tag-outline','Dégradée'), state: tag('tag-accent','Actif') },
+        { name:'MTN Bénin', code:'op_mtn_bj', type:'Opérateur', countries:'Bénin', channels:'SMS, OTP', protocol:'SMPP direct', volume:'3,20 M', health: tag('tag-accent','Nominale'), state: tag('tag-accent','Actif') },
+        { name:'Celtiis Bénin', code:'op_celtiis_bj', type:'Opérateur', countries:'Bénin', channels:'SMS', protocol:'HTTP / REST', volume:'1,10 M', health: tag('tag-accent','Nominale'), state: tag('tag-accent','Actif') },
+        { name:'Agrégateur Panafric', code:'prov_panafric', type:'Provider · agrégateur', countries:'8 pays', channels:'SMS, OTP', protocol:'SMPP', volume:'4,80 M', health: tag('tag-outline','Dégradée'), state: tag('tag-accent','Actif') },
+        { name:'Lagos Net', code:'prov_lagosnet', type:'Provider · agrégateur', countries:'Nigeria, Ghana', channels:'SMS', protocol:'HTTP / REST', volume:'0,62 M', health: tag('tag-outline','Dégradée'), state: tag('tag-accent','Actif partiel') },
+        { name:'Meta Cloud API', code:'prov_meta', type:'Provider · plateforme', countries:'Tous', channels:'WhatsApp', protocol:'HTTP / REST', volume:'0,60 M', health: tag('tag-accent','Nominale'), state: tag('tag-accent','Actif') },
+        { name:'Passerelle email', code:'prov_mailrelay', type:'Provider · email', countries:'Tous', channels:'Email', protocol:'SMTP', volume:'2,40 M', health: tag('tag-accent','Nominale'), state: tag('tag-accent','Actif') },
+        { name:'Sahel Telecom Gateway', code:'prov_sahel_gw', type:'Provider · agrégateur', countries:'Mali, Burkina, Niger', channels:'SMS, OTP', protocol:'SMPP', volume:'0', health: tag('tag-neutral','Non mesurée'), state: tag('tag-neutral','En test') }
+      ],
+
+      steps: [
+        { n:'1', label:'Déclaration et test de connexion', detail:"Identifiants vérifiés, débit et accusés de livraison contrôlés. Aucun trafic client." },
+        { n:'2', label:'Grille de coûts d\u2019achat', detail:'Obligatoire avant activation : sans elle, aucune marge calculable.' },
+        { n:'3', label:'Trafic de test interne', detail:'Sonde toutes les 5 minutes vers des numéros de contrôle pendant 48 h.' },
+        { n:'4', label:'Montée progressive', detail:'5 %, puis 20 %, puis 50 % du trafic de la destination, avec mesure de délivrabilité à chaque palier.' },
+        { n:'5', label:'Route principale ou secours', detail:'Promotion en route principale seulement après 7 jours dans l\u2019engagement de service.' }
+      ],
+
+      routing: [
+        { dest:'SMS · Togo — Moov', primary:'Moov direct', share:'100 %', backup1:'Panafric', backup2:'—', rule:'Délai > 15 s ou échec > 8 % sur 5 min', state: tag('tag-accent','Principale') },
+        { dest:'SMS · Togo — Yas', primary:'Panafric (secours)', share:'100 %', backup1:'Yas direct (indisponible)', backup2:'—', rule:'Retour auto après 30 min nominales', state: tag('tag-outline','Sur secours') },
+        { dest:'SMS · Bénin — MTN', primary:'MTN direct', share:'80 %', backup1:'Panafric', backup2:'—', rule:'Répartition 80 / 20 · engagement de volume', state: tag('tag-accent','Principale') },
+        { dest:'SMS · Bénin — Celtiis', primary:'Celtiis direct', share:'100 %', backup1:'Panafric', backup2:'—', rule:'Délai > 20 s ou échec > 10 %', state: tag('tag-accent','Principale') },
+        { dest:'SMS · Nigeria', primary:'Lagos Net', share:'100 %', backup1:'Panafric', backup2:'—', rule:'Échec > 12 % sur 10 min', state: tag('tag-outline','Sous surveillance') },
+        { dest:'WhatsApp · tous pays', primary:'Meta Cloud API', share:'100 %', backup1:'Aucun', backup2:'—', rule:'Pas d\u2019alternative — dépendance unique', state: tag('tag-neutral','Sans secours') },
+        { dest:'SMS · Mali, Burkina, Niger', primary:'Sahel Gateway (test)', share:'0 %', backup1:'Panafric', backup2:'—', rule:'Montée progressive à valider', state: tag('tag-neutral','En test') }
+      ],
+
+      health: [
+        { name:'Moov direct (Togo)', uptime:'99,96 %', sla:'99,5 %', delay:'5 s', rate:'97,4 %', errors:'0,12 %', incidents:'0', upStyle:{}, state: tag('tag-accent','Dans l\u2019engagement') },
+        { name:'Yas direct (Togo)', uptime:'97,20 %', sla:'99,5 %', delay:'22 s', rate:'95,8 %', errors:'2,80 %', incidents:'1', upStyle: warn, state: tag('tag-outline','Engagement non tenu') },
+        { name:'MTN direct (Bénin)', uptime:'99,91 %', sla:'99,5 %', delay:'8 s', rate:'96,1 %', errors:'0,20 %', incidents:'0', upStyle:{}, state: tag('tag-accent','Dans l\u2019engagement') },
+        { name:'Celtiis direct (Bénin)', uptime:'99,64 %', sla:'99,0 %', delay:'11 s', rate:'93,2 %', errors:'0,40 %', incidents:'0', upStyle:{}, state: tag('tag-accent','Dans l\u2019engagement') },
+        { name:'Agrégateur Panafric', uptime:'98,71 %', sla:'99,5 %', delay:'14 s', rate:'94,8 %', errors:'1,10 %', incidents:'2', upStyle: warn, state: tag('tag-outline','Pénalité mobilisable') },
+        { name:'Lagos Net', uptime:'96,40 %', sla:'99,0 %', delay:'18 s', rate:'89,6 %', errors:'3,20 %', incidents:'3', upStyle: warn, state: tag('tag-outline','Engagement non tenu') },
+        { name:'Meta Cloud API', uptime:'99,89 %', sla:'99,9 %', delay:'2 s', rate:'98,2 %', errors:'0,08 %', incidents:'1', upStyle:{}, state: tag('tag-accent','Dans l\u2019engagement') },
+        { name:'Passerelle email', uptime:'99,97 %', sla:'99,5 %', delay:'3 s', rate:'97,2 %', errors:'0,05 %', incidents:'0', upStyle:{}, state: tag('tag-accent','Dans l\u2019engagement') }
+      ],
+
+      costs: [
+        { scope:'Moov direct · Togo', channel:'SMS', cost:'4,80', currency:'XOF', since:'01/01/2026', prev:'4,80', variation:'stable', price:'6,72', varStyle:{} },
+        { scope:'Yas direct · Togo', channel:'SMS', cost:'4,95', currency:'XOF', since:'01/01/2026', prev:'4,90', variation:'+ 1,0 %', price:'6,70', varStyle:{} },
+        { scope:'Panafric · Togo (secours)', channel:'SMS', cost:'6,40', currency:'XOF', since:'01/06/2026', prev:'6,10', variation:'+ 4,9 %', price:'6,70', varStyle: warn },
+        { scope:'MTN direct · Bénin', channel:'SMS', cost:'5,40', currency:'XOF', since:'01/03/2026', prev:'5,40', variation:'stable', price:'7,90', varStyle:{} },
+        { scope:'Lagos Net · Nigeria', channel:'SMS', cost:'0,0225', currency:'USD', since:'01/09/2026', prev:'0,0210', variation:'+ 7,1 %', price:'15,20', varStyle: warn },
+        { scope:'Meta · Togo Utility', channel:'WhatsApp', cost:'18,40', currency:'XOF', since:'01/09/2026', prev:'18,40', variation:'stable', price:'24,00', varStyle:{} },
+        { scope:'Meta · Bénin Marketing', channel:'WhatsApp', cost:'44,20', currency:'XOF', since:'01/09/2026', prev:'42,00', variation:'+ 5,2 %', price:'48,00', varStyle: warn },
+        { scope:'Passerelle email · tous', channel:'Email', cost:'0,90', currency:'XOF', since:'01/01/2026', prev:'1,00', variation:'− 10,0 %', price:'2,00', varStyle:{} }
+      ],
+
+      connLog: [
+        { at:'14:05:12', level:'INFO', msg:'Session 4 établie · bind transceiver accepté', levelStyle: { color: 'var(--color-neutral-400)' } },
+        { at:'13:53:40', level:'WARN', msg:'Session 5 rompue · délai de réponse enquire_link dépassé', levelStyle: { color: 'var(--color-accent-300)' } },
+        { at:'13:53:40', level:'WARN', msg:'Session 6 rompue · même cause · débit réduit à 180 msg/s', levelStyle: { color: 'var(--color-accent-300)' } },
+        { at:'13:48:02', level:'INFO', msg:'File d\u2019attente à 2 840 messages · seuil d\u2019alerte 5 000', levelStyle: { color: 'var(--color-neutral-400)' } },
+        { at:'13:20:55', level:'ERROR', msg:'Code fournisseur inconnu 0x08A2 · remonté en échec technique', levelStyle: { color: 'var(--color-accent)' } },
+        { at:'12:00:00', level:'INFO', msg:'Message de sonde livré en 12 s · route considérée disponible', levelStyle: { color: 'var(--color-neutral-400)' } }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

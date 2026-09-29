@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 9 · OTP</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Application mobile · Live</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Codes à usage unique</h2>
+    <p class="text-muted" style="margin:0; max-width:70ch; font-size:14px">L'OTP n'est pas un SMS comme les autres : c'est un service de vérification. NotifyAfrica facture le <strong style="color:var(--color-text)">code vérifié</strong>, pas la tentative d'envoi — ce qui aligne le coût sur la valeur et protège le client des échecs opérateur. Le tarif vient du même moteur de prix que les autres canaux.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-8)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <span class="card-kicker">{{ k.label }}</span>
+          <span class="num" style="font-size:25px; line-height:1.1">{{ k.value }}</span>
+          <span class="text-muted" style="font-size:12px">{{ k.note }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap">
+          <div><span class="card-kicker">Entonnoir de vérification</span><div class="card-title" style="font-size:17px">30 derniers jours</div></div>
+          <span class="tag tag-outline">Facturé : étape 4</span>
+        </div>
+        <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="4">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13.5px">{{ f.label }}</span><span class="num text-muted" style="font-size:13px">{{ f.value }}</span></div>
+            <div style="height:8px; border-radius:4px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ f.barStyle }}"></div></div>
+            <span class="text-muted" style="font-size:11.5px">{{ f.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+          <span class="card-kicker">Coût du mois</span>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Codes vérifiés</span><span class="num" style="font-size:13px">55 320</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier appliqué</span><span style="font-size:13px">50 001 – 200 000</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="num" style="font-size:13px">8,50 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Codes non facturés</span><span class="num" style="font-size:13px">8 940</span></div>
+          <hr class="hr" style="margin:var(--space-2) 0">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Total</span><span class="num" style="font-size:20px; color:var(--color-accent-300)">485 040 FCFA</span></div>
+          <p class="text-muted" style="margin:0; font-size:11px">Les codes envoyés mais jamais vérifiés ne sont pas facturés.</p>
+        </div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Alerte anti-fraude</span><p class="card-body" style="margin:0">Un numéro a demandé 14 codes en 10 minutes. Les demandes suivantes ont été bloquées automatiquement.</p><a href="#" style="font-size:13px">Voir la règle</a></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isApps }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Une application OTP par usage : chacune a ses propres règles, ses modèles et ses statistiques. Cela permet de durcir la connexion sans gêner la création de compte.</p>
+      <button type="button" class="btn btn-primary">Créer une application</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ apps }}" as="a" hint-placeholder-count="4">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:16px">{{ a.name }}</span><span class="tag tag-neutral">{{ a.state }}</span></div>
+          <p class="card-body" style="margin:0">{{ a.desc }}</p>
+          <div style="display:flex; flex-direction:column; gap:4px">
+            <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:12px">Canal</span><span style="font-size:12px">{{ a.channel }}</span></div>
+            <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:12px">Code</span><span class="num" style="font-size:12px">{{ a.code }}</span></div>
+            <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:12px">Vérifiés / mois</span><span class="num" style="font-size:12px">{{ a.verified }}</span></div>
+            <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:12px">Taux de vérification</span><span class="num" style="font-size:12px">{{ a.rate }}</span></div>
+          </div>
+          <div style="display:flex; gap:var(--space-2)"><button type="button" class="btn btn-secondary" onClick="{{ goSettings }}">Paramètres</button><button type="button" class="btn btn-ghost">Journaux</button></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSettings }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Application</span><div class="card-title" style="font-size:18px">Connexion mobile</div></div>
+        <span class="tag tag-accent">Active</span>
+      </div>
+      <div>
+        <span class="card-kicker">Code</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4); margin-top:var(--space-3)">
+          <div class="field"><label>Longueur</label><select class="input"><option>6 chiffres</option><option>4 chiffres</option><option>8 chiffres</option></select></div>
+          <div class="field"><label>Type</label><select class="input"><option>Numérique</option><option>Alphanumérique</option></select></div>
+          <div class="field"><label>Durée de validité</label><select class="input"><option>5 minutes</option><option>2 minutes</option><option>10 minutes</option></select></div>
+        </div>
+      </div>
+      <div>
+        <span class="card-kicker">Tentatives et renvois</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4); margin-top:var(--space-3)">
+          <div class="field"><label>Tentatives maximum</label><select class="input"><option>3</option><option>5</option></select></div>
+          <div class="field"><label>Délai avant renvoi</label><select class="input"><option>60 secondes</option><option>30 secondes</option></select></div>
+          <div class="field"><label>Renvois maximum</label><select class="input"><option>2</option><option>3</option></select></div>
+        </div>
+      </div>
+      <div>
+        <span class="card-kicker">Acheminement</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4); margin-top:var(--space-3)">
+          <div class="field"><label>Canal principal</label><select class="input"><option>SMS</option><option>WhatsApp</option></select></div>
+          <div class="field"><label>Canal de repli</label><select class="input"><option>WhatsApp après 60 s</option><option>Aucun</option></select></div>
+          <div class="field"><label>Nom d'expéditeur</label><select class="input"><option>MABANQUE</option><option>NOTIFY</option></select></div>
+        </div>
+      </div>
+      <div>
+        <span class="card-kicker">Protection</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3); margin-top:var(--space-3)">
+          <label class="radio" style="align-items:flex-start"><input type="checkbox" checked><span class="dot"></span><span style="font-size:13px">Limiter à 5 demandes par numéro et par heure</span></label>
+          <label class="radio" style="align-items:flex-start"><input type="checkbox" checked><span class="dot"></span><span style="font-size:13px">Bloquer les préfixes sans opérateur connu</span></label>
+          <label class="radio" style="align-items:flex-start"><input type="checkbox" checked><span class="dot"></span><span style="font-size:13px">Alerter au-delà de 3 fois le volume habituel</span></label>
+          <label class="radio" style="align-items:flex-start"><input type="checkbox"><span class="dot"></span><span style="font-size:13px">Restreindre aux pays du catalogue de l'organisation</span></label>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <span class="card-kicker">Impact sur le coût</span>
+        <p class="card-body" style="margin:0">Le canal de repli WhatsApp est facturé au tarif WhatsApp s'il est utilisé et que le code est vérifié.</p>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">OTP par SMS</span><span class="num" style="font-size:13px">8,50 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">OTP par WhatsApp</span><span class="num" style="font-size:13px">28,00 FCFA</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Repli déclenché</span><span class="num" style="font-size:13px">4,2 % des cas</span></div>
+        <p class="text-muted" style="margin:0; font-size:11px">Tarifs issus du moteur de prix pour le Togo, palier courant.</p>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Arbitrage</span><p class="card-body" style="margin:0">Réduire la validité à 2 minutes augmente la sécurité mais fait chuter le taux de vérification — donc le nombre de connexions réussies. Recommandation : 5 minutes, avec renvoi possible après 60 secondes.</p></div>
+      <button type="button" class="btn btn-primary btn-block">Enregistrer les paramètres</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTemplates }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Un modèle par langue et par canal. La variable {code} est obligatoire ; la durée de validité est reprise automatiquement des paramètres de l'application.</p>
+      <button type="button" class="btn btn-primary">Créer un modèle</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:760px">
+        <thead><tr><th>Application</th><th>Langue</th><th>Canal</th><th>Message</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td>Connexion mobile</td><td class="text-muted">Français</td><td class="text-muted">SMS</td><td>Votre code de connexion est {code}. Valable {duree} minutes.</td><td><span class="tag tag-accent">Actif</span></td></tr>
+          <tr><td>Connexion mobile</td><td class="text-muted">English</td><td class="text-muted">SMS</td><td>Your login code is {code}. Valid for {duree} minutes.</td><td><span class="tag tag-accent">Actif</span></td></tr>
+          <tr><td>Connexion mobile</td><td class="text-muted">Français</td><td class="text-muted">WhatsApp</td><td>Modèle « auth_login_fr » — approuvé par Meta</td><td><span class="tag tag-accent">Approuvé</span></td></tr>
+          <tr><td>Validation paiement</td><td class="text-muted">Français</td><td class="text-muted">SMS</td><td>Code {code} pour valider votre paiement de {montant} FCFA.</td><td><span class="tag tag-accent">Actif</span></td></tr>
+          <tr><td>Création de compte</td><td class="text-muted">Français</td><td class="text-muted">SMS</td><td>Bienvenue. Votre code de vérification est {code}.</td><td><span class="tag tag-outline">Brouillon</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm"><span class="card-kicker">Règle</span><p class="card-body" style="margin:0">La langue est choisie selon le contact, sinon selon le pays du numéro, sinon la langue par défaut de l'organisation. Un modèle WhatsApp doit être approuvé par Meta avant d'être utilisable comme canal principal ou de repli.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLogs }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Application</label><select class="input"><option>Toutes</option><option>Connexion mobile</option><option>Validation paiement</option></select></div>
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Vérifié</option><option>Expiré</option><option>Échec</option><option>Bloqué</option></select></div>
+        <div class="field"><label>Canal</label><select class="input"><option>Tous</option><option>SMS</option><option>WhatsApp</option></select></div>
+        <div class="field"><label>Numéro</label><input class="input" type="text" placeholder="+228…"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">Aujourd'hui</span><button type="button" class="btn btn-ghost">Réinitialiser</button><button type="button" class="btn btn-secondary" style="margin-left:auto">Exporter</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:880px">
+        <thead><tr><th>Heure</th><th>Numéro</th><th>Application</th><th>Canal</th><th>Tentatives</th><th>Délai</th><th>Statut</th><th>Facturé</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ logs }}" as="l" hint-placeholder-count="8">
+            <tr>
+              <td class="num text-muted">{{ l.time }}</td>
+              <td class="num">{{ l.phone }}</td>
+              <td class="text-muted">{{ l.app }}</td>
+              <td class="text-muted">{{ l.channel }}</td>
+              <td class="num">{{ l.attempts }}</td>
+              <td class="num text-muted">{{ l.delay }}</td>
+              <td>{{ l.status }}</td>
+              <td class="num">{{ l.billed }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted" style="margin:0; font-size:12px">Le code lui-même n'est jamais affiché ni journalisé en clair — seul son cycle de vie est traçable.</p>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAnalytics }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Taux de vérification</span><span class="num" style="font-size:24px">86,1 %</span><span class="text-muted" style="font-size:12px">+1,4 pt sur 30 j</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Délai médian</span><span class="num" style="font-size:24px">14 s</span><span class="text-muted" style="font-size:12px">de l'envoi à la saisie</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Renvois demandés</span><span class="num" style="font-size:24px">7,8 %</span><span class="text-muted" style="font-size:12px">des demandes</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Blocages anti-fraude</span><span class="num" style="font-size:24px">1 204</span><span class="text-muted" style="font-size:12px">sur 30 j</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Par opérateur</span><div class="card-title" style="font-size:17px">Vérification et délai</div></div>
+        <div style="overflow:auto">
+          <table class="table" style="min-width:420px">
+            <thead><tr><th>Opérateur</th><th>Envoyés</th><th>Vérifiés</th><th>Taux</th><th>Délai médian</th></tr></thead>
+            <tbody>
+              <tr><td>Moov Togo</td><td class="num">38 200</td><td class="num">33 640</td><td class="num">88,1 %</td><td class="num">12 s</td></tr>
+              <tr><td>Yas Togo</td><td class="num">21 400</td><td class="num">17 920</td><td class="num">83,7 %</td><td class="num">18 s</td></tr>
+              <tr><td>MTN Bénin</td><td class="num">4 660</td><td class="num">3 760</td><td class="num">80,7 %</td><td class="num">21 s</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12px">Un délai médian qui grimpe est le premier signe d'une route dégradée — avant même que le taux d'échec bouge.</p>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Par application</span><div class="card-title" style="font-size:17px">Répartition de la dépense</div></div>
+        <sc-for list="{{ appStats }}" as="s" hint-placeholder-count="3">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13.5px">{{ s.name }}</span><span class="num text-muted" style="font-size:13px">{{ s.cost }}</span></div>
+            <div style="height:5px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ s.barStyle }}"></div></div>
+            <span class="text-muted num" style="font-size:11.5px">{{ s.detail }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Facturation au code vérifié : un code envoyé mais non vérifié n'est pas facturé. Un renvoi ne crée pas une nouvelle facturation si le code final est vérifié. Le repli sur un autre canal est facturé au tarif de ce canal. Le code n'est jamais stocké en clair. Les limites par numéro et par heure sont configurables par application et bornées par une limite globale définie en back-office.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Demandé, envoyé, remis, vérifié, expiré, tentatives épuisées, renvoyé, bloqué (anti-fraude), échec opérateur, canal de repli déclenché. Application désactivée. Modèle WhatsApp non approuvé. Pays non couvert. Quota de l'organisation atteint.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Deux codes demandés simultanément pour le même numéro : seul le dernier reste valable, les précédents sont invalidés. Code vérifié après expiration : refusé, non facturé. Le repli WhatsApp part alors que le SMS arrive finalement : une seule facturation. Attaque par énumération de numéros : blocage automatique et alerte à l'Admin NotifyAfrica.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Facturer au code vérifié est favorable au client mais expose NotifyAfrica au coût opérateur des codes non vérifiés : faut-il un plancher (par exemple facturer au-delà de 25 % de codes non vérifiés) ? Le client doit-il pouvoir désactiver le repli WhatsApp pour maîtriser son coût ? Faut-il exposer une API de vérification côté serveur uniquement, pour empêcher la vérification depuis le mobile ?</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 9 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 10 — WhatsApp</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'overview' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['overview', "Vue d'ensemble"],
+      ['apps', 'Applications'],
+      ['settings', 'Paramètres'],
+      ['templates', 'Modèles'],
+      ['logs', 'Journaux'],
+      ['analytics', 'Statistiques']
+    ];
+    const t = this.state.tab;
+    const bar = pct => ({ width: pct + '%', height: '100%', background: 'var(--color-accent)' });
+
+    return {
+      tabs: tabs.map(([key, label]) => ({
+        label,
+        onClick: () => this.setState({ tab: key }),
+        style: {
+          whiteSpace: 'nowrap',
+          color: key === t ? 'var(--color-accent)' : 'var(--color-text)',
+          borderColor: key === t ? 'var(--color-accent)' : 'var(--color-divider)',
+          background: key === t ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+        }
+      })),
+      goSettings: () => this.setState({ tab: 'settings' }),
+
+      isOverview: t === 'overview',
+      isApps: t === 'apps',
+      isSettings: t === 'settings',
+      isTemplates: t === 'templates',
+      isLogs: t === 'logs',
+      isAnalytics: t === 'analytics',
+
+      kpis: [
+        { label:'Codes demandés', value:'64 260', note:'sur 30 jours' },
+        { label:'Codes vérifiés', value:'55 320', note:'86,1 % de vérification' },
+        { label:'Délai médian', value:'14 s', note:'envoi → saisie' },
+        { label:'Échecs opérateur', value:'1 880', note:'non facturés' },
+        { label:'Coût du mois', value:'485 040', note:'FCFA · palier 50k–200k' }
+      ],
+
+      funnel: [
+        { label:'1 · Codes demandés', value:'64 260', note:'appels API reçus', barStyle: bar(100) },
+        { label:'2 · Codes envoyés', value:'62 380', note:'1 880 échecs opérateur, non facturés', barStyle: bar(97) },
+        { label:'3 · Remis au destinataire', value:'60 940', note:'accusés de réception opérateur', barStyle: bar(95) },
+        { label:'4 · Codes vérifiés — facturés', value:'55 320', note:'5 620 expirés ou abandonnés, non facturés', barStyle: bar(86) }
+      ],
+
+      apps: [
+        { name:'Connexion mobile', state:'Active', desc:"Vérification à chaque connexion depuis un appareil non reconnu.",
+          channel:'SMS, repli WhatsApp', code:'6 chiffres · 5 min', verified:'38 400', rate:'88,2 %' },
+        { name:'Validation paiement', state:'Active', desc:"Confirmation avant tout virement supérieur à un seuil.",
+          channel:'SMS uniquement', code:'6 chiffres · 2 min', verified:'12 100', rate:'91,4 %' },
+        { name:'Création de compte', state:'Active', desc:"Vérification du numéro à l'inscription.",
+          channel:'SMS, repli WhatsApp', code:'4 chiffres · 10 min', verified:'4 820', rate:'74,8 %' },
+        { name:'Espace agent', state:'Inactive', desc:"Accès du personnel aux outils internes — en préparation.",
+          channel:'SMS', code:'8 chiffres · 2 min', verified:'—', rate:'—' }
+      ],
+
+      logs: [
+        { time:'14:02:11', phone:'+228 90 12 34 56', app:'Connexion mobile', channel:'SMS', attempts:'1', delay:'9 s', status:'Vérifié', billed:'8,50 FCFA' },
+        { time:'14:01:48', phone:'+228 91 44 20 08', app:'Connexion mobile', channel:'SMS', attempts:'2', delay:'42 s', status:'Vérifié', billed:'8,50 FCFA' },
+        { time:'14:00:12', phone:'+229 97 11 08 42', app:'Validation paiement', channel:'SMS', attempts:'1', delay:'11 s', status:'Vérifié', billed:'9,40 FCFA' },
+        { time:'13:58:30', phone:'+228 70 00 12 99', app:'Connexion mobile', channel:'SMS', attempts:'0', delay:'—', status:'Échec opérateur', billed:'0 FCFA' },
+        { time:'13:55:02', phone:'+228 92 31 77 10', app:'Création de compte', channel:'WhatsApp', attempts:'1', delay:'26 s', status:'Vérifié · repli', billed:'28,00 FCFA' },
+        { time:'13:52:44', phone:'+228 90 88 45 21', app:'Connexion mobile', channel:'SMS', attempts:'3', delay:'—', status:'Tentatives épuisées', billed:'0 FCFA' },
+        { time:'13:50:19', phone:'+228 93 02 64 73', app:'Connexion mobile', channel:'SMS', attempts:'0', delay:'—', status:'Bloqué · 14 demandes / 10 min', billed:'0 FCFA' },
+        { time:'13:47:05', phone:'+225 07 58 90 11', app:'Validation paiement', channel:'SMS', attempts:'1', delay:'—', status:'Expiré', billed:'0 FCFA' }
+      ],
+
+      appStats: [
+        { name:'Connexion mobile', cost:'326 400 FCFA', detail:'67 % de la dépense · 38 400 codes vérifiés · 8,50 FCFA', barStyle: bar(67) },
+        { name:'Validation paiement', cost:'113 740 FCFA', detail:'23 % de la dépense · 12 100 codes vérifiés · 9,40 FCFA', barStyle: bar(23) },
+        { name:'Création de compte', cost:'44 900 FCFA', detail:'10 % de la dépense · 4 820 codes vérifiés, dont 202 en repli WhatsApp à 28 FCFA', barStyle: bar(10) }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

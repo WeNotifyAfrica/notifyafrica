@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 22 · Devis &amp; cycle commercial</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Serge K. · Commercial</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Devis &amp; cycle commercial</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Le pendant interne du lot 14. Le client demande un devis ; l'équipe commerciale le construit, le fait valider, l'envoie, et le devis accepté devient automatiquement une règle du moteur de prix (lot 21). Aucune ressaisie entre le commercial et la facturation.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isPipeline }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Devis ouverts</span><span class="num" style="font-size:25px">17</span><span class="text-muted" style="font-size:12px">dont 4 en attente de validation</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Valeur annuelle en jeu</span><span class="num" style="font-size:25px">312 M FCFA</span><span class="text-muted" style="font-size:12px">pondérée : 148 M FCFA</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Taux de signature</span><span class="num" style="font-size:25px">41 %</span><span class="text-muted" style="font-size:12px">12 derniers mois</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Délai moyen</span><span class="num" style="font-size:25px">9 jours</span><span class="text-muted" style="font-size:12px">demande → signature</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(5,minmax(220px,1fr)); gap:var(--space-4); overflow-x:auto; padding-bottom:var(--space-2)">
+      <sc-for list="{{ columns }}" as="col" hint-placeholder-count="5">
+        <div style="display:flex; flex-direction:column; gap:var(--space-3); min-width:220px">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-2)"><span class="card-kicker">{{ col.title }}</span><span class="text-muted num" style="font-size:12px">{{ col.sum }}</span></div>
+          <sc-for list="{{ col.items }}" as="q">
+            <button type="button" class="card elev-sm" onClick="{{ q.onClick }}" style="gap:var(--space-2); text-align:left; cursor:pointer; font:inherit; color:inherit">
+              <div style="display:flex; justify-content:space-between; gap:var(--space-2)"><span class="mono text-muted" style="font-size:11px">{{ q.ref }}</span><span class="text-muted num" style="font-size:11px">{{ q.age }}</span></div>
+              <span style="font-size:14px">{{ q.client }}</span>
+              <span class="text-muted" style="font-size:12px">{{ q.scope }}</span>
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-2)"><span class="num" style="font-size:13px; color:var(--color-accent-300)">{{ q.value }}</span><span class="num text-muted" style="font-size:11.5px">{{ q.discount }}</span></div>
+            </button>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Relance due</span><p class="card-body" style="margin:0">NA-2026-027 (Assur Ouest) envoyé il y a 12 jours sans réponse. Le devis expire dans 3 jours : au-delà, les prix seront recalculés sur la grille en vigueur.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isEditor }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker mono">NA-2026-031 · version 2</span><div class="card-title" style="font-size:18px">MaBanque SA — renouvellement 12 mois</div></div>
+        <span class="tag tag-outline">Brouillon</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Durée d'engagement</label><select class="input"><option>12 mois</option><option>24 mois</option><option>Sans engagement</option></select></div>
+        <div class="field"><label>Validité du devis</label><select class="input"><option>30 jours</option><option>15 jours</option></select></div>
+        <div class="field"><label>Mode de facturation</label><select class="input"><option>Prépayé</option><option>Post-payé · 30 jours</option></select></div>
+      </div>
+      <div style="overflow:auto">
+        <table class="table" style="min-width:680px">
+          <thead><tr><th>Ligne</th><th>Volume / mois</th><th>Prix grille</th><th>Prix proposé</th><th>Remise</th><th>Total / mois</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ lines }}" as="l" hint-placeholder-count="4">
+              <tr>
+                <td style="font-size:12.5px">{{ l.label }}</td>
+                <td class="num">{{ l.volumeLabel }}</td>
+                <td class="num text-muted">{{ l.grid }}</td>
+                <td class="num" style="color:var(--color-accent-300)">{{ l.price }}</td>
+                <td class="num text-muted">{{ l.disc }}</td>
+                <td class="num">{{ l.total }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div class="field"><label>Remise globale proposée : <span class="num" style="color:var(--color-accent-300)">{{ discLabel }}</span></label>
+        <input type="range" min="0" max="20" step="0.1" value="{{ disc }}" onInput="{{ onDisc }}" style="width:100%; accent-color:var(--color-accent)">
+        <div style="display:flex; justify-content:space-between"><span class="text-muted num" style="font-size:11px">0 %</span><span class="text-muted num" style="font-size:11px">seuil de validation direction : 10 %</span><span class="text-muted num" style="font-size:11px">20 %</span></div>
+      </div>
+      <div class="field"><label>Conditions particulières</label><textarea class="input" style="min-height:70px">Engagement de volume de 600 000 messages / mois. En cas de volume inférieur pendant deux mois consécutifs, retour au prix de la grille. Nom d'expéditeur MABANQUE maintenu sur tous les opérateurs couverts.</textarea></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Aperçu PDF client</button><button type="button" class="btn btn-primary" onClick="{{ goApproval }}">{{ submitLabel }}</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Synthèse économique</span>
+        <sc-for list="{{ summary }}" as="s" hint-placeholder-count="6">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">{{ s.label }}</span><span class="num" style="font-size:13px; {{ s.style }}">{{ s.value }}</span></div>
+        </sc-for>
+      </div>
+      <div class="card elev-sm" style="{{ verdictCardStyle }}"><span class="card-kicker">{{ verdictTitle }}</span><p class="card-body" style="margin:0">{{ verdictText }}</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Prix calculés, pas saisis</span><p class="card-body" style="margin:0">Le commercial fixe une remise ; les prix unitaires sont produits par le moteur de prix avec les coûts d'achat du jour. Impossible de proposer un prix sous le plancher de marge sans que cela se voie.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Versions</span><p class="card-body" style="margin:0">v1 envoyée le 04/09 à − 12 %, refusée en interne. Chaque version reste consultable : on sait toujours ce qui a été proposé au client, et quand.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isApproval }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Circuit de validation · NA-2026-031</span><div class="card-title" style="font-size:18px">Qui doit dire oui, et dans quel ordre</div></div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <sc-for list="{{ approvals }}" as="a" hint-placeholder-count="4">
+          <div style="display:flex; gap:var(--space-4); align-items:flex-start; padding-bottom:var(--space-4); border-bottom:1px solid var(--color-divider)">
+            <span style="{{ a.dotStyle }}"></span>
+            <div style="display:flex; flex-direction:column; gap:3px; flex:1">
+              <div style="display:flex; justify-content:space-between; gap:var(--space-3); flex-wrap:wrap"><span style="font-size:14px">{{ a.step }}</span><span class="{{ a.tagCls }}">{{ a.status }}</span></div>
+              <span class="text-muted" style="font-size:12.5px">{{ a.who }}</span>
+              <span class="text-muted" style="font-size:12px">{{ a.note }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div class="field"><label>Commentaire de validation</label><textarea class="input" style="min-height:70px" placeholder="Motif de l'accord ou du refus — obligatoire"></textarea></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Valider</button><button type="button" class="btn btn-secondary">Demander une modification</button><button type="button" class="btn btn-ghost">Refuser</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Seuils de validation</span>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise ≤ 5 %</span><span style="font-size:13px">Commercial seul</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">5 % – 10 %</span><span style="font-size:13px">Responsable commercial</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">&gt; 10 % ou marge &lt; 20 %</span><span style="font-size:13px">Direction</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Post-payé &gt; 5 M FCFA</span><span style="font-size:13px">+ Finance</span></div>
+        <p class="text-muted" style="margin:0; font-size:11.5px">Les seuils sont des paramètres du back-office, pas des règles codées : la direction peut les ajuster sans développement.</p>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Délai</span><p class="card-body" style="margin:0">Une validation sans réponse sous 48 h est relancée, puis remonte au niveau supérieur. Un devis ne doit pas mourir dans une boîte de réception.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Séparation des rôles</span><p class="card-body" style="margin:0">L'auteur d'un devis ne peut pas le valider lui-même, quel que soit son niveau.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isContracts }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">Un devis accepté devient un contrat, et un contrat devient une règle du moteur de prix. Cet écran montre la chaîne complète et ce qui arrive à échéance.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1040px">
+        <thead><tr><th>Contrat</th><th>Client</th><th>Devis source</th><th>Règle générée</th><th>Engagement</th><th>Réalisé</th><th>Échéance</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ contracts }}" as="c" hint-placeholder-count="6">
+            <tr>
+              <td class="mono" style="font-size:11.5px"><strong>{{ c.ref }}</strong></td>
+              <td style="font-size:12.5px">{{ c.client }}</td>
+              <td class="mono text-muted" style="font-size:11.5px">{{ c.quote }}</td>
+              <td class="mono" style="font-size:11.5px; color:var(--color-accent-300)">{{ c.rule }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ c.commit }}</td>
+              <td class="num" style="font-size:12px; {{ c.realStyle }}">{{ c.real }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ c.end }}</td>
+              <td>{{ c.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Engagement non tenu</span><p class="card-body" style="margin:0">Agence Digitale Lomé réalise 61 % de son engagement depuis deux mois. La clause prévoit le retour au prix de la grille : action à confirmer par le commercial avant application automatique.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Renouvellement</span><p class="card-body" style="margin:0">Les contrats arrivant à échéance sous 60 jours génèrent automatiquement un devis de renouvellement en brouillon, pré-rempli avec le volume réel des six derniers mois.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Signature</span><p class="card-body" style="margin:0">L'acceptation client se fait dans sa console (lot 14) par un membre ayant le rôle Owner ou Billing Manager. L'horodatage et l'identité valent accord.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAccounts }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1000px">
+        <thead><tr><th>Compte</th><th>Segment</th><th>Commercial</th><th>Volume 3 mois</th><th>Tendance</th><th>Marge</th><th>Potentiel</th><th>Signal</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="7">
+            <tr>
+              <td style="font-size:12.5px"><strong>{{ a.name }}</strong></td>
+              <td class="text-muted" style="font-size:12px">{{ a.segment }}</td>
+              <td class="text-muted" style="font-size:12px">{{ a.owner }}</td>
+              <td class="num">{{ a.volume }}</td>
+              <td class="num" style="{{ a.trendStyle }}">{{ a.trend }}</td>
+              <td class="num text-muted">{{ a.margin }}</td>
+              <td class="text-muted" style="font-size:12px">{{ a.potential }}</td>
+              <td class="text-muted" style="font-size:11.5px">{{ a.signal }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Signaux d'opportunité</span><p class="card-body" style="margin:0">Un client proche d'un palier, un usage SMS massif sans WhatsApp, un nouveau pays apparu dans les envois : chaque signal propose un devis pré-construit.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Risque d'attrition</span><p class="card-body" style="margin:0">Une baisse de volume de plus de 30 % sur un mois, sans saisonnalité connue, alerte le commercial en charge. C'est souvent un concurrent qui teste une route.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Les prix d'un devis sont calculés par le moteur de prix à partir d'une remise ; jamais saisis à la main. La validation suit des seuils paramétrables (remise, marge, encours post-payé). L'auteur ne valide jamais son propre devis. Un devis expire à sa date de validité et ses prix sont alors recalculés. Un devis accepté génère automatiquement la règle de remise correspondante, datée du début du contrat.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Demande reçue · brouillon · en validation · modification demandée · refusé en interne · envoyé · consulté par le client · accepté · décliné · expiré. Contrat actif · engagement non tenu · en renouvellement · résilié. Validation en retard, relancée, escaladée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Un coût d'achat augmente entre l'envoi et l'acceptation : le devis reste valable jusqu'à sa date, et la marge dégradée est signalée au commercial. Client qui accepte une version antérieure : impossible, seule la dernière version envoyée est acceptable. Contrat qui chevauche une remise existante : l'ancienne est automatiquement clôturée la veille du démarrage.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il un outil de CRM externe (et donc une synchronisation), ou ce pipeline suffit-il ? La clause d'engagement non tenu doit-elle s'appliquer automatiquement ou toujours après décision humaine ? Recommandation : pipeline interne en phase 1, et application de la clause après confirmation du commercial, avec délai de 7 jours.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 22 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 23 — Moyens de paiement</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'pipeline', disc: 10.5 };
+  }
+
+  fmt(n, d) {
+    return n.toLocaleString('fr-FR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/\u202f/g, ' ');
+  }
+
+  renderVals() {
+    const tabs = [
+      ['pipeline', 'Pipeline'],
+      ['editor', 'Construire un devis'],
+      ['approval', 'Validation'],
+      ['contracts', 'Contrats'],
+      ['accounts', 'Comptes']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const warn = { color: 'var(--color-accent-300)' };
+    const open = () => this.setState({ tab: 'editor' });
+
+    const q = (ref, client, scope, value, discount, age) => ({ ref, client, scope, value, discount, age, onClick: open });
+
+    const disc = this.state.disc;
+    const base = [
+      { label:'SMS · Togo', vol:420000, grid:6.80, cost:4.85 },
+      { label:'SMS · Bénin', vol:80000, grid:7.90, cost:5.40 },
+      { label:'OTP · Togo', vol:100000, grid:6.10, cost:4.10 },
+      { label:'WhatsApp Utility · Togo', vol:10000, grid:24.00, cost:18.40 }
+    ];
+    let rev = 0, costT = 0, gridT = 0;
+    const lines = base.map(b => {
+      const p = b.grid * (1 - disc / 100);
+      rev += p * b.vol; costT += b.cost * b.vol; gridT += b.grid * b.vol;
+      return {
+        label: b.label,
+        volumeLabel: this.fmt(b.vol),
+        grid: this.fmt(b.grid, 2),
+        price: this.fmt(p, 2),
+        disc: '− ' + this.fmt(disc, 1) + ' %',
+        total: this.fmt(p * b.vol) + ' FCFA'
+      };
+    });
+    const margin = (rev - costT) / rev * 100;
+    const needsDirection = disc > 10 || margin < 20;
+    const needsManager = disc > 5;
+    const underFloor = margin < 15;
+
+    let verdictTitle, verdictText;
+    if (underFloor) {
+      verdictTitle = 'Bloqué · sous le plancher';
+      verdictText = 'Marge de ' + this.fmt(margin, 1) + ' %, sous le plancher de 15 %. Le devis ne peut pas être soumis : réduire la remise ou retirer une ligne.';
+    } else if (needsDirection) {
+      verdictTitle = 'Validation direction requise';
+      verdictText = 'Remise de ' + this.fmt(disc, 1) + ' % et marge de ' + this.fmt(margin, 1) + ' % : le devis passera par le responsable commercial puis la direction.';
+    } else if (needsManager) {
+      verdictTitle = 'Validation responsable commercial';
+      verdictText = 'Remise entre 5 et 10 % avec une marge de ' + this.fmt(margin, 1) + ' % : une seule validation hiérarchique suffit.';
+    } else {
+      verdictTitle = 'Envoi direct possible';
+      verdictText = 'Remise ≤ 5 % : le commercial peut envoyer le devis sans validation.';
+    }
+
+    const dot = s => ({
+      width: '10px', height: '10px', flex: 'none', marginTop: '5px', borderRadius: '50%',
+      background: s === 'done' ? 'var(--color-accent)' : 'transparent',
+      border: '1.5px solid ' + (s === 'todo' ? 'var(--color-neutral-600)' : 'var(--color-accent)')
+    });
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isPipeline: t === 'pipeline',
+      isEditor: t === 'editor',
+      isApproval: t === 'approval',
+      isContracts: t === 'contracts',
+      isAccounts: t === 'accounts',
+      goApproval: () => { if (!underFloor) this.setState({ tab: 'approval' }); },
+
+      columns: [
+        { title:'Demandes', sum:'3', items:[
+          q('NA-2026-034','Pharma Lomé','SMS · 150 k/mois','≈ 12 M FCFA','—','2 j'),
+          q('NA-2026-033','Transco Cotonou','SMS + WhatsApp','≈ 18 M FCFA','—','3 j'),
+          q('NA-2026-032','EduNet Togo','OTP · 80 k/mois','≈ 6 M FCFA','—','5 j')
+        ]},
+        { title:'Brouillons', sum:'2', items:[
+          q('NA-2026-031','MaBanque SA','Renouvellement 12 mois','62 M FCFA / an','− 10,5 %','v2'),
+          q('NA-2026-030','Assur Ouest','Extension Bénin','14 M FCFA / an','− 4,0 %','1 j')
+        ]},
+        { title:'En validation', sum:'4', items:[
+          q('NA-2026-029','MicroCrédit Kara','SMS · 24 mois','22 M FCFA / an','− 7,5 %','1 j'),
+          q('NA-2026-028','Agence Digitale Lomé','Renouvellement','9 M FCFA / an','− 6,0 %','3 j')
+        ]},
+        { title:'Envoyés', sum:'5', items:[
+          q('NA-2026-027','Assur Ouest','SMS + WhatsApp CI','31 M FCFA / an','− 5,0 %','12 j'),
+          q('NA-2026-025','Sahel Retail','SMS · Mali, Burkina','41 M FCFA / an','− 8,0 %','6 j')
+        ]},
+        { title:'Signés ce mois', sum:'3', items:[
+          q('NA-2026-022','Banque Atlantique Togo','OTP + SMS','48 M FCFA / an','− 9,0 %','signé'),
+          q('NA-2026-020','Livraison Express','WhatsApp Utility','11 M FCFA / an','− 3,0 %','signé')
+        ]}
+      ],
+
+      disc,
+      discLabel: this.fmt(disc, 1) + ' %',
+      onDisc: e => this.setState({ disc: parseFloat(e.target.value) }),
+      lines,
+      summary: [
+        { label:'Revenu mensuel', value: this.fmt(rev) + ' FCFA', style:{} },
+        { label:'Revenu annuel', value: this.fmt(rev * 12) + ' FCFA', style:{} },
+        { label:'Coût fournisseur mensuel', value: this.fmt(costT) + ' FCFA', style:{} },
+        { label:'Marge brute', value: this.fmt(margin, 1) + ' %', style: underFloor || margin < 20 ? warn : { color: 'var(--color-accent)' } },
+        { label:'Concession vs grille / an', value: this.fmt((gridT - rev) * 12) + ' FCFA', style:{} },
+        { label:'Validation', value: underFloor ? 'Impossible' : (needsDirection ? 'Direction' : (needsManager ? 'Resp. commercial' : 'Aucune')), style:{} }
+      ],
+      verdictTitle, verdictText,
+      verdictCardStyle: underFloor || needsDirection ? { borderLeft: '2px solid var(--color-accent)' } : {},
+      submitLabel: underFloor ? 'Soumission bloquée' : (needsManager ? 'Soumettre pour validation' : 'Envoyer au client'),
+
+      approvals: [
+        { step:'Construction', who:'Serge K. · Commercial', note:'13/09 · 11:42 · remise ' + this.fmt(disc, 1) + ' %, motif renseigné', status:'Fait', tagCls:'tag tag-accent', dotStyle: dot('done') },
+        { step:'Responsable commercial', who:'Mariam D.', note:'13/09 · 15:10 · « Volume engagé cohérent avec l\u2019historique »', status:'Validé', tagCls:'tag tag-accent', dotStyle: dot('done') },
+        needsDirection
+          ? { step:'Direction', who:'Kodjo A. · Directeur général', note:'Requise : remise > 10 % ou marge < 20 % · relance automatique sous 48 h', status:'En attente', tagCls:'tag tag-outline', dotStyle: dot('now') }
+          : { step:'Direction', who:'Kodjo A. · Directeur général', note:'Non requise : remise ≤ 10 % et marge ≥ 20 %', status:'Non requise', tagCls:'tag tag-neutral', dotStyle: dot('todo') },
+        { step:'Envoi au client', who:'Automatique après dernière validation', note:'Le client est notifié et le devis apparaît dans sa console', status:'À venir', tagCls:'tag tag-neutral', dotStyle: dot('todo') }
+      ],
+
+      contracts: [
+        { ref:'CT-2026-014', client:'MaBanque SA', quote:'NA-2026-004', rule:'disc_mabanque_014', commit:'400 000 / mois', real:'103 %', end:'31/10/2026', realStyle:{}, state: tag('tag-outline','Renouvellement en cours') },
+        { ref:'CT-2026-019', client:'Banque Atlantique Togo', quote:'NA-2026-022', rule:'disc_batogo_019', commit:'300 000 / mois', real:'—', end:'30/09/2027', realStyle:{}, state: tag('tag-accent','Démarre le 01/10') },
+        { ref:'CT-2025-031', client:'Assur Ouest', quote:'NA-2025-044', rule:'disc_assurouest', commit:'150 000 / mois', real:'118 %', end:'31/08/2027', realStyle:{}, state: tag('tag-accent','Actif') },
+        { ref:'CT-2026-006', client:'Agence Digitale Lomé', quote:'NA-2026-001', rule:'disc_agence_lome', commit:'200 000 / mois', real:'61 %', end:'31/10/2026', realStyle: warn, state: tag('tag-outline','Engagement non tenu') },
+        { ref:'CT-2026-011', client:'MicroCrédit Kara', quote:'NA-2026-012', rule:'disc_microkara', commit:'sans engagement', real:'—', end:'tacite', realStyle:{}, state: tag('tag-accent','Actif') },
+        { ref:'CT-2026-017', client:'Livraison Express', quote:'NA-2026-020', rule:'disc_livex_017', commit:'20 000 conv. / mois', real:'94 %', end:'31/08/2027', realStyle:{}, state: tag('tag-accent','Actif') }
+      ],
+
+      accounts: [
+        { name:'MaBanque SA', segment:'Grand compte', owner:'Serge K.', volume:'1,84 M', trend:'+ 12 %', margin:'28,4 %', potential:'WhatsApp Bénin', signal:'Proche du palier 1 M / mois', trendStyle:{ color:'var(--color-accent)' } },
+        { name:'Banque Atlantique Togo', segment:'Grand compte', owner:'Serge K.', volume:'—', trend:'nouveau', margin:'—', potential:'Email transactionnel', signal:'Contrat signé, onboarding en cours', trendStyle:{} },
+        { name:'Assur Ouest', segment:'Grand compte', owner:'Mariam D.', volume:'0,53 M', trend:'+ 4 %', margin:'33,1 %', potential:'Extension Bénin', signal:'Devis NA-2026-030 en brouillon', trendStyle:{} },
+        { name:'Agence Digitale Lomé', segment:'Revendeur', owner:'Serge K.', volume:'0,37 M', trend:'− 34 %', margin:'− 2,1 %', potential:'—', signal:'Attrition probable · marge négative', trendStyle: warn },
+        { name:'MicroCrédit Kara', segment:'PME', owner:'Mariam D.', volume:'0,21 M', trend:'+ 22 %', margin:'35,2 %', potential:'OTP', signal:'Usage SMS de codes : migration OTP possible', trendStyle:{ color:'var(--color-accent)' } },
+        { name:'Sahel Retail', segment:'PME', owner:'Serge K.', volume:'—', trend:'prospect', margin:'—', potential:'SMS Mali, Burkina', signal:'Attend l\u2019ouverture du provider Sahel', trendStyle:{} },
+        { name:'Pharma Lomé', segment:'PME', owner:'Non attribué', volume:'0,02 M', trend:'+ 180 %', margin:'32,6 %', potential:'SMS volume', signal:'Demande de devis reçue', trendStyle:{ color:'var(--color-accent)' } }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 23 · Moyens de paiement</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Finance</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Moyens de paiement</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Votre seconde exigence : plusieurs moyens de paiement, et la possibilité d'en ajouter sans développement. Même logique que les providers (lot 20) : un catalogue, une déclaration, des règles d'éligibilité, un rapprochement. Le client ne voit que les moyens éligibles pour son pays, sa devise et son montant.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isCatalog }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">Mobile money · 6</span><span class="tag tag-neutral">Carte · 1</span><span class="tag tag-neutral">Virement · 2</span><span class="tag tag-neutral">Crédit · 1</span></div>
+      <button type="button" class="btn btn-primary" onClick="{{ goNew }}">Déclarer un moyen de paiement</button>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1060px">
+        <thead><tr><th>Moyen</th><th>Famille</th><th>Pays</th><th>Devises</th><th>Frais supportés</th><th>Délai d'encaissement</th><th>Volume 30 j</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ methods }}" as="m" hint-placeholder-count="10">
+            <tr>
+              <td><strong>{{ m.name }}</strong><div class="text-muted mono" style="font-size:11px">{{ m.code }}</div></td>
+              <td class="text-muted" style="font-size:12px">{{ m.family }}</td>
+              <td class="text-muted" style="font-size:12px">{{ m.countries }}</td>
+              <td class="text-muted num" style="font-size:12px">{{ m.currencies }}</td>
+              <td class="num" style="font-size:12px">{{ m.fee }}</td>
+              <td class="text-muted" style="font-size:12px">{{ m.delay }}</td>
+              <td class="num">{{ m.volume }}</td>
+              <td>{{ m.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Quatre familles</span><p class="card-body" style="margin:0"><strong>Mobile money</strong> (confirmation sur le téléphone), <strong>carte</strong> (via une passerelle), <strong>virement</strong> (rapprochement par référence), <strong>crédit</strong> (post-payé, réservé aux contrats). Chaque famille a son propre cycle de confirmation.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Nouveau marché</span><p class="card-body" style="margin:0">Ouvrir le Mali avec Orange Money Mali revient à déclarer le moyen, ses identifiants d'agrégateur et ses règles d'éligibilité. La console client le proposera automatiquement aux organisations maliennes.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Agrégateur ou direct</span><p class="card-body" style="margin:0">Un même moyen peut être raccordé via un agrégateur de paiement ou en direct avec l'opérateur. Le champ « passerelle » l'indique ; basculer de l'un à l'autre ne change rien côté client.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isNew }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Déclaration</span><div class="card-title" style="font-size:18px">Nouveau moyen de paiement</div></div>
+      <div class="field"><label>Famille</label>
+        <div class="seg" style="max-width:640px; white-space:nowrap">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="fam" checked><span>Mobile money</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="fam"><span>Carte</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="fam"><span>Virement</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="fam"><span>Crédit</span></label>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Nom affiché au client</label><input class="input" type="text" value="Orange Money Mali"></div>
+        <div class="field"><label>Code interne</label><input class="input mono" type="text" value="pay_om_ml"></div>
+        <div class="field"><label>Passerelle</label><select class="input"><option>Agrégateur régional</option><option>Direct opérateur</option></select></div>
+        <div class="field"><label>Pays</label><select class="input"><option>Mali</option><option>Burkina Faso</option><option>Sénégal</option></select></div>
+        <div class="field"><label>Devise</label><select class="input"><option>XOF (FCFA)</option></select></div>
+        <div class="field"><label>Environnement</label><select class="input"><option>Test</option><option>Production</option></select></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Identifiant marchand</label><input class="input mono" type="text" value="NA-ML-00481"></div>
+        <div class="field"><label>Clé secrète</label><input class="input mono" type="password" value="••••••••••••••"></div>
+        <div class="field"><label>URL de notification</label><input class="input mono" type="text" value="https://pay.notifyafrica.com/cb/om_ml"></div>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div>
+        <span class="card-kicker">Limites et frais</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4); margin-top:var(--space-3)">
+          <div class="field"><label>Montant minimum</label><input class="input num" type="text" value="1 000 FCFA"></div>
+          <div class="field"><label>Montant maximum</label><input class="input num" type="text" value="2 000 000 FCFA"></div>
+          <div class="field"><label>Frais de la passerelle</label><input class="input num" type="text" value="1,5 %"></div>
+          <div class="field"><label>Frais supportés par</label><select class="input"><option>NotifyAfrica</option><option>Client (ajoutés au montant)</option><option>Partagés</option></select></div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Délai d'expiration de la demande</label><select class="input"><option>10 minutes</option><option>30 minutes</option></select></div>
+        <div class="field"><label>Ordre d'affichage</label><input class="input num" type="text" value="2"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Paiement de test à 100 FCFA</button><button type="button" class="btn btn-primary">Enregistrer en mode test</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Aperçu côté client</span>
+        <div class="card" style="background:var(--color-neutral-900); gap:var(--space-3)">
+          <span style="font-size:13.5px">Recharger 250 000 FCFA</span>
+          <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+            <label class="radio"><input type="radio" name="pv" checked><span class="dot"></span>Orange Money Mali · nouveau</label>
+            <label class="radio"><input type="radio" name="pv"><span class="dot"></span>Carte bancaire</label>
+            <label class="radio"><input type="radio" name="pv"><span class="dot"></span>Virement bancaire</label>
+          </div>
+          <span class="text-muted" style="font-size:11.5px">Confirmation sur le téléphone du payeur. Crédit immédiat après validation.</span>
+        </div>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Test obligatoire</span><p class="card-body" style="margin:0">Un moyen ne passe en production qu'après un paiement réel de test confirmé, remboursé, et retrouvé dans le rapprochement. Les trois étapes sont vérifiées automatiquement.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Désactivation</span><p class="card-body" style="margin:0">Désactiver un moyen le retire de l'offre sans interrompre les paiements en cours : ceux-ci vont jusqu'à confirmation ou expiration.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRules }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-5)">
+      <div><span class="card-kicker">Éligibilité</span><div class="card-title" style="font-size:18px">Tester : quels moyens voit ce client ?</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Pays de facturation</label>
+          <select class="input" onChange="{{ onCountry }}"><sc-for list="{{ countryOpts }}" as="o"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for></select>
+        </div>
+        <div class="field"><label>Type de compte</label>
+          <select class="input" onChange="{{ onAccount }}"><sc-for list="{{ accountOpts }}" as="o"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for></select>
+        </div>
+      </div>
+      <div class="field"><label>Montant : <span class="num" style="color:var(--color-accent-300)">{{ amountLabel }}</span></label>
+        <input type="range" min="500" max="10000000" step="500" value="{{ amount }}" onInput="{{ onAmount }}" style="width:100%; accent-color:var(--color-accent)">
+      </div>
+      <hr class="hr" style="margin:0">
+      <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+        <sc-for list="{{ eligibility }}" as="e" hint-placeholder-count="6">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); padding-bottom:var(--space-3); border-bottom:1px solid var(--color-divider)">
+            <div style="display:flex; flex-direction:column"><span style="{{ e.nameStyle }}">{{ e.name }}</span><span class="text-muted" style="font-size:11.5px">{{ e.reason }}</span></div>
+            <span class="{{ e.tagCls }}">{{ e.status }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Règles évaluées, dans l'ordre</span>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">1 · Pays</span><span style="font-size:13px">moyen déclaré pour ce pays</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">2 · Devise</span><span style="font-size:13px">devise de facturation acceptée</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">3 · Montant</span><span style="font-size:13px">entre minimum et maximum</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">4 · Compte</span><span style="font-size:13px">crédit réservé au post-payé</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">5 · Santé</span><span style="font-size:13px">moyen non dégradé</span></div>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Montant au-dessus des plafonds</span><p class="card-body" style="margin:0">Au-delà du plafond du mobile money, le client se voit proposer le virement, ou le fractionnement en plusieurs paiements. Il ne tombe jamais sur un écran sans option.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Moyen dégradé</span><p class="card-body" style="margin:0">Si le taux d'échec d'un moyen dépasse 20 % sur 30 minutes, il reste visible mais passe en dernière position avec la mention « perturbé ».</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTx }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Encaissé · 30 j</span><span class="num" style="font-size:24px">184,2 M FCFA</span><span class="text-muted" style="font-size:12px">2 418 paiements</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Taux de succès</span><span class="num" style="font-size:24px">91,4 %</span><span class="text-muted" style="font-size:12px">mobile money : 89,8 %</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Frais supportés</span><span class="num" style="font-size:24px">2,31 M FCFA</span><span class="text-muted" style="font-size:12px">1,25 % des encaissements</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">À rapprocher</span><span class="num" style="font-size:24px">3</span><span class="text-muted" style="font-size:12px">dont 1 virement sans référence</span></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1060px">
+        <thead><tr><th>Horodatage</th><th>Référence</th><th>Client</th><th>Moyen</th><th>Montant</th><th>Frais</th><th>Crédité</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ txs }}" as="x" hint-placeholder-count="8">
+            <tr>
+              <td class="num text-muted" style="font-size:12px">{{ x.at }}</td>
+              <td class="mono" style="font-size:11.5px">{{ x.ref }}</td>
+              <td style="font-size:12.5px">{{ x.client }}</td>
+              <td class="text-muted" style="font-size:12px">{{ x.method }}</td>
+              <td class="num">{{ x.amount }}</td>
+              <td class="num text-muted">{{ x.fee }}</td>
+              <td class="num text-muted">{{ x.credited }}</td>
+              <td>{{ x.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Virement sans référence</span><p class="card-body" style="margin:0">1 500 000 FCFA reçus le 12/09 d'un compte « ASSUR OUEST SA » sans référence de facture. Rapprochement suggéré avec la facture F-2026-0892 du même montant. Confirmation humaine requise.</p><button type="button" class="btn btn-primary" style="align-self:flex-start">Rapprocher</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Paiement confirmé tardivement</span><p class="card-body" style="margin:0">Une confirmation mobile money arrivée après l'expiration de la demande est quand même créditée — l'argent a bien été prélevé — et signalée pour contrôle.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Double paiement</span><p class="card-body" style="margin:0">Deux paiements identiques à moins de 2 minutes d'intervalle : le second est crédité et marqué « doublon probable », avec une proposition de remboursement au client.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRefunds }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <p class="text-muted" style="margin:0; max-width:66ch; font-size:13.5px">Rembourser un paiement, c'est retirer du solde prépayé ce qui n'a pas été consommé. Le remboursement repasse par le moyen d'origine quand il le permet, sinon par virement.</p>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:980px">
+        <thead><tr><th>Demande</th><th>Client</th><th>Paiement d'origine</th><th>Montant</th><th>Voie de retour</th><th>Motif</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ refunds }}" as="r" hint-placeholder-count="5">
+            <tr>
+              <td class="mono" style="font-size:11.5px">{{ r.ref }}</td>
+              <td style="font-size:12.5px">{{ r.client }}</td>
+              <td class="mono text-muted" style="font-size:11.5px">{{ r.origin }}</td>
+              <td class="num">{{ r.amount }}</td>
+              <td class="text-muted" style="font-size:12px">{{ r.way }}</td>
+              <td class="text-muted" style="font-size:11.5px">{{ r.reason }}</td>
+              <td>{{ r.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Plafond</span><p class="card-body" style="margin:0">Le remboursement ne peut jamais dépasser le solde disponible non consommé, ni le montant du paiement d'origine.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Frais</span><p class="card-body" style="margin:0">Les frais de passerelle du paiement initial ne sont pas récupérés : ils restent à la charge de NotifyAfrica sauf clause contraire.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Double validation</span><p class="card-body" style="margin:0">Au-delà de 500 000 FCFA, un second membre de la Finance doit approuver. L'auteur de la demande ne peut pas approuver.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Déclarer un moyen de paiement est une opération de configuration, sans développement. Le client ne voit que les moyens éligibles pour son pays, sa devise, son montant et son type de compte. Le solde n'est crédité qu'à réception de la confirmation de la passerelle, jamais sur la seule intention de paiement. Un moyen passe en production après un paiement de test réel confirmé, remboursé et rapproché.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Moyen en test · actif · perturbé · désactivé. Paiement initié · en attente de confirmation sur le téléphone · confirmé · crédité · échoué · expiré · confirmé tardivement · doublon probable. Virement reçu · rapproché · sans référence. Remboursement demandé · en approbation · émis · échoué.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Confirmation reçue sans demande correspondante : mise en quarantaine pour contrôle manuel. Montant confirmé différent du montant demandé : crédit du montant réellement reçu et alerte. Notification de la passerelle reçue deux fois : traitée une seule fois grâce à sa référence unique. Devise de paiement différente de la devise de facturation : conversion au taux du jour, affichée avant validation.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Les frais de passerelle doivent-ils être absorbés par NotifyAfrica ou répercutés au client ? Le mobile money étant dominant, les répercuter pénalise l'usage principal. Faut-il autoriser le paiement par un tiers (un comptable qui paie depuis son propre numéro) ? Recommandation : frais absorbés, paiement par un tiers autorisé avec le nom du payeur conservé sur le reçu.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 23 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 24</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'catalog', country: 'TG', account: 'pre', amount: 250000 };
+  }
+
+  fmt(n) { return n.toLocaleString('fr-FR').replace(/\u202f/g, ' '); }
+
+  renderVals() {
+    const tabs = [
+      ['catalog', 'Catalogue'],
+      ['new', 'Déclarer un moyen'],
+      ['rules', 'Éligibilité'],
+      ['tx', 'Transactions & rapprochement'],
+      ['refunds', 'Remboursements']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+
+    const { country, account, amount } = this.state;
+    const catalog = [
+      { name:'Flooz (Moov Money)', c:['TG','BJ','CI'], min:500, max:2000000, family:'mm' },
+      { name:'T-Money (Yas)', c:['TG'], min:500, max:1500000, family:'mm' },
+      { name:'MTN Mobile Money', c:['BJ','CI','NG'], min:500, max:2000000, family:'mm' },
+      { name:'Celtiis Cash', c:['BJ'], min:500, max:1000000, family:'mm', degraded:true },
+      { name:'Wave', c:['CI'], min:100, max:1500000, family:'mm' },
+      { name:'Carte bancaire', c:['TG','BJ','CI','NG'], min:5000, max:5000000, family:'card' },
+      { name:'Virement bancaire', c:['TG','BJ','CI','NG'], min:100000, max:null, family:'wire' },
+      { name:'Crédit post-payé', c:['TG','BJ','CI','NG'], min:0, max:null, family:'credit' }
+    ];
+    const eligibility = catalog.map(m => {
+      let ok = true, reason = '', status = 'Proposé', perturbed = false;
+      if (!m.c.includes(country)) { ok = false; reason = 'Non déclaré pour ce pays'; }
+      else if (m.family === 'credit' && account !== 'post') { ok = false; reason = 'Réservé aux contrats post-payés'; }
+      else if (amount < m.min) { ok = false; reason = 'Sous le minimum de ' + this.fmt(m.min) + ' FCFA'; }
+      else if (m.max && amount > m.max) { ok = false; reason = 'Au-dessus du plafond de ' + this.fmt(m.max) + ' FCFA'; }
+      else if (m.degraded) { perturbed = true; reason = 'Taux d\u2019échec élevé · affiché en dernier'; status = 'Perturbé'; }
+      else { reason = m.max ? 'Entre ' + this.fmt(m.min) + ' et ' + this.fmt(m.max) + ' FCFA' : 'Sans plafond'; }
+      return {
+        name: m.name, reason,
+        status: ok ? status : 'Masqué',
+        tagCls: ok ? (perturbed ? 'tag tag-outline' : 'tag tag-accent') : 'tag tag-neutral',
+        nameStyle: { fontSize: '13.5px', color: ok ? 'var(--color-text)' : 'var(--color-neutral-500)' }
+      };
+    });
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isCatalog: t === 'catalog',
+      isNew: t === 'new',
+      isRules: t === 'rules',
+      isTx: t === 'tx',
+      isRefunds: t === 'refunds',
+      goNew: () => this.setState({ tab: 'new' }),
+
+      methods: [
+        { name:'Flooz (Moov Money)', code:'pay_flooz', family:'Mobile money', countries:'TG, BJ, CI', currencies:'XOF', fee:'1,5 %', delay:'Immédiat', volume:'62,4 M', state: tag('tag-accent','Actif') },
+        { name:'T-Money (Yas)', code:'pay_tmoney', family:'Mobile money', countries:'TG', currencies:'XOF', fee:'1,5 %', delay:'Immédiat', volume:'41,8 M', state: tag('tag-accent','Actif') },
+        { name:'MTN Mobile Money', code:'pay_momo', family:'Mobile money', countries:'BJ, CI, NG', currencies:'XOF, NGN', fee:'1,8 %', delay:'Immédiat', volume:'28,6 M', state: tag('tag-accent','Actif') },
+        { name:'Celtiis Cash', code:'pay_celtiis', family:'Mobile money', countries:'BJ', currencies:'XOF', fee:'1,5 %', delay:'Immédiat', volume:'3,1 M', state: tag('tag-outline','Perturbé') },
+        { name:'Wave', code:'pay_wave', family:'Mobile money', countries:'CI', currencies:'XOF', fee:'1,0 %', delay:'Immédiat', volume:'6,2 M', state: tag('tag-accent','Actif') },
+        { name:'Orange Money Mali', code:'pay_om_ml', family:'Mobile money', countries:'ML', currencies:'XOF', fee:'1,5 %', delay:'Immédiat', volume:'0', state: tag('tag-neutral','En test') },
+        { name:'Carte bancaire', code:'pay_card', family:'Carte', countries:'Tous', currencies:'XOF, EUR, USD', fee:'2,9 %', delay:'J+2', volume:'9,8 M', state: tag('tag-accent','Actif') },
+        { name:'Virement local', code:'pay_wire_local', family:'Virement', countries:'UEMOA', currencies:'XOF', fee:'0', delay:'J+1 à J+3', volume:'24,1 M', state: tag('tag-accent','Actif') },
+        { name:'Virement international', code:'pay_wire_intl', family:'Virement', countries:'Tous', currencies:'EUR, USD', fee:'frais bancaires', delay:'J+3 à J+5', volume:'4,2 M', state: tag('tag-accent','Actif') },
+        { name:'Crédit post-payé', code:'pay_credit', family:'Crédit', countries:'Tous', currencies:'XOF, EUR, USD', fee:'0', delay:'échéance 30 j', volume:'4,0 M', state: tag('tag-accent','Contrats uniquement') }
+      ],
+
+      countryOpts: [['TG','Togo'],['BJ','Bénin'],['CI',"Côte d'Ivoire"],['NG','Nigeria']].map(([v,l]) => ({ v, l, sel: v === country })),
+      accountOpts: [['pre','Prépayé'],['post','Contrat post-payé']].map(([v,l]) => ({ v, l, sel: v === account })),
+      country, account, amount,
+      amountLabel: this.fmt(amount) + ' FCFA',
+      onCountry: e => this.setState({ country: e.target.value }),
+      onAccount: e => this.setState({ account: e.target.value }),
+      onAmount: e => this.setState({ amount: parseInt(e.target.value, 10) }),
+      eligibility,
+
+      txs: [
+        { at:'13/09 14:22', ref:'PAY-88214', client:'MaBanque SA', method:'Flooz', amount:'500 000', fee:'7 500', credited:'500 000', state: tag('tag-accent','Crédité') },
+        { at:'13/09 13:58', ref:'PAY-88213', client:'MicroCrédit Kara', method:'T-Money', amount:'150 000', fee:'2 250', credited:'150 000', state: tag('tag-accent','Crédité') },
+        { at:'13/09 13:40', ref:'PAY-88212', client:'Pharma Lomé', method:'T-Money', amount:'25 000', fee:'—', credited:'—', state: tag('tag-neutral','Expiré') },
+        { at:'13/09 12:05', ref:'PAY-88211', client:'Transco Cotonou', method:'MTN MoMo', amount:'80 000', fee:'1 440', credited:'80 000', state: tag('tag-outline','Confirmé tardivement') },
+        { at:'13/09 11:30', ref:'PAY-88210', client:'Transco Cotonou', method:'MTN MoMo', amount:'80 000', fee:'1 440', credited:'80 000', state: tag('tag-outline','Doublon probable') },
+        { at:'12/09 16:44', ref:'VIR-20931', client:'ASSUR OUEST SA (?)', method:'Virement local', amount:'1 500 000', fee:'0', credited:'—', state: tag('tag-outline','Sans référence') },
+        { at:'12/09 10:12', ref:'PAY-88190', client:'Livraison Express', method:'Carte', amount:'200 000', fee:'5 800', credited:'200 000', state: tag('tag-accent','Crédité') },
+        { at:'12/09 09:03', ref:'PAY-88188', client:'EduNet Togo', method:'Celtiis Cash', amount:'40 000', fee:'—', credited:'—', state: tag('tag-neutral','Échoué · passerelle') }
+      ],
+
+      refunds: [
+        { ref:'RMB-0142', client:'Transco Cotonou', origin:'PAY-88210', amount:'80 000', way:'MTN MoMo (origine)', reason:'Doublon de paiement', state: tag('tag-outline','En approbation') },
+        { ref:'RMB-0141', client:'Sahel Retail', origin:'VIR-20877', amount:'1 200 000', way:'Virement', reason:'Résiliation · solde non consommé', state: tag('tag-outline','Double validation requise') },
+        { ref:'RMB-0139', client:'Pharma Lomé', origin:'PAY-87990', amount:'15 000', way:'T-Money (origine)', reason:'Erreur de montant', state: tag('tag-accent','Émis') },
+        { ref:'RMB-0137', client:'EduNet Togo', origin:'PAY-87911', amount:'50 000', way:'Virement (carte expirée)', reason:'Geste commercial après incident', state: tag('tag-accent','Émis') },
+        { ref:'RMB-0135', client:'Agence Digitale Lomé', origin:'PAY-87802', amount:'300 000', way:'Flooz (origine)', reason:'Numéro payeur fermé', state: tag('tag-neutral','Échoué · repli virement') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

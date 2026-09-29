@@ -195,10 +195,10 @@ Prépare les applications pour être déployées séparément.
 
 Exemples de cibles :
 
-- Website : `notifyafrica.com`
-- Console : `app.notifyafrica.com`
-- Admin : `admin.notifyafrica.com`
-- API : `api.notifyafrica.com`
+- Website : `www.wenotifyafrica.com`
+- Console : `console.wenotifyafrica.com`
+- Admin : `backoffice.wenotifyafrica.com`
+- API : `api.wenotifyafrica.com`
 
 Ces valeurs doivent venir des variables d'environnement et non être codées en dur.
 

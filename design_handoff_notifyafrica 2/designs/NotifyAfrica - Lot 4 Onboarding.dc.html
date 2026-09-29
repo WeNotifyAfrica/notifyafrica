@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1180px; margin:0 auto; padding:calc(var(--space-8) * 2) var(--space-8) calc(var(--space-8) * 4); display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+
+  <header style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--space-6); flex-wrap:wrap">
+      <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:34px; width:auto; border-radius:var(--radius-md)">
+      <h6 class="text-muted" style="margin:0">Lot 4 · Onboarding</h6>
+    </div>
+    <h1 style="margin:0; max-width:26ch">Du compte créé au premier message</h1>
+    <p class="text-muted" style="margin:0; max-width:66ch">Huit étapes, une seule séance. L'objectif produit : que l'utilisateur envoie un message de test <strong style="color:var(--color-text)">avant</strong> d'avoir payé quoi que ce soit — la recharge n'arrive qu'au moment de passer en production.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+      <span class="tag tag-neutral">Reprise possible à tout moment</span>
+      <span class="tag tag-neutral">Étapes 4 à 8 sautables</span>
+      <span class="tag tag-outline">Progression sauvegardée</span>
+    </div>
+  </header>
+
+  <section style="display:grid; grid-template-columns:minmax(0,260px) minmax(0,1fr); gap:var(--space-8); align-items:start">
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-4); position:sticky; top:var(--space-8)">
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <h6 style="margin:0; color:var(--color-accent)">Parcours</h6>
+        <span class="text-muted num" style="font-size:12px">{{ progressLabel }}</span>
+      </div>
+      <div style="height:3px; border-radius:2px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ progressStyle }}"></div></div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-1)">
+        <sc-for list="{{ rail }}" as="s" hint-placeholder-count="8">
+          <button type="button" onClick="{{ s.onClick }}" style="{{ s.style }}">
+            <span class="num" style="min-width:20px; opacity:.7">{{ s.n }}</span>
+            <span>{{ s.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:11.5px">Cliquez une étape pour la présenter.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+
+      <div class="card elev-md" style="padding:calc(var(--space-8) * 1.2); gap:var(--space-6); min-height:440px">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+          <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+            <span class="card-kicker">Étape {{ stepNumber }} sur 8</span>
+            <h3 style="margin:0">{{ stepTitle }}</h3>
+            <p class="text-muted" style="margin:0; max-width:56ch; font-size:14px">{{ stepIntro }}</p>
+          </div>
+          <span class="tag tag-outline">{{ stepBadge }}</span>
+        </div>
+
+        <span style="display:block; width:48px; height:2px; background:var(--color-accent)"></span>
+
+        <sc-if value="{{ isAccount }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:var(--space-6)">
+          <div class="field"><label>Nom complet</label><input class="input" type="text" value="Awa Koffi"></div>
+          <div class="field"><label>Email professionnel</label><input class="input" type="email" value="awa@mabanque.tg"></div>
+          <div class="field"><label>Téléphone</label><input class="input" type="text" value="+228 90 12 34 56"></div>
+          <div class="field"><label>Langue de l'interface</label><select class="input"><option>Français</option><option>English</option></select></div>
+        </div>
+        <div class="card elev-sm" style="background:var(--color-neutral-900)"><div class="card-kicker">Vérification</div><p class="card-body" style="margin:0">Email confirmé. Le téléphone sert aux alertes de solde bas et à la récupération de compte.</p></div>
+        </sc-if>
+
+        <sc-if value="{{ isOrg }}">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:var(--space-6)">
+          <div class="field"><label>Nom de l'organisation</label><input class="input" type="text" value="MaBanque SA"></div>
+          <div class="field"><label>Pays</label><select class="input"><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option><option>Sénégal</option></select></div>
+          <div class="field"><label>Devise de facturation</label><select class="input"><option>XOF — FCFA</option><option>XAF</option><option>USD</option><option>EUR</option></select></div>
+          <div class="field"><label>Secteur</label><select class="input"><option>Banque / Fintech</option><option>E-commerce</option><option>Santé</option><option>Institution publique</option></select></div>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12.5px">Le pays et la devise déterminent les tarifs affichés, les taxes appliquées et les moyens de paiement disponibles. Modifiables plus tard, mais la devise du solde ne se convertit pas.</p>
+        </sc-if>
+
+        <sc-if value="{{ isCompany }}">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:var(--space-6)">
+          <div class="field"><label>Raison sociale</label><input class="input" type="text" value="MaBanque Société Anonyme"></div>
+          <div class="field"><label>Numéro d'identification fiscale</label><input class="input" type="text" value="TG-0123456789"></div>
+          <div class="field"><label>Adresse de facturation</label><input class="input" type="text" value="12 boulevard du 13 janvier, Lomé"></div>
+          <div class="field"><label>Email de facturation</label><input class="input" type="email" value="compta@mabanque.tg"></div>
+        </div>
+        <div class="card elev-sm" style="background:var(--color-neutral-900)"><div class="card-kicker">Pourquoi maintenant</div><p class="card-body" style="margin:0">Ces informations apparaissent sur vos factures. Étape sautable : elle sera exigée avant la première recharge, pas avant les tests.</p></div>
+        </sc-if>
+
+        <sc-if value="{{ isProject }}">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:var(--space-6)">
+          <div class="field"><label>Nom du projet</label><input class="input" type="text" value="Application mobile"></div>
+          <div class="field"><label>Environnement de départ</label>
+            <div class="seg" style="width:100%">
+              <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="env" checked><span>Test</span></label>
+              <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="env"><span>Production</span></label>
+            </div>
+          </div>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12.5px">Un projet = un périmètre technique isolé : ses clés, ses quotas, ses journaux et sa consommation. Une organisation peut en créer autant qu'elle veut ; le solde, lui, reste commun.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-3)">
+          <div class="card"><div class="card-title" style="font-size:14px">Application mobile</div><p class="card-body">Environnement test</p></div>
+          <div class="card" style="border:1px dashed var(--color-divider); background:transparent; align-items:flex-start; justify-content:center"><span class="btn btn-ghost">+ Ajouter un projet</span></div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isServices }}">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:var(--space-4)">
+          <sc-for list="{{ services }}" as="sv" hint-placeholder-count="4">
+            <div class="card" style="{{ sv.style }}">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)">
+                <span class="card-title" style="font-size:15px">{{ sv.name }}</span>
+                <span class="tag tag-neutral">{{ sv.state }}</span>
+              </div>
+              <p class="card-body">{{ sv.desc }}</p>
+              <div class="card-meta num">{{ sv.price }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12.5px">Activer un service ne coûte rien : la facturation démarre au premier envoi. WhatsApp demande une vérification de numéro professionnel, qui peut prendre quelques jours.</p>
+        </sc-if>
+
+        <sc-if value="{{ isApiKey }}">
+        <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+          <div class="field"><label>Clé de test — Application mobile</label>
+            <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+              <input class="input" type="text" value="na_test_8f21c4b9d7e3a05f" style="flex:1; min-width:220px; font-family:ui-monospace, Menlo, monospace">
+              <button type="button" class="btn btn-secondary">Copier</button>
+            </div>
+          </div>
+          <div class="card elev-sm" style="background:var(--color-neutral-900)"><div class="card-kicker">À faire une seule fois</div><p class="card-body" style="margin:0">Cette clé ne sera plus affichée en entier. Conservez-la dans votre gestionnaire de secrets. Une clé de production distincte sera générée au passage en live.</p></div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-3)">
+            <div class="card"><div class="card-title" style="font-size:14px">Notifications de statut</div><p class="card-body">Recevez les changements de statut sur votre serveur — configurable plus tard.</p></div>
+            <div class="card"><div class="card-title" style="font-size:14px">Bibliothèques</div><p class="card-body">Node.js · PHP · Python · Java</p></div>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isFunding }}">
+        <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+          <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+            <div class="field"><label>Montant de la recharge</label><input class="input num" type="text" value="500 000 FCFA"></div>
+            <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+              <span class="tag tag-outline num">100 000</span><span class="tag tag-outline num">250 000</span><span class="tag tag-accent num">500 000</span><span class="tag tag-outline num">1 000 000</span>
+            </div>
+            <div class="field"><label>Moyen de paiement</label><select class="input"><option>Mobile Money — Moov</option><option>Mobile Money — MTN</option><option>Mobile Money — Yas</option><option>Carte bancaire</option><option>Virement bancaire</option></select></div>
+          </div>
+          <div class="card elev-sm" style="background:var(--color-neutral-900); gap:var(--space-2)">
+            <div class="card-kicker">Ce que vous obtenez</div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Recharge</span><span class="num" style="font-size:13px">500 000 FCFA</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Frais du moyen de paiement</span><span class="num" style="font-size:13px">7 500 FCFA</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Crédité sur le solde</span><span class="num" style="font-size:13px">500 000 FCFA</span></div>
+            <hr class="hr" style="margin:var(--space-2) 0">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Soit environ</span><span class="num" style="font-size:19px; color:var(--color-accent-300)">73 500 SMS</span></div>
+            <p class="text-muted" style="margin:0; font-size:11.5px">Estimation au tarif du palier 25 001 – 100 000 (6,80 FCFA) vers le Togo.</p>
+          </div>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:12.5px">Étape sautable : on peut tester sans recharger. Elle devient obligatoire à la première tentative d'envoi en production.</p>
+        </sc-if>
+
+        <sc-if value="{{ isFirstMessage }}">
+        <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+          <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+            <div class="field"><label>Destinataire</label><input class="input" type="text" value="+228 90 12 34 56"></div>
+            <div class="field"><label>Nom d'expéditeur</label><select class="input"><option>MABANQUE (en validation)</option><option>NOTIFY (partagé)</option></select></div>
+            <div class="field"><label>Message</label><textarea class="input">Bienvenue chez MaBanque. Votre code de vérification est 4821.</textarea></div>
+            <p class="text-muted" style="margin:0; font-size:11.5px">62 caractères · 1 SMS</p>
+          </div>
+          <div class="card elev-sm" style="gap:var(--space-3)">
+            <div class="card-kicker">Avant envoi</div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Destinataires</span><span class="num" style="font-size:13px">1</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="num" style="font-size:13px">7,00 FCFA</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Taxe (18 %)</span><span class="num" style="font-size:13px">1,26 FCFA</span></div>
+            <hr class="hr" style="margin:var(--space-2) 0">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Coût total</span><span class="num" style="font-size:19px; color:var(--color-accent-300)">8,26 FCFA</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Solde après envoi</span><span class="num text-muted" style="font-size:12px">499 991,74 FCFA</span></div>
+            <span class="tag tag-accent" style="align-self:flex-start">Environnement de test</span>
+          </div>
+        </div>
+        <div class="card elev-sm" style="background:var(--color-neutral-900)"><div class="card-kicker">Après l'envoi</div><p class="card-body" style="margin:0">L'utilisateur arrive sur le tableau de bord avec son premier message dans les journaux, son solde à jour et trois raccourcis : créer une campagne, inviter un collègue, passer en production.</p></div>
+        </sc-if>
+
+        <div style="display:flex; gap:var(--space-3); align-items:center; margin-top:auto; flex-wrap:wrap">
+          <button type="button" class="btn btn-secondary" onClick="{{ prev }}">Retour</button>
+          <button type="button" class="btn btn-primary" onClick="{{ next }}">{{ nextLabel }}</button>
+          <sc-if value="{{ skippable }}"><button type="button" class="btn btn-ghost" onClick="{{ next }}">Passer cette étape</button></sc-if>
+          <span class="text-muted" style="font-size:11.5px; margin-left:auto">Progression enregistrée automatiquement</span>
+        </div>
+      </div>
+
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)">
+        <div class="card-kicker">Ce que cette étape décide</div>
+        <p class="card-body" style="margin:0">{{ stepRule }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Une organisation est créée d'office à l'inscription, avec l'utilisateur comme Owner. Le pays et la devise sont fixés à l'organisation ; la devise du solde n'est pas convertible. Activer un service est gratuit. La clé de test est générée automatiquement, la clé de production seulement au passage en live. Les informations de société sont exigées avant la première recharge. Aucun envoi en production sans solde suffisant.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Étape en cours, complétée, sautée, bloquée (dépendance manquante). Nom d'organisation déjà pris. Numéro fiscal invalide. Service en attente de vérification (WhatsApp). Paiement en attente, échoué, expiré. Envoi de test refusé (numéro invalide, opérateur non couvert). Reprise après déconnexion.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">L'utilisateur abandonne à l'étape 4 et revient trois semaines plus tard. Il est invité dans une organisation existante : il saute les étapes 2 et 3. Le moyen de paiement choisi disparaît du catalogue entre-temps. Le pays sélectionné n'a aucun opérateur actif pour le canal choisi. Recharge créditée après expiration de la session.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Le nom d'expéditeur doit-il être demandé dès l'onboarding, sachant que sa validation opérateur prend plusieurs jours ? Faut-il un onboarding distinct pour un profil « développeur » (clé + doc directement) et un profil « métier » (campagne guidée) ? Le montant minimum de recharge est-il le même pour tous les pays ?</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 4 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lots 5 + 6 — Console Shell &amp; Overview</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { step: 0 };
+  }
+
+  get steps() {
+    return [
+      { key:'account', label:'Compte', title:'Votre compte', badge:'Obligatoire',
+        intro:"Identité de la personne qui administre le compte. C'est ce compte qui devient propriétaire de l'organisation.",
+        rule:"Crée l'utilisateur et le rôle Owner. L'email vérifié conditionne l'accès à l'environnement de test." },
+      { key:'org', label:'Organisation', title:'Votre organisation', badge:'Obligatoire',
+        intro:"L'entité qui porte le solde, la facturation et les équipes. Une personne peut appartenir à plusieurs organisations.",
+        rule:"Fixe le pays, la devise de facturation et donc les tarifs, taxes et moyens de paiement disponibles." },
+      { key:'company', label:'Informations société', title:'Informations de société', badge:'Sautable',
+        intro:"Les données qui figureront sur vos factures. Vous pouvez les compléter plus tard.",
+        rule:"Conditionne l'émission de factures conformes. Exigée avant la première recharge, pas avant les tests." },
+      { key:'project', label:'Projet', title:'Votre premier projet', badge:'Obligatoire',
+        intro:"Un projet isole une application ou un service : ses clés, ses quotas, ses journaux et sa consommation.",
+        rule:"Crée le périmètre technique auquel seront rattachées les clés, les envois et les statistiques." },
+      { key:'services', label:'Services', title:'Services à activer', badge:'Obligatoire',
+        intro:"Choisissez les canaux dont vous avez besoin. Vous pourrez en activer d'autres à tout moment.",
+        rule:"Détermine les menus visibles dans la console et les tarifs chargés depuis le catalogue." },
+      { key:'apikey', label:'Clé API', title:'Votre clé de test', badge:'Obligatoire',
+        intro:"Une clé de test est générée automatiquement. Elle n'engendre aucun coût et n'envoie aucun message réel.",
+        rule:"Ouvre l'accès technique. La clé de production est générée séparément, au passage en live." },
+      { key:'funding', label:'Recharge', title:'Alimenter votre solde', badge:'Sautable',
+        intro:"NotifyAfrica fonctionne en prépayé : vous ne pouvez jamais dépenser plus que votre solde.",
+        rule:"Crédite le solde de l'organisation dans sa devise. Les frais du moyen de paiement sont affichés avant validation." },
+      { key:'first', label:'Premier message', title:'Votre premier envoi', badge:'Recommandé',
+        intro:"Un envoi de test, avec le coût affiché avant confirmation — exactement comme en production.",
+        rule:"Valide la chaîne complète : clé, projet, service, tarification, solde et journal de livraison." }
+    ];
+  }
+
+  renderVals() {
+    const i = this.state.step;
+    const steps = this.steps;
+    const cur = steps[i];
+    const go = n => () => this.setState({ step: Math.max(0, Math.min(steps.length - 1, n)) });
+
+    return {
+      rail: steps.map((s, idx) => ({
+        n: String(idx + 1).padStart(2, '0'),
+        label: s.label,
+        onClick: go(idx),
+        style: {
+          display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
+          width: '100%', textAlign: 'left', cursor: 'pointer',
+          font: "400 13.5px 'Inter', system-ui, sans-serif",
+          padding: 'var(--space-2) var(--space-3)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid ' + (idx === i ? 'var(--color-accent)' : 'transparent'),
+          background: idx === i
+            ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)'
+            : 'transparent',
+          color: idx === i ? 'var(--color-accent)' : (idx < i ? 'var(--color-text)' : 'color-mix(in srgb, var(--color-text) 55%, transparent)')
+        }
+      })),
+      progressLabel: (i + 1) + ' / ' + steps.length,
+      progressStyle: {
+        width: Math.round(((i + 1) / steps.length) * 100) + '%',
+        height: '100%',
+        background: 'var(--color-accent)',
+        transition: 'width .2s ease'
+      },
+
+      stepNumber: i + 1,
+      stepTitle: cur.title,
+      stepIntro: cur.intro,
+      stepBadge: cur.badge,
+      stepRule: cur.rule,
+      skippable: cur.badge === 'Sautable',
+      nextLabel: i === steps.length - 1 ? 'Terminer et ouvrir la console' : 'Continuer',
+      next: go(i + 1),
+      prev: go(i - 1),
+
+      isAccount: cur.key === 'account',
+      isOrg: cur.key === 'org',
+      isCompany: cur.key === 'company',
+      isProject: cur.key === 'project',
+      isServices: cur.key === 'services',
+      isApiKey: cur.key === 'apikey',
+      isFunding: cur.key === 'funding',
+      isFirstMessage: cur.key === 'first',
+
+      services: [
+        { name:'SMS', state:'Activé', desc:'Envoi unitaire, en masse et campagnes planifiées.', price:'à partir de 7 FCFA / message',
+          style:{ boxShadow:'0 0 0 1.5px var(--color-accent)' } },
+        { name:'Codes OTP', state:'Activé', desc:'Génération et vérification de codes à usage unique.', price:'à partir de 9 FCFA / code vérifié',
+          style:{ boxShadow:'0 0 0 1.5px var(--color-accent)' } },
+        { name:'WhatsApp', state:'À vérifier', desc:'Numéro professionnel et modèles soumis à validation Meta.', price:'à partir de 24 FCFA / conversation',
+          style:{ boxShadow:'var(--shadow-sm)' } },
+        { name:'Email', state:'Inactif', desc:'Domaine à authentifier avant le premier envoi.', price:'à partir de 3 FCFA / email',
+          style:{ boxShadow:'var(--shadow-sm)' } }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

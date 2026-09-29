@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 21 · Moteur de prix &amp; remises</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Serge K. · Commercial</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Moteur de prix &amp; remises</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Le cœur du système. Tout prix affiché dans les 20 lots précédents sort d'ici. Six écrans : les règles et leur priorité, le constructeur de règle, les paliers, les remises, le simulateur d'impact et l'audit des versions. Une règle n'est jamais modifiée — elle est versionnée et datée.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isRules }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div><span class="card-kicker">Ordre d'évaluation</span><div class="card-title" style="font-size:17px">Comment un prix est calculé, dans l'ordre</div></div>
+      <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:stretch">
+        <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="5">
+          <div class="card" style="flex:1; min-width:180px; background:var(--color-neutral-900); gap:var(--space-2)">
+            <span class="num" style="font-size:11px; color:var(--color-accent-300)">Étape {{ p.n }}</span>
+            <span style="font-size:13.5px">{{ p.label }}</span>
+            <span class="text-muted" style="font-size:11.5px">{{ p.detail }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Cet ordre est immuable. Une remise ne s'applique jamais avant le palier, et la taxe toujours en dernier : c'est ce qui garantit qu'un même contexte produit toujours le même prix, hier comme dans six mois.</p>
+    </div>
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Type de règle</label><select class="input"><option>Toutes</option><option>Prix de base</option><option>Palier de volume</option><option>Remise contractuelle</option><option>Taxe</option><option>Majoration</option></select></div>
+        <div class="field"><label>Canal</label><select class="input"><option>Tous</option><option>SMS</option><option>OTP</option><option>WhatsApp</option><option>Email</option></select></div>
+        <div class="field"><label>Portée</label><select class="input"><option>Toutes</option><option>Globale</option><option>Par segment</option><option>Par organisation</option></select></div>
+        <div class="field"><label>État</label><select class="input"><option>En vigueur</option><option>Programmée</option><option>Expirée</option><option>Brouillon</option></select></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent num">184 règles en vigueur</span><span class="tag tag-neutral">6 programmées</span><button type="button" class="btn btn-primary" onClick="{{ goBuilder }}" style="margin-left:auto">Créer une règle</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1060px">
+        <thead><tr><th>Règle</th><th>Type</th><th>Condition</th><th>Effet</th><th>Priorité</th><th>Effet du</th><th>Version</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ rules }}" as="r" hint-placeholder-count="9">
+            <tr>
+              <td class="mono" style="font-size:12px"><strong>{{ r.code }}</strong></td>
+              <td class="text-muted" style="font-size:12px">{{ r.type }}</td>
+              <td style="font-size:12px">{{ r.condition }}</td>
+              <td class="num" style="font-size:12px">{{ r.effect }}</td>
+              <td class="num text-muted">{{ r.priority }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ r.since }}</td>
+              <td class="num text-muted">{{ r.version }}</td>
+              <td>{{ r.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Conflit détecté</span><p class="card-body" style="margin:0">Deux remises s'appliquent au même contexte (Agence Digitale Lomé · SMS Togo) : la remise de segment « revendeur » à 8 % et sa remise contractuelle à 11 %. La priorité la plus élevée gagne — mais le cumul serait plus intuitif pour un commercial. Point à trancher.</p></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isBuilder }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Constructeur de règle</span><div class="card-title" style="font-size:18px">Nouvelle remise contractuelle</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Type de règle</label><select class="input"><option>Remise contractuelle</option><option>Prix de base</option><option>Palier de volume</option><option>Majoration</option><option>Taxe</option></select></div>
+        <div class="field"><label>Code</label><input class="input mono" type="text" value="disc_mabanque_2026"></div>
+        <div class="field"><label>Priorité</label><input class="input num" type="text" value="80"></div>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div>
+        <span class="card-kicker">Conditions — toutes doivent être vraies</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3); margin-top:var(--space-3)">
+          <sc-for list="{{ conditions }}" as="c" hint-placeholder-count="5">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,1.3fr) auto; gap:var(--space-2); align-items:center">
+              <select class="input" style="font-size:12.5px"><option>{{ c.field }}</option></select>
+              <select class="input" style="font-size:12.5px"><option>{{ c.op }}</option></select>
+              <input class="input" type="text" value="{{ c.value }}" style="font-size:12.5px">
+              <button type="button" class="btn btn-ghost">Retirer</button>
+            </div>
+          </sc-for>
+          <button type="button" class="btn btn-secondary" style="align-self:flex-start">Ajouter une condition</button>
+        </div>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div>
+        <span class="card-kicker">Effet</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4); margin-top:var(--space-3)">
+          <div class="field"><label>Nature</label><select class="input"><option>Remise en pourcentage</option><option>Remise en montant fixe</option><option>Prix unitaire imposé</option></select></div>
+          <div class="field"><label>Valeur</label><input class="input num" type="text" value="9,9 %"></div>
+          <div class="field"><label>Plancher de marge</label><input class="input num" type="text" value="15 %"></div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Date d'effet</label><input class="input num" type="text" value="01/11/2026"></div>
+        <div class="field"><label>Date de fin</label><input class="input num" type="text" value="31/10/2027"></div>
+      </div>
+      <div class="field"><label>Motif — obligatoire</label><textarea class="input" style="min-height:70px">Devis NA-2026-031 accepté. Volume engagé 600 000 msg/mois sur 12 mois. Validation direction du 12/09 pour dépassement du seuil de 10 % de remise.</textarea></div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary" onClick="{{ goSim }}">Simuler l'impact</button><button type="button" class="btn btn-primary">Soumettre pour validation</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Règle en langage clair</span>
+        <p class="card-body" style="margin:0">Pour l'organisation MaBanque SA, sur les canaux SMS et OTP, vers le Togo et le Bénin, quand le volume mensuel atteint 600 000 messages : appliquer une remise de 9,9 % après le palier de volume, sans descendre sous 15 % de marge. En vigueur du 1<sup>er</sup> novembre 2026 au 31 octobre 2027.</p>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Plancher de marge</span><p class="card-body" style="margin:0">Si un coût fournisseur augmente au point de faire passer la marge sous 15 %, la remise est automatiquement réduite et une alerte est émise — la règle ne peut pas produire une vente à perte silencieuse.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Validation requise</span><p class="card-body" style="margin:0">Au-delà de 10 % de remise, la règle passe en attente de validation de direction. Elle reste visible comme brouillon et ne s'applique à aucun envoi.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Jamais rétroactif</span><p class="card-body" style="margin:0">La date d'effet ne peut pas être antérieure à aujourd'hui. Un message déjà envoyé garde le prix figé au moment de son envoi, sans exception.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTiers }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:60ch; font-size:13.5px">Les paliers sont la grille publique. Ils s'appliquent à tout client sans offre négociée, et servent de base de calcul aux remises contractuelles.</p>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">Importer une grille</button><button type="button" class="btn btn-primary">Nouveau palier</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1000px">
+        <thead><tr><th>Canal · pays</th><th>Palier (msg / mois)</th><th>Prix public</th><th>Coût d'achat</th><th>Marge</th><th>Clients concernés</th><th>Volume</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ tiers }}" as="i" hint-placeholder-count="9">
+            <tr>
+              <td style="font-size:12.5px">{{ i.scope }}</td>
+              <td class="num" style="font-size:12px">{{ i.tier }}</td>
+              <td class="num">{{ i.price }}</td>
+              <td class="num text-muted">{{ i.cost }}</td>
+              <td class="num" style="{{ i.marginStyle }}">{{ i.margin }}</td>
+              <td class="num text-muted">{{ i.clients }}</td>
+              <td class="num text-muted">{{ i.volume }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Volume cumulé, pas par envoi</span><p class="card-body" style="margin:0">Le palier est déterminé par le volume cumulé du mois, toutes destinations confondues. Un client qui franchit un seuil en milieu de mois voit son prix baisser sur les messages suivants, jamais rétroactivement sur les précédents.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Marge faible en entrée de grille</span><p class="card-body" style="margin:0">Le palier WhatsApp Marketing Bénin est à 7,9 % de marge depuis la hausse Meta. Trois options : répercuter au 15/10, réduire la couverture, ou accepter la marge sur un volume marginal.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Rétroactivité du palier</span><p class="card-body" style="margin:0">Faut-il appliquer le meilleur palier atteint à l'ensemble du mois (plus généreux, plus lisible) ou par tranche ? Décision structurante, à trancher avec la direction commerciale.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isDiscounts }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1060px">
+        <thead><tr><th>Remise</th><th>Bénéficiaire</th><th>Périmètre</th><th>Valeur</th><th>Marge résultante</th><th>Période</th><th>Validée par</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ discounts }}" as="d" hint-placeholder-count="8">
+            <tr>
+              <td class="mono" style="font-size:12px"><strong>{{ d.code }}</strong></td>
+              <td style="font-size:12.5px">{{ d.who }}</td>
+              <td class="text-muted" style="font-size:12px">{{ d.scope }}</td>
+              <td class="num">{{ d.value }}</td>
+              <td class="num" style="{{ d.marginStyle }}">{{ d.margin }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ d.period }}</td>
+              <td class="text-muted" style="font-size:12px">{{ d.by }}</td>
+              <td>{{ d.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Trois natures de remise</span><p class="card-body" style="margin:0">Par <strong>segment</strong> (tous les revendeurs), par <strong>organisation</strong> (issue d'un devis), ou <strong>promotionnelle</strong> (durée courte, acquisition). Elles ne se cumulent pas : la priorité la plus élevée s'applique seule.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Remise à perte</span><p class="card-body" style="margin:0">La remise de l'Agence Digitale Lomé produit une marge de − 2,1 % depuis la hausse fournisseur. Son plancher de marge n'avait pas été défini à la création — erreur à corriger, et argument pour rendre le plancher obligatoire.</p><button type="button" class="btn btn-primary" style="align-self:flex-start">Corriger la règle</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Expiration</span><p class="card-body" style="margin:0">Une remise sans date de fin est un risque permanent. Les remises promotionnelles expirent automatiquement ; les contractuelles suivent la durée du devis signé.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSim }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Simulateur d'impact</span><div class="card-title" style="font-size:18px">Avant d'appliquer une règle</div></div>
+      <div class="field"><label>Règle simulée</label><select class="input"><option>disc_mabanque_2026 — remise 9,9 % (brouillon)</option><option>Répercussion hausse Meta au 15/10</option><option>Nouveau palier 1 M+ SMS Togo</option></select></div>
+      <div class="field"><label>Remise appliquée : <span class="num" style="color:var(--color-accent-300)">{{ discountLabel }}</span></label>
+        <input type="range" min="0" max="25" step="0.1" value="{{ discount }}" onInput="{{ onDiscount }}" style="width:100%; accent-color:var(--color-accent)">
+        <div style="display:flex; justify-content:space-between"><span class="text-muted num" style="font-size:11px">0 %</span><span class="text-muted num" style="font-size:11px">25 %</span></div>
+      </div>
+      <div class="field"><label>Volume mensuel supposé : <span class="num" style="color:var(--color-accent-300)">{{ volumeLabel }}</span> messages</label>
+        <input type="range" min="100000" max="1500000" step="50000" value="{{ volume }}" onInput="{{ onVolume }}" style="width:100%; accent-color:var(--color-accent)">
+      </div>
+      <hr class="hr" style="margin:0">
+      <div>
+        <span class="card-kicker">Impact calculé</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-3)">
+          <sc-for list="{{ impact }}" as="i" hint-placeholder-count="7">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">{{ i.label }}</span><span class="num" style="font-size:13px; {{ i.valueStyle }}">{{ i.value }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="card" style="background:var(--color-neutral-900); gap:var(--space-2)">
+        <span class="card-kicker">Verdict</span>
+        <p class="card-body" style="margin:0">{{ verdict }}</p>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Marge résultante</span>
+        <div style="display:flex; align-items:baseline; gap:var(--space-2)"><span class="num" style="font-size:32px; line-height:1.05; {{ marginStyle }}">{{ marginLabel }}</span><span class="text-muted" style="font-size:13px">de marge brute</span></div>
+        <div style="height:8px; border-radius:4px; background:var(--color-neutral-800); overflow:hidden; margin-top:var(--space-2)"><div style="{{ marginBarStyle }}"></div></div>
+        <div style="display:flex; justify-content:space-between"><span class="text-muted num" style="font-size:11px">0 %</span><span class="text-muted num" style="font-size:11px">seuil 15 %</span><span class="text-muted num" style="font-size:11px">40 %</span></div>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Ce que le simulateur ne dit pas</span><p class="card-body" style="margin:0">L'effet de volume réel : une remise peut faire passer un client au palier suivant et améliorer la marge absolue tout en dégradant la marge relative. C'est au commercial de trancher, pas au moteur.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Portée multi-clients</span><p class="card-body" style="margin:0">Pour une règle de segment, le simulateur affiche l'impact agrégé sur tous les clients concernés et signale ceux qui passeraient sous le seuil de marge.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAudit }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Historique des versions · rule_sms_tg</span><div class="card-title" style="font-size:18px">Prix de base SMS Togo</div></div>
+        <span class="tag tag-accent">Version 4 en vigueur</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <sc-for list="{{ versions }}" as="v" hint-placeholder-count="4">
+          <div style="display:flex; gap:var(--space-4); align-items:flex-start; padding-bottom:var(--space-4); border-bottom:1px solid var(--color-divider)">
+            <div style="display:flex; flex-direction:column; min-width:110px">
+              <span class="num" style="font-size:13px; color:var(--color-accent-300)">v{{ v.n }}</span>
+              <span class="num text-muted" style="font-size:11.5px">{{ v.at }}</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px; flex:1">
+              <div style="display:flex; gap:var(--space-3); align-items:baseline; flex-wrap:wrap">
+                <span class="num text-muted" style="font-size:13px; text-decoration:line-through">{{ v.before }}</span>
+                <span class="text-muted" style="font-size:13px">→</span>
+                <span class="num" style="font-size:14px">{{ v.after }}</span>
+                <span class="{{ v.tagCls }}">{{ v.tag }}</span>
+              </div>
+              <span class="text-muted" style="font-size:12.5px">{{ v.reason }}</span>
+              <span class="text-muted" style="font-size:11.5px">{{ v.who }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <span class="card-kicker" style="padding:0 var(--space-2)">Dernières modifications du moteur, toutes règles</span>
+      <table class="table" style="min-width:1000px; margin-top:var(--space-3)">
+        <thead><tr><th>Horodatage</th><th>Règle</th><th>Auteur</th><th>Avant → après</th><th>Motif</th><th>Validation</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ changes }}" as="c" hint-placeholder-count="7">
+            <tr>
+              <td class="num text-muted" style="font-size:12px">{{ c.at }}</td>
+              <td class="mono" style="font-size:11.5px">{{ c.rule }}</td>
+              <td style="font-size:12.5px">{{ c.who }}</td>
+              <td class="num" style="font-size:12px">{{ c.diff }}</td>
+              <td class="text-muted" style="font-size:11.5px">{{ c.reason }}</td>
+              <td>{{ c.approval }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Reconstituer un prix passé</span><p class="card-body" style="margin:0">Toute facture porte la référence et la version de la règle appliquée. Saisir un identifiant de message ici rejoue le calcul exact tel qu'il a été fait, avec les versions de règles de l'époque — c'est la réponse définitive à une contestation client.</p><div style="display:flex; gap:var(--space-2); align-items:flex-end; max-width:480px"><div class="field" style="flex:1"><label>Identifiant de message ou de facture</label><input class="input mono" type="text" placeholder="msg_8f21c4b9"></div><button type="button" class="btn btn-primary">Rejouer le calcul</button></div></div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">L'ordre d'évaluation est immuable : prix de base → palier → remise → majoration → taxe. Une règle n'est jamais modifiée, elle est versionnée avec une date d'effet jamais antérieure au jour de sa création. Chaque règle porte un plancher de marge ; sous ce plancher, l'effet est réduit et une alerte émise. Toute création ou modification exige un motif écrit, et une validation de direction au-delà de 10 % de remise. Les remises ne se cumulent pas : la priorité la plus élevée s'applique seule.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Règle brouillon · en attente de validation · programmée · en vigueur · suspendue · expirée · remplacée. Conflit de priorité détecté. Plancher de marge franchi. Coût d'achat manquant pour le contexte demandé — le moteur refuse alors de produire un prix plutôt que d'en inventer un. Simulation impossible faute de volume de référence.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Un envoi multi-pays combine plusieurs prix de base et plusieurs paliers : le total est ventilé par destination, jamais moyenné. Un client franchissant un palier pendant une campagne en cours d'exécution garde le prix estimé à la réservation. Une remise qui expire en milieu de mois s'arrête au jour, pas au mois. Un contexte sans aucune règle applicable renvoie une erreur explicite, jamais un prix par défaut.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Les remises doivent-elles se cumuler ou rester exclusives ? L'exclusivité est plus sûre, le cumul plus intuitif pour les commerciaux. Le meilleur palier atteint doit-il s'appliquer à tout le mois ou par tranche ? Recommandation : remises exclusives avec message explicite dans le constructeur, et palier appliqué par tranche avec affichage du gain à venir.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 21 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 22 — Devis &amp; cycle commercial interne</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'rules', discount: 9.9, volume: 750000 };
+  }
+
+  fmt(n, d) {
+    return n.toLocaleString('fr-FR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/\u202f/g, ' ');
+  }
+
+  renderVals() {
+    const tabs = [
+      ['rules', 'Règles'],
+      ['builder', 'Constructeur'],
+      ['tiers', 'Paliers'],
+      ['discounts', 'Remises'],
+      ['sim', "Simulateur d'impact"],
+      ['audit', 'Versions & audit']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const warn = { color: 'var(--color-accent-300)' };
+
+    const d = this.state.discount;
+    const v = this.state.volume;
+    const basePrice = 6.80;
+    const cost = 4.85;
+    const price = basePrice * (1 - d / 100);
+    const margin = (price - cost) / price * 100;
+    const revenue = price * v;
+    const costTotal = cost * v;
+    const marginAbs = revenue - costTotal;
+    const refRevenue = basePrice * v;
+    const under = margin < 15;
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isRules: t === 'rules',
+      isBuilder: t === 'builder',
+      isTiers: t === 'tiers',
+      isDiscounts: t === 'discounts',
+      isSim: t === 'sim',
+      isAudit: t === 'audit',
+      goBuilder: () => this.setState({ tab: 'builder' }),
+      goSim: () => this.setState({ tab: 'sim' }),
+
+      pipeline: [
+        { n:'1', label:'Prix de base', detail:'Par canal, pays et opérateur. Issu du coût d\u2019achat et de la marge cible du segment.' },
+        { n:'2', label:'Palier de volume', detail:'Volume cumulé du mois, toutes destinations. Détermine le prix unitaire de la grille publique.' },
+        { n:'3', label:'Remise', detail:'Contractuelle, de segment ou promotionnelle. Exclusive : une seule s\u2019applique.' },
+        { n:'4', label:'Majoration', detail:'Route de secours, catégorie WhatsApp, urgence. Souvent absorbée, jamais implicite.' },
+        { n:'5', label:'Taxe', detail:'Selon le pays de facturation de l\u2019organisation. Toujours en dernier.' }
+      ],
+
+      rules: [
+        { code:'rule_sms_tg', type:'Prix de base', condition:'canal = SMS · pays = TG', effect:'6,80 FCFA', priority:'10', since:'01/01/2026', version:'v4', state: tag('tag-accent','En vigueur') },
+        { code:'rule_sms_bj', type:'Prix de base', condition:'canal = SMS · pays = BJ', effect:'7,90 FCFA', priority:'10', since:'01/03/2026', version:'v2', state: tag('tag-accent','En vigueur') },
+        { code:'tier_sms_global', type:'Palier de volume', condition:'canal = SMS · volume mensuel', effect:'4 paliers', priority:'30', since:'01/01/2026', version:'v3', state: tag('tag-accent','En vigueur') },
+        { code:'disc_segment_reseller', type:'Remise contractuelle', condition:'segment = revendeur', effect:'− 8,0 %', priority:'60', since:'01/06/2025', version:'v2', state: tag('tag-accent','En vigueur') },
+        { code:'disc_mabanque_014', type:'Remise contractuelle', condition:'org = org_4410 · SMS, OTP', effect:'− 6,4 %', priority:'80', since:'01/03/2026', version:'v1', state: tag('tag-accent','En vigueur') },
+        { code:'disc_mabanque_2026', type:'Remise contractuelle', condition:'org = org_4410 · volume ≥ 600 000', effect:'− 9,9 %', priority:'80', since:'01/11/2026', version:'v1', state: tag('tag-neutral','Brouillon · validation') },
+        { code:'surch_backup_route', type:'Majoration', condition:'route = secours', effect:'absorbée · 0 %', priority:'70', since:'01/01/2026', version:'v1', state: tag('tag-accent','En vigueur') },
+        { code:'rule_wa_bj_mkt', type:'Prix de base', condition:'canal = WhatsApp · BJ · Marketing', effect:'48,00 FCFA', priority:'10', since:'15/10/2026', version:'v3', state: tag('tag-outline','Programmée') },
+        { code:'tax_tg_vat', type:'Taxe', condition:'pays facturation = TG', effect:'+ 18 %', priority:'99', since:'01/01/2024', version:'v1', state: tag('tag-accent','En vigueur') }
+      ],
+
+      conditions: [
+        { field:'Organisation', op:'égale', value:'MaBanque SA (org_4410)' },
+        { field:'Canal', op:'parmi', value:'SMS, OTP' },
+        { field:'Pays de destination', op:'parmi', value:'Togo, Bénin' },
+        { field:'Volume mensuel', op:'≥', value:'600 000' },
+        { field:'Segment', op:'égale', value:'Grand compte' }
+      ],
+
+      tiers: [
+        { scope:'SMS · Togo', tier:'0 – 25 000', price:'7,20', cost:'4,85', margin:'32,6 %', clients:'142', volume:'1,20 M', marginStyle:{} },
+        { scope:'SMS · Togo', tier:'25 001 – 100 000', price:'7,00', cost:'4,85', margin:'30,7 %', clients:'62', volume:'3,40 M', marginStyle:{} },
+        { scope:'SMS · Togo', tier:'100 001 – 500 000', price:'6,80', cost:'4,85', margin:'28,7 %', clients:'28', volume:'6,80 M', marginStyle:{} },
+        { scope:'SMS · Togo', tier:'500 001 – 1 000 000', price:'6,50', cost:'4,85', margin:'25,4 %', clients:'6', volume:'3,90 M', marginStyle:{} },
+        { scope:'SMS · Bénin', tier:'0 – 100 000', price:'8,20', cost:'5,40', margin:'34,1 %', clients:'48', volume:'1,10 M', marginStyle:{} },
+        { scope:'SMS · Bénin', tier:'100 001 et +', price:'7,90', cost:'5,40', margin:'31,6 %', clients:'12', volume:'2,10 M', marginStyle:{} },
+        { scope:'OTP · Togo', tier:'toutes tranches', price:'6,10', cost:'4,10', margin:'32,8 %', clients:'88', volume:'4,80 M', marginStyle:{} },
+        { scope:'WhatsApp Utility · Togo', tier:'toutes tranches', price:'24,00', cost:'18,40', margin:'23,3 %', clients:'22', volume:'0,48 M', marginStyle:{} },
+        { scope:'WhatsApp Marketing · Bénin', tier:'toutes tranches', price:'48,00', cost:'44,20', margin:'7,9 %', clients:'4', volume:'0,12 M', marginStyle: warn }
+      ],
+
+      discounts: [
+        { code:'disc_mabanque_014', who:'MaBanque SA', scope:'SMS, OTP · TG, BJ', value:'− 6,4 %', margin:'28,4 %', period:'03/2026 → tacite', by:'Direction', marginStyle:{}, state: tag('tag-accent','Active') },
+        { code:'disc_mabanque_2026', who:'MaBanque SA', scope:'SMS, OTP · TG, BJ', value:'− 9,9 %', margin:'21,2 %', period:'11/2026 → 10/2027', by:'En attente', marginStyle:{}, state: tag('tag-neutral','Brouillon') },
+        { code:'disc_segment_reseller', who:'Segment revendeur (14 comptes)', scope:'SMS · tous pays', value:'− 8,0 %', margin:'22,4 %', period:'06/2025 → tacite', by:'Direction', marginStyle:{}, state: tag('tag-accent','Active') },
+        { code:'disc_agence_lome', who:'Agence Digitale Lomé', scope:'SMS · TG', value:'− 11,0 %', margin:'− 2,1 %', period:'01/2026 → 31/10/2026', by:'Serge K.', marginStyle: warn, state: tag('tag-outline','Sous le plancher') },
+        { code:'disc_assurouest', who:'Assur Ouest', scope:'SMS, WhatsApp · CI', value:'− 5,0 %', margin:'33,1 %', period:'09/2025 → 08/2027', by:'Direction', marginStyle:{}, state: tag('tag-accent','Active') },
+        { code:'promo_launch_bj', who:'Nouveaux comptes Bénin', scope:'SMS · BJ · 3 premiers mois', value:'− 15,0 %', margin:'19,4 %', period:'01/09 → 30/11/2026', by:'Direction', marginStyle:{}, state: tag('tag-accent','Active · promo') },
+        { code:'disc_microkara', who:'MicroCrédit Kara', scope:'SMS · TG', value:'− 3,0 %', margin:'35,2 %', period:'05/2026 → tacite', by:'Serge K.', marginStyle:{}, state: tag('tag-accent','Active') },
+        { code:'promo_wa_trial', who:'Essai WhatsApp (8 comptes)', scope:'WhatsApp Utility', value:'− 20,0 %', margin:'4,2 %', period:'expirée le 31/08', by:'Direction', marginStyle: warn, state: tag('tag-neutral','Expirée') }
+      ],
+
+      discount: d,
+      discountLabel: this.fmt(d, 1) + ' %',
+      onDiscount: e => this.setState({ discount: parseFloat(e.target.value) }),
+      volume: v,
+      volumeLabel: this.fmt(v),
+      onVolume: e => this.setState({ volume: parseInt(e.target.value, 10) }),
+      impact: [
+        { label:'Prix public de référence', value: this.fmt(basePrice, 2) + ' FCFA', valueStyle: {} },
+        { label:'Prix après remise', value: this.fmt(price, 2) + ' FCFA', valueStyle: { color: 'var(--color-accent-300)' } },
+        { label:'Coût d\u2019achat unitaire', value: this.fmt(cost, 2) + ' FCFA', valueStyle: {} },
+        { label:'Revenu mensuel', value: this.fmt(revenue) + ' FCFA', valueStyle: {} },
+        { label:'Coût fournisseur mensuel', value: this.fmt(costTotal) + ' FCFA', valueStyle: {} },
+        { label:'Marge absolue mensuelle', value: this.fmt(marginAbs) + ' FCFA', valueStyle: {} },
+        { label:'Manque à gagner vs grille', value: this.fmt(refRevenue - revenue) + ' FCFA', valueStyle: {} }
+      ],
+      marginLabel: this.fmt(margin, 1) + ' %',
+      marginStyle: under ? { color: 'var(--color-accent-300)' } : { color: 'var(--color-accent)' },
+      marginBarStyle: {
+        width: Math.max(2, Math.min(100, margin / 40 * 100)) + '%',
+        height: '100%',
+        background: under ? 'var(--color-accent-700)' : 'var(--color-accent)'
+      },
+      verdict: under
+        ? 'Marge de ' + this.fmt(margin, 1) + ' % — sous le plancher de 15 %. Le moteur plafonnerait la remise à ' + this.fmt((basePrice - cost / 0.85) / basePrice * 100, 1) + ' % (soit un prix plancher de ' + this.fmt(cost / 0.85, 2) + ' FCFA) et émettrait une alerte. Cette règle ne peut pas être appliquée telle quelle.'
+        : (margin < 22
+          ? 'Marge de ' + this.fmt(margin, 1) + ' % — acceptable mais sous l\u2019objectif de 32 %. Recommandé seulement avec un engagement de volume ferme, ce qui est le cas ici (600 000 msg/mois sur 12 mois).'
+          : 'Marge de ' + this.fmt(margin, 1) + ' % — dans l\u2019objectif. La remise est applicable sans validation de direction si elle reste sous 10 %.'),
+
+      versions: [
+        { n:'4', at:'01/01/2026', before:'6,90 FCFA', after:'6,80 FCFA', tag:'En vigueur', tagCls:'tag tag-accent', reason:'Baisse du coût d\u2019achat Moov négociée à 4,80. Répercussion partielle pour rester compétitif face à l\u2019entrant régional.', who:'Direction · motif validé' },
+        { n:'3', at:'01/06/2025', before:'7,20 FCFA', after:'6,90 FCFA', tag:'Remplacée', tagCls:'tag tag-neutral', reason:'Alignement sur la grille du concurrent principal après perte de deux appels d\u2019offres bancaires.', who:'Direction · motif validé' },
+        { n:'2', at:'15/01/2025', before:'7,50 FCFA', after:'7,20 FCFA', tag:'Remplacée', tagCls:'tag tag-neutral', reason:'Passage en lien direct opérateur, suppression de la marge d\u2019agrégateur.', who:'Serge K. · Commercial' },
+        { n:'1', at:'01/09/2024', before:'—', after:'7,50 FCFA', tag:'Création', tagCls:'tag tag-neutral', reason:'Ouverture du marché togolais via agrégateur Panafric.', who:'Direction · création initiale' }
+      ],
+
+      changes: [
+        { at:'13/09 11:42', rule:'disc_mabanque_2026', who:'Serge K.', diff:'création · − 9,9 %', reason:'Devis NA-2026-031 accepté', approval: tag('tag-neutral','En attente direction') },
+        { at:'12/09 17:02', rule:'engine_margin_floor', who:'Direction', diff:'12 % → 15 %', reason:'Hausse générale des coûts fournisseurs', approval: tag('tag-accent','Appliquée') },
+        { at:'09/09 08:30', rule:'rule_wa_bj_mkt', who:'Direction', diff:'46,00 → 48,00 FCFA', reason:'Répercussion grille Meta · préavis 30 j notifié', approval: tag('tag-accent','Programmée 15/10') },
+        { at:'01/09 00:05', rule:'promo_launch_bj', who:'Direction', diff:'activation · − 15 %', reason:'Campagne d\u2019acquisition Bénin T4', approval: tag('tag-accent','Appliquée') },
+        { at:'31/08 23:59', rule:'promo_wa_trial', who:'Système', diff:'active → expirée', reason:'Fin de période programmée', approval: tag('tag-accent','Automatique') },
+        { at:'12/08 14:20', rule:'tier_sms_global', who:'Serge K.', diff:'ajout palier 500 001+', reason:'Trois clients au-dessus de 500 000 msg/mois', approval: tag('tag-accent','Appliquée') },
+        { at:'04/08 09:11', rule:'disc_agence_lome', who:'Serge K.', diff:'− 8 % → − 11 %', reason:'Négociation de renouvellement · plancher non défini', approval: tag('tag-outline','À corriger') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

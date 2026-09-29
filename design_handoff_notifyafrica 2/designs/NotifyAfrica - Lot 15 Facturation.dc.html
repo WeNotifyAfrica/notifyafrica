@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 15 · Facturation</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Prépayé · XOF</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Facturation</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Sept écrans autour d'une distinction qui structure tout : le solde disponible n'est pas le solde total. Une partie est réservée par des envois planifiés, une autre en attente de confirmation de paiement. Confondre les trois est la première cause de litige sur ce type de plateforme.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:var(--space-4)">
+      <div class="card elev-md" style="gap:var(--space-2)"><span class="card-kicker">Solde disponible</span><span class="num" style="font-size:27px; line-height:1.05; color:var(--color-accent-300)">1 260 000</span><span class="text-muted" style="font-size:12px">FCFA · immédiatement utilisable</span></div>
+      <div class="card elev-sm" style="gap:var(--space-2)"><span class="card-kicker">Réservé</span><span class="num" style="font-size:27px; line-height:1.05">408 197</span><span class="text-muted" style="font-size:12px">2 envois planifiés</span></div>
+      <div class="card elev-sm" style="gap:var(--space-2)"><span class="card-kicker">En attente</span><span class="num" style="font-size:27px; line-height:1.05">500 000</span><span class="text-muted" style="font-size:12px">virement non confirmé</span></div>
+      <div class="card elev-sm" style="gap:var(--space-2)"><span class="card-kicker">Consommé ce mois</span><span class="num" style="font-size:27px; line-height:1.05">3,48 M</span><span class="text-muted" style="font-size:12px">au 13 septembre</span></div>
+      <div class="card elev-sm" style="gap:var(--space-2)"><span class="card-kicker">Autonomie estimée</span><span class="num" style="font-size:27px; line-height:1.05">11 j</span><span class="text-muted" style="font-size:12px">au rythme des 7 derniers jours</span></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Consommation par canal</span><div class="card-title" style="font-size:17px">Mois en cours</div></div>
+        <sc-for list="{{ bars }}" as="b" hint-placeholder-count="4">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13.5px">{{ b.name }}</span><span class="num text-muted" style="font-size:13px">{{ b.value }}</span></div>
+            <div style="height:6px; border-radius:3px; background:var(--color-neutral-800); overflow:hidden"><div style="{{ b.barStyle }}"></div></div>
+          </div>
+        </sc-for>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:14px">Total consommé</span><span class="num" style="font-size:17px">3 479 320 FCFA</span></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Seuil d'alerte atteint</span><p class="card-body" style="margin:0">Votre solde disponible est passé sous 1,5 M FCFA. Au rythme actuel, il sera épuisé le 24 septembre — avant l'envoi planifié du 1<sup>er</sup> octobre.</p><button type="button" class="btn btn-primary" onClick="{{ goTopup }}" style="align-self:flex-start">Recharger</button></div>
+        <div class="card elev-sm"><span class="card-kicker">Recharge automatique</span><p class="card-body" style="margin:0">Inactive. Elle déclencherait une recharge de 2 M FCFA dès que le disponible passe sous 1 M, via le moyen de paiement par défaut.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Activer</button></div>
+        <div class="card elev-sm"><span class="card-kicker">Prochaine facture</span><p class="card-body" style="margin:0">Facture de consommation de septembre émise le 1<sup>er</sup> octobre. Montant provisoire : <span class="num">3 479 320</span> FCFA.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isBalance }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Décomposition du solde</span><div class="card-title" style="font-size:18px">Ce que vous pouvez réellement dépenser</div></div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <sc-for list="{{ balanceRows }}" as="b" hint-placeholder-count="4">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3); flex-wrap:wrap"><span style="font-size:14px">{{ b.label }}</span><span class="num" style="font-size:14px">{{ b.value }}</span></div>
+            <div style="height:20px; border-radius:var(--radius-sm); background:var(--color-neutral-800); overflow:hidden"><div style="{{ b.barStyle }}"></div></div>
+            <span class="text-muted" style="font-size:11.5px">{{ b.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:15px">Solde total du compte</span><span class="num" style="font-size:22px">2 168 197 FCFA</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Réservation</span><p class="card-body" style="margin:0">Un envoi planifié réserve son coût estimé la veille de l'exécution. Le montant non consommé — destinataires exclus, échecs non facturables — est libéré à la fin de l'envoi, généralement en quelques minutes.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">En attente</span><p class="card-body" style="margin:0">Un virement bancaire est crédité à réception effective des fonds, pas à la déclaration. Le mobile money et la carte créditent en temps réel.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Seuils d'alerte</span><p class="card-body" style="margin:0">Deux seuils configurables, notifiés par email, webhook et dans la console. Recommandation : un seuil à 7 jours d'autonomie, un second à 2 jours.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Configurer</button></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTopup }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Recharger</span><div class="card-title" style="font-size:18px">Créditer le compte</div></div>
+      <div class="field"><label>Montant</label>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-bottom:var(--space-2)">
+          <sc-for list="{{ amounts }}" as="a" hint-placeholder-count="4">
+            <button type="button" class="btn" onClick="{{ a.onClick }}" style="{{ a.style }}">{{ a.label }}</button>
+          </sc-for>
+        </div>
+        <input class="input num" type="text" value="{{ amountValue }}" onChange="{{ onAmount }}">
+      </div>
+      <div class="field"><label>Moyen de paiement</label>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+          <sc-for list="{{ methods }}" as="m" hint-placeholder-count="5">
+            <button type="button" onClick="{{ m.onClick }}" style="{{ m.style }}">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); width:100%">
+                <div style="display:flex; flex-direction:column; align-items:flex-start"><span style="font-size:13.5px">{{ m.name }}</span><span class="text-muted" style="font-size:11.5px">{{ m.detail }}</span></div>
+                <span class="text-muted num" style="font-size:12px">{{ m.fee }}</span>
+              </div>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Les moyens de paiement disponibles dépendent du pays de facturation de l'organisation. De nouveaux fournisseurs sont ajoutés en back-office sans mise à jour de l'application.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <span class="card-kicker">Récapitulatif</span>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Montant rechargé</span><span class="num" style="font-size:13px">{{ topupAmount }}</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Moyen</span><span style="font-size:13px">{{ topupMethod }}</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Frais du fournisseur</span><span class="num" style="font-size:13px">{{ topupFee }}</span></div>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Total à payer</span><span class="num" style="font-size:21px; color:var(--color-accent-300)">{{ topupTotal }}</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Crédité sur le compte</span><span class="num" style="font-size:12px">{{ topupAmount }}</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Disponibilité</span><span style="font-size:12px">{{ topupDelay }}</span></div>
+        <button type="button" class="btn btn-primary btn-block">Payer</button>
+        <p class="text-muted" style="margin:0; font-size:11px">Les frais du fournisseur de paiement sont à votre charge et apparaissent séparément sur le reçu.</p>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Reçu</span><p class="card-body" style="margin:0">Un reçu de recharge est émis immédiatement. Il est distinct de la facture de consommation : une recharge n'est pas une prestation.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTx }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Période</label><select class="input"><option>30 derniers jours</option><option>Ce mois</option><option>Personnalisée</option></select></div>
+        <div class="field"><label>Type</label><select class="input"><option>Tous</option><option>Recharge</option><option>Consommation</option><option>Réservation</option><option>Remboursement</option></select></div>
+        <div class="field"><label>Projet</label><select class="input"><option>Tous</option><option>Application mobile</option><option>Site web</option></select></div>
+        <div class="field"><label>Référence</label><input class="input" type="text" placeholder="txn_…"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">30 j</span><button type="button" class="btn btn-ghost">Réinitialiser</button><button type="button" class="btn btn-secondary" style="margin-left:auto">Exporter (CSV)</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:900px">
+        <thead><tr><th>Date</th><th>Référence</th><th>Type</th><th>Détail</th><th>Montant</th><th>Solde après</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ txs }}" as="x" hint-placeholder-count="8">
+            <tr>
+              <td class="num text-muted">{{ x.date }}</td>
+              <td class="num" style="font-size:12px">{{ x.ref }}</td>
+              <td>{{ x.type }}</td>
+              <td class="text-muted" style="font-size:12.5px">{{ x.detail }}</td>
+              <td class="num" style="{{ x.amountStyle }}">{{ x.amount }}</td>
+              <td class="num text-muted">{{ x.after }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted" style="margin:0; font-size:12px">Le registre est immuable : une erreur se corrige par une écriture inverse, jamais par modification d'une ligne existante. Chaque ligne de consommation renvoie à l'envoi ou à la campagne qui l'a produite.</p>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isUsage }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <span class="card-kicker" style="padding:0 var(--space-2)">Consommation détaillée · septembre 2026</span>
+      <table class="table" style="min-width:940px; margin-top:var(--space-3)">
+        <thead><tr><th>Projet</th><th>Canal</th><th>Pays</th><th>Quantité</th><th>Prix unitaire</th><th>Montant HT</th><th>Taxe</th><th>Total</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ usage }}" as="u" hint-placeholder-count="7">
+            <tr>
+              <td>{{ u.project }}</td>
+              <td>{{ u.channel }}</td>
+              <td class="text-muted">{{ u.country }}</td>
+              <td class="num">{{ u.qty }}</td>
+              <td class="num text-muted">{{ u.unit }}</td>
+              <td class="num">{{ u.ht }}</td>
+              <td class="num text-muted">{{ u.tax }}</td>
+              <td class="num">{{ u.total }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Refacturation interne</span><p class="card-body" style="margin:0">La ventilation par projet permet de refacturer chaque département. Un code d'imputation comptable peut être attaché à chaque projet et repris dans l'export.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Prix figé</span><p class="card-body" style="margin:0">Chaque ligne porte le prix appliqué au moment de l'envoi et la référence de la règle tarifaire. Un contrôle peut remonter jusqu'au devis signé.</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Écart détecté</span><p class="card-body" style="margin:0">La ligne WhatsApp Bénin utilise deux prix sur la période : changement de grille Meta au 1<sup>er</sup> septembre. Le détail par jour est consultable.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isInvoices }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:880px">
+        <thead><tr><th>Numéro</th><th>Période</th><th>Émise le</th><th>Échéance</th><th>Montant</th><th>Statut</th><th></th></tr></thead>
+        <tbody>
+          <sc-for list="{{ invoices }}" as="i" hint-placeholder-count="6">
+            <tr>
+              <td class="num"><strong>{{ i.no }}</strong></td>
+              <td class="text-muted">{{ i.period }}</td>
+              <td class="num text-muted">{{ i.issued }}</td>
+              <td class="num text-muted">{{ i.due }}</td>
+              <td class="num">{{ i.amount }}</td>
+              <td>{{ i.status }}</td>
+              <td>{{ i.action }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Deux natures de document</span><p class="card-body" style="margin:0">Le reçu de recharge atteste d'un encaissement. La facture de consommation atteste d'une prestation, mensuelle et détaillée par projet, canal et pays. Les deux sont nécessaires à une comptabilité correcte.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Conformité locale</span><p class="card-body" style="margin:0">Mentions fiscales, numéro de contribuable et devise adaptés au pays de facturation de l'organisation. Le format des taxes est paramétré par pays en back-office.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Coordonnées de facturation</span><p class="card-body" style="margin:0">Raison sociale, adresse, numéro fiscal et destinataires des factures se modifient sans effet rétroactif : une facture émise n'est jamais réécrite.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Modifier</button></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isMethods }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+      <p class="text-muted" style="margin:0; max-width:62ch; font-size:13.5px">Plusieurs moyens de paiement par organisation, avec un moyen par défaut utilisé pour la recharge automatique. La liste disponible dépend du pays de facturation et se pilote en back-office.</p>
+      <button type="button" class="btn btn-primary">Ajouter un moyen de paiement</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ savedMethods }}" as="m" hint-placeholder-count="4">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:15px">{{ m.name }}</span><span class="{{ m.tagCls }}">{{ m.tag }}</span></div>
+          <div class="num text-muted" style="font-size:12.5px">{{ m.ref }}</div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Frais</span><span class="num" style="font-size:12px">{{ m.fee }}</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Délai de crédit</span><span style="font-size:12px">{{ m.delay }}</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Plafond par opération</span><span class="num" style="font-size:12px">{{ m.cap }}</span></div>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary">{{ m.primaryAction }}</button><button type="button" class="btn btn-ghost">Retirer</button></div>
+        </div>
+      </sc-for>
+    </div>
+    <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Extensibilité</span><p class="card-body" style="margin:0">Mobile money, carte, virement et agrégateurs sont des fournisseurs déclarés, chacun avec ses devises, ses frais, ses plafonds et ses pays. Ajouter un nouvel opérateur de paiement est une opération de configuration, pas de développement — même mécanisme que pour les opérateurs SMS.</p></div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Trois soldes distincts : disponible, réservé, en attente. Seul le disponible autorise un envoi. Le registre des transactions est immuable ; une correction est une écriture inverse. Une recharge produit un reçu, une consommation mensuelle produit une facture. Le prix figé à l'envoi est la seule base de facturation, quelles que soient les évolutions tarifaires ultérieures.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Solde suffisant · sous seuil · épuisé · négatif (dépassement technique toléré, à régulariser). Paiement initié · en attente de confirmation · réussi · échoué · expiré · remboursé. Facture brouillon · émise · payée · en retard · avoir. Moyen de paiement actif · expiré · refusé · indisponible dans le pays.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Un paiement confirmé après expiration de sa session est crédité et signalé. Une réservation qui dépasse le disponible suite à une consommation concurrente suspend l'envoi planifié au lieu de rendre le solde négatif. Un remboursement d'échec non facturable arrive après la facture : il produit un avoir, pas une facture corrigée. Changement de devise de facturation : uniquement à la frontière d'un mois.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il proposer un mode postpayé pour les grands comptes bancaires, avec plafond de crédit et facturation à terme échu ? Cela change la logique de réservation, qui devient un contrôle d'encours. Un dépassement technique négatif est-il toléré, et jusqu'à quel montant ? Recommandation : postpayé réservé aux comptes sous contrat, tolérance négative plafonnée à un jour de consommation moyenne.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 15 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 16 — Équipe &amp; rôles</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'overview', amount: 2000000, method: 'mtn' };
+  }
+
+  fmt(n) {
+    return n.toLocaleString('fr-FR').replace(/\u202f/g, ' ');
+  }
+
+  renderVals() {
+    const tabs = [
+      ['overview', "Vue d'ensemble"],
+      ['balance', 'Solde'],
+      ['topup', 'Recharger'],
+      ['tx', 'Transactions'],
+      ['usage', 'Consommation'],
+      ['invoices', 'Factures'],
+      ['methods', 'Moyens de paiement']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const bar = (pct, dim) => ({ width: pct + '%', height: '100%', background: dim ? 'var(--color-accent-700)' : 'var(--color-accent)', opacity: dim ? 0.9 : 0.8 });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const link = txt => React.createElement('a', { href: '#', style: { fontSize: '12px' } }, txt);
+    const pos = { color: 'var(--color-accent-300)' };
+
+    const methodDefs = [
+      { key:'mtn', name:'MTN MoMo', detail:'Mobile money · Bénin, Ghana, Côte d\u2019Ivoire', feePct: 1.5, delay:'Immédiat' },
+      { key:'moov', name:'Moov Money / Flooz', detail:'Mobile money · Togo, Bénin', feePct: 1.8, delay:'Immédiat' },
+      { key:'wave', name:'Wave', detail:'Mobile money · Sénégal, Côte d\u2019Ivoire', feePct: 1.0, delay:'Immédiat' },
+      { key:'card', name:'Carte bancaire', detail:'Visa, Mastercard · toutes devises', feePct: 2.9, delay:'Immédiat' },
+      { key:'wire', name:'Virement bancaire', detail:'Ecobank · XOF', feePct: 0, delay:'1 à 3 jours ouvrés' }
+    ];
+    const m = methodDefs.find(x => x.key === this.state.method) || methodDefs[0];
+    const amt = this.state.amount;
+    const fee = Math.round(amt * m.feePct / 100);
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isOverview: t === 'overview',
+      isBalance: t === 'balance',
+      isTopup: t === 'topup',
+      isTx: t === 'tx',
+      isUsage: t === 'usage',
+      isInvoices: t === 'invoices',
+      isMethods: t === 'methods',
+      goTopup: () => this.setState({ tab: 'topup' }),
+
+      bars: [
+        { name:'SMS', value:'2 246 400 FCFA', barStyle: bar(100) },
+        { name:'WhatsApp', value:'904 200 FCFA', barStyle: bar(40) },
+        { name:'OTP', value:'284 120 FCFA', barStyle: bar(13) },
+        { name:'Email', value:'44 600 FCFA', barStyle: bar(2) }
+      ],
+
+      balanceRows: [
+        { label:'Disponible', value:'1 260 000 FCFA', barStyle: bar(58), note:'Utilisable immédiatement pour tout envoi' },
+        { label:'Réservé', value:'408 197 FCFA', barStyle: bar(19, true), note:'Campagne du 14/09 (408 197) — libéré si annulée' },
+        { label:'En attente', value:'500 000 FCFA', barStyle: bar(23, true), note:'Virement Ecobank déclaré le 12/09 — crédité à réception' },
+        { label:'Autonomie au rythme actuel', value:'11 jours', barStyle: bar(37, true), note:'Basée sur la moyenne des 7 derniers jours (112 000 FCFA / jour)' }
+      ],
+
+      amounts: [500000, 1000000, 2000000, 5000000].map(a => ({
+        label: this.fmt(a) + ' FCFA',
+        onClick: () => this.setState({ amount: a }),
+        style: pill(a === amt)
+      })),
+      amountValue: this.fmt(amt) + ' FCFA',
+      onAmount: e => {
+        const n = parseInt(String(e.target.value).replace(/[^0-9]/g, ''), 10);
+        if (!isNaN(n)) this.setState({ amount: n });
+      },
+      methods: methodDefs.map(d => ({
+        name: d.name, detail: d.detail,
+        fee: d.feePct ? d.feePct.toLocaleString('fr-FR') + ' %' : 'Sans frais',
+        onClick: () => this.setState({ method: d.key }),
+        style: {
+          textAlign: 'left', cursor: 'pointer',
+          padding: 'var(--space-3) var(--space-4)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid ' + (d.key === this.state.method ? 'var(--color-accent)' : 'var(--color-divider)'),
+          background: d.key === this.state.method ? 'color-mix(in srgb, var(--color-accent) 10%, transparent)' : 'var(--color-bg)',
+          color: 'var(--color-text)'
+        }
+      })),
+      topupAmount: this.fmt(amt) + ' FCFA',
+      topupMethod: m.name,
+      topupFee: fee ? this.fmt(fee) + ' FCFA' : 'Sans frais',
+      topupTotal: this.fmt(amt + fee) + ' FCFA',
+      topupDelay: m.delay,
+
+      txs: [
+        { date:'13/09 14:02', ref:'txn_9a41c0', type:'Consommation', detail:'Envoi SMS · Application mobile', amount:'− 10 016', after:'1 260 000', amountStyle:{} },
+        { date:'13/09 08:00', ref:'txn_9a3f12', type:'Réservation', detail:'Campagne « Rappel échéance » du 14/09', amount:'− 408 197', after:'1 270 016', amountStyle:{} },
+        { date:'12/09 16:40', ref:'txn_9a3a08', type:'Recharge', detail:'Virement Ecobank · en attente de réception', amount:'+ 500 000', after:'1 678 213', amountStyle: pos },
+        { date:'11/09 09:12', ref:'txn_9a3102', type:'Remboursement', detail:'2 840 messages non livrés · incident du 08/09', amount:'+ 23 460', after:'1 678 213', amountStyle: pos },
+        { date:'08/09 14:55', ref:'txn_9a2c44', type:'Consommation', detail:'Campagne WhatsApp · Application mobile', amount:'− 269 040', after:'1 654 753', amountStyle:{} },
+        { date:'05/09 10:20', ref:'txn_9a2011', type:'Recharge', detail:'MTN MoMo · +228 90 12 34 56', amount:'+ 2 000 000', after:'1 923 793', amountStyle: pos },
+        { date:'02/09 08:00', ref:'txn_9a1808', type:'Consommation', detail:'Campagne « Rappel échéance » août', amount:'− 398 240', after:'− 76 207', amountStyle:{} },
+        { date:'01/09 00:05', ref:'txn_9a1700', type:'Libération', detail:'Solde non consommé de la campagne du 02/09', amount:'+ 9 957', after:'322 033', amountStyle: pos }
+      ],
+
+      usage: [
+        { project:'Application mobile', channel:'SMS', country:'Togo', qty:'612 400', unit:'6,55 FCFA', ht:'4 011 220', tax:'722 020', total:'4 733 240' },
+        { project:'Application mobile', channel:'SMS', country:'Bénin', qty:'148 600', unit:'7,80 FCFA', ht:'1 159 080', tax:'208 634', total:'1 367 714' },
+        { project:'Application mobile', channel:'OTP', country:'Togo', qty:'268 100', unit:'6,00 FCFA', ht:'1 608 600', tax:'289 548', total:'1 898 148' },
+        { project:'Application mobile', channel:'WhatsApp', country:'Togo', qty:'26 600', unit:'24,00 FCFA', ht:'638 400', tax:'114 912', total:'753 312' },
+        { project:'Application mobile', channel:'WhatsApp', country:'Bénin', qty:'2 240', unit:'26,00 FCFA', ht:'58 240', tax:'10 483', total:'68 723' },
+        { project:'Site web', channel:'Email', country:'Tous', qty:'82 400', unit:'2,00 FCFA', ht:'164 800', tax:'29 664', total:'194 464' },
+        { project:'Agence — pilote', channel:'SMS', country:'Togo', qty:'0', unit:'—', ht:'0', tax:'0', total:'0' }
+      ],
+
+      invoices: [
+        { no:'FA-2026-0912', period:'Septembre 2026 (en cours)', issued:'—', due:'—', amount:'3 479 320 FCFA', status: tag('tag-outline','Provisoire'), action: link('Aperçu') },
+        { no:'FA-2026-0811', period:'Août 2026', issued:'01/09/2026', due:'01/10/2026', amount:'3 812 640 FCFA', status: tag('tag-accent','Payée'), action: link('PDF') },
+        { no:'AV-2026-0804', period:'Août 2026 · avoir', issued:'11/09/2026', due:'—', amount:'− 23 460 FCFA', status: tag('tag-accent','Émis'), action: link('PDF') },
+        { no:'FA-2026-0710', period:'Juillet 2026', issued:'01/08/2026', due:'01/09/2026', amount:'3 204 180 FCFA', status: tag('tag-accent','Payée'), action: link('PDF') },
+        { no:'FA-2026-0609', period:'Juin 2026', issued:'01/07/2026', due:'01/08/2026', amount:'2 988 700 FCFA', status: tag('tag-neutral','Payée en retard'), action: link('PDF') },
+        { no:'RC-2026-0905', period:'Reçu de recharge · 05/09', issued:'05/09/2026', due:'—', amount:'2 030 000 FCFA', status: tag('tag-accent','Encaissé'), action: link('PDF') }
+      ],
+
+      savedMethods: [
+        { name:'MTN MoMo', ref:'+228 90 12 34 56 · Kodjo A.', fee:'1,5 %', delay:'Immédiat', cap:'5 000 000 FCFA', tag:'Par défaut', tagCls:'tag tag-accent', primaryAction:'Modifier' },
+        { name:'Carte bancaire', ref:'Visa •••• 4218 · exp. 09/2027', fee:'2,9 %', delay:'Immédiat', cap:'10 000 000 FCFA', tag:'Active', tagCls:'tag tag-outline', primaryAction:'Définir par défaut' },
+        { name:'Virement bancaire', ref:'Ecobank Togo · TG•••• 8841', fee:'Sans frais', delay:'1 à 3 j ouvrés', cap:'Sans plafond', tag:'Active', tagCls:'tag tag-outline', primaryAction:'Définir par défaut' },
+        { name:'Moov Money', ref:'+228 91 44 20 08 · Awa S.', fee:'1,8 %', delay:'Immédiat', cap:'2 000 000 FCFA', tag:'Expirée · à revalider', tagCls:'tag tag-neutral', primaryAction:'Revalider' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

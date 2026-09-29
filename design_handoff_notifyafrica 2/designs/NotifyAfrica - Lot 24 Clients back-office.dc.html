@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 24 · Clients &amp; organisations</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Back-office</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Clients &amp; organisations</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">La vue interne de chaque client : qui il est, ce qu'il consomme, ce qu'il doit, et ce que l'équipe a le droit de faire sur son compte. Cinq écrans : l'annuaire, la fiche client, la vérification d'identité (KYC), les actions sensibles et l'accès support.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Organisations</span><span class="num" style="font-size:24px">1 284</span><span class="text-muted" style="font-size:12px">dont 412 actives ce mois</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">KYC en attente</span><span class="num" style="font-size:24px">23</span><span class="text-muted" style="font-size:12px">délai moyen 1,4 j</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Suspendues</span><span class="num" style="font-size:24px">7</span><span class="text-muted" style="font-size:12px">4 impayés · 3 conformité</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Encours post-payé</span><span class="num" style="font-size:24px">38,6 M FCFA</span><span class="text-muted" style="font-size:12px">14 contrats</span></div>
+    </div>
+    <div class="card elev-sm" style="gap:var(--space-3)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Recherche</label><input class="input" type="text" placeholder="Nom, identifiant, email, numéro"></div>
+        <div class="field"><label>Segment</label><select class="input"><option>Tous</option><option>Grand compte</option><option>PME</option><option>Revendeur</option><option>Libre-service</option></select></div>
+        <div class="field"><label>Pays</label><select class="input"><option>Tous</option><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option></select></div>
+        <div class="field"><label>État</label><select class="input"><option>Tous</option><option>Actif</option><option>KYC en attente</option><option>Suspendu</option></select></div>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1060px">
+        <thead><tr><th>Organisation</th><th>Segment</th><th>Pays</th><th>Mode</th><th>Volume 30 j</th><th>Solde / encours</th><th>KYC</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ orgs }}" as="o" hint-placeholder-count="8">
+            <tr style="cursor:pointer" onClick="{{ o.onClick }}">
+              <td><strong>{{ o.name }}</strong><div class="text-muted mono" style="font-size:11px">{{ o.id }}</div></td>
+              <td class="text-muted" style="font-size:12px">{{ o.segment }}</td>
+              <td class="text-muted" style="font-size:12px">{{ o.country }}</td>
+              <td class="text-muted" style="font-size:12px">{{ o.mode }}</td>
+              <td class="num">{{ o.volume }}</td>
+              <td class="num" style="{{ o.balStyle }}">{{ o.balance }}</td>
+              <td>{{ o.kyc }}</td>
+              <td>{{ o.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker mono">org_4410 · client depuis 09/2024</span><div class="card-title" style="font-size:20px">MaBanque SA</div><span class="text-muted" style="font-size:13px">Grand compte · Togo · Prépayé · Commercial : Serge K.</span></div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">Actif</span><span class="tag tag-accent">KYC validé</span><span class="tag tag-neutral">Contrat CT-2026-014</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-4)">
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Solde prépayé</span><span class="num" style="font-size:19px">1 249 984 FCFA</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Consommation 30 j</span><span class="num" style="font-size:19px">3,42 M FCFA</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Messages 30 j</span><span class="num" style="font-size:19px">612 400</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Marge 30 j</span><span class="num" style="font-size:19px">28,4 %</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Tickets ouverts</span><span class="num" style="font-size:19px">1</span></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <span class="card-kicker">Projets &amp; canaux</span>
+          <div style="overflow:auto">
+            <table class="table" style="min-width:520px">
+              <thead><tr><th>Projet</th><th>Canaux</th><th>Volume 30 j</th><th>Environnement</th></tr></thead>
+              <tbody>
+                <tr><td>Application mobile</td><td class="text-muted">SMS, OTP, WhatsApp</td><td class="num">524 000</td><td><span class="tag tag-accent">Live</span></td></tr>
+                <tr><td>Site web</td><td class="text-muted">Email</td><td class="num">88 400</td><td><span class="tag tag-accent">Live</span></td></tr>
+                <tr><td>Agence — pilote</td><td class="text-muted">SMS</td><td class="num">0</td><td><span class="tag tag-outline">Test</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <span class="card-kicker">Historique du compte</span>
+          <sc-for list="{{ history }}" as="h" hint-placeholder-count="6">
+            <div style="display:flex; gap:var(--space-4); align-items:baseline">
+              <span class="num text-muted" style="font-size:11.5px; min-width:76px">{{ h.at }}</span>
+              <div style="display:flex; flex-direction:column"><span style="font-size:13px">{{ h.label }}</span><span class="text-muted" style="font-size:11.5px">{{ h.who }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <span class="card-kicker">Tarification appliquée</span>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise active</span><span class="mono" style="font-size:12px">disc_mabanque_014 · − 6,4 %</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise à venir</span><span class="mono" style="font-size:12px">disc_mabanque_2026 · validation</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier du mois</span><span style="font-size:13px">500 001 – 1 000 000</span></div>
+          <a href="#" style="font-size:12.5px">Ouvrir dans le moteur de prix</a>
+        </div>
+        <div class="card elev-sm" style="gap:var(--space-2)">
+          <span class="card-kicker">Membres</span>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Kossi A. · Owner</span><span class="text-muted" style="font-size:12px">2FA active</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">Afi M. · Billing Manager</span><span class="text-muted" style="font-size:12px">2FA active</span></div>
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">7 autres membres</span><span class="text-muted" style="font-size:12px">3 sans 2FA</span></div>
+        </div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Note interne</span><p class="card-body" style="margin:0">Client stratégique pour le secteur bancaire togolais. Tout incident doit être escaladé au responsable de compte dans l'heure. — Mariam D., 04/2026</p></div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-secondary" onClick="{{ goActions }}">Actions sensibles</button><button type="button" class="btn btn-secondary" onClick="{{ goAccess }}">Accès support</button></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isKyc }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker mono">org_5127 · soumis le 12/09</span><div class="card-title" style="font-size:18px">Transco Cotonou SARL</div></div>
+        <span class="tag tag-outline">À examiner</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+        <sc-for list="{{ kycDocs }}" as="d" hint-placeholder-count="5">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); padding-bottom:var(--space-3); border-bottom:1px solid var(--color-divider)">
+            <div style="display:flex; flex-direction:column"><span style="font-size:13.5px">{{ d.label }}</span><span class="text-muted" style="font-size:11.5px">{{ d.note }}</span></div>
+            <div style="display:flex; gap:var(--space-2); align-items:center"><a href="#" style="font-size:12px">Voir</a><span class="{{ d.tagCls }}">{{ d.status }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <div class="field"><label>Décision</label>
+        <div class="seg" style="max-width:520px; white-space:nowrap">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="kd" checked><span>Valider</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="kd"><span>Compléments</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="kd"><span>Refuser</span></label>
+        </div>
+      </div>
+      <div class="field"><label>Message au client</label><textarea class="input" style="min-height:70px">Merci de fournir une attestation d'immatriculation de moins de 3 mois : celle transmise date de janvier 2025.</textarea></div>
+      <button type="button" class="btn btn-primary" style="align-self:flex-start">Enregistrer la décision</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">File d'attente KYC</span>
+        <sc-for list="{{ kycQueue }}" as="k" hint-placeholder-count="5">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span style="font-size:13px">{{ k.name }}</span><span class="text-muted num" style="font-size:12px">{{ k.age }}</span></div>
+        </sc-for>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Ce que bloque un KYC non validé</span><p class="card-body" style="margin:0">Le compte peut tester en sandbox et envoyer au plus 50 messages réels vers des numéros vérifiés. Pas de nom d'expéditeur, pas de WhatsApp, pas de recharge au-delà de 50 000 FCFA.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Niveaux</span><p class="card-body" style="margin:0">Particulier / auto-entrepreneur : pièce d'identité. Entreprise : immatriculation, pièce du représentant légal, justificatif d'adresse. Secteur financier : en plus, agrément de l'autorité de tutelle.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isActions }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Actions sensibles · MaBanque SA</span><div class="card-title" style="font-size:18px">Chaque action est motivée, validée et journalisée</div></div>
+      <sc-for list="{{ actions }}" as="a" hint-placeholder-count="6">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-4); padding-bottom:var(--space-4); border-bottom:1px solid var(--color-divider); flex-wrap:wrap">
+          <div style="display:flex; flex-direction:column; gap:2px; max-width:60ch"><span style="font-size:14px">{{ a.label }}</span><span class="text-muted" style="font-size:12px">{{ a.note }}</span></div>
+          <div style="display:flex; gap:var(--space-2); align-items:center"><span class="tag tag-neutral">{{ a.approval }}</span><button type="button" class="btn btn-secondary">{{ a.cta }}</button></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Exemple · ajustement de solde</span>
+        <div class="field"><label>Montant</label><input class="input num" type="text" value="+ 50 000 FCFA"></div>
+        <div class="field"><label>Nature</label><select class="input"><option>Geste commercial</option><option>Correction d'erreur de facturation</option><option>Compensation d'incident</option></select></div>
+        <div class="field"><label>Motif — obligatoire</label><textarea class="input" style="min-height:60px">Compensation de l'incident INC-2026-091 (Yas Togo, 11/09).</textarea></div>
+        <button type="button" class="btn btn-primary" style="align-self:flex-start">Soumettre à la Finance</button>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Suspension</span><p class="card-body" style="margin:0">Une suspension bloque tout nouvel envoi mais honore les codes OTP pendant 24 h, pour ne pas couper les connexions des clients finaux de la banque. L'Owner est prévenu par email et SMS.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAccess }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+        <div><span class="card-kicker">Accès support</span><div class="card-title" style="font-size:18px">Voir la console comme le client, avec son accord</div></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+          <div class="field"><label>Ticket lié — obligatoire</label><input class="input mono" type="text" value="TCK-4821"></div>
+          <div class="field"><label>Durée</label><select class="input"><option>30 minutes</option><option>2 heures</option></select></div>
+          <div class="field"><label>Mode</label><select class="input"><option>Lecture seule</option><option>Lecture et écriture (validation Owner)</option></select></div>
+        </div>
+        <div class="field"><label>Raison communiquée au client</label><textarea class="input" style="min-height:60px">Vérifier la configuration du point de réception des accusés de livraison signalé en échec.</textarea></div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Demander l'accès au client</button></div>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+        <span class="card-kicker" style="padding:0 var(--space-2)">Accès récents</span>
+        <table class="table" style="min-width:680px; margin-top:var(--space-3)">
+          <thead><tr><th>Date</th><th>Agent</th><th>Ticket</th><th>Mode</th><th>Durée</th><th>Accord</th></tr></thead>
+          <tbody>
+            <tr><td class="num text-muted">13/09 10:02</td><td>Yawa T.</td><td class="mono">TCK-4821</td><td class="text-muted">Lecture seule</td><td class="num text-muted">18 min</td><td><span class="tag tag-accent">Kossi A.</span></td></tr>
+            <tr><td class="num text-muted">02/09 15:40</td><td>Edem K.</td><td class="mono">TCK-4702</td><td class="text-muted">Lecture et écriture</td><td class="num text-muted">42 min</td><td><span class="tag tag-accent">Kossi A.</span></td></tr>
+            <tr><td class="num text-muted">28/08 09:15</td><td>Yawa T.</td><td class="mono">TCK-4655</td><td class="text-muted">Lecture seule</td><td class="num text-muted">—</td><td><span class="tag tag-neutral">Refusé</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Jamais sans accord</span><p class="card-body" style="margin:0">Le client reçoit la demande dans sa console et par email. Sans réponse, pas d'accès. Pendant la session, un bandeau visible de son côté indique qu'un agent NotifyAfrica consulte le compte.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Ce qui reste invisible</span><p class="card-body" style="margin:0">Même en accès support : clés API masquées, contenu des messages masqué, méthodes de paiement masquées. L'agent voit la configuration, pas les données des clients finaux.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Journal</span><p class="card-body" style="margin:0">Chaque page vue et chaque action pendant la session sont journalisées et consultables par le client dans son propre journal d'activité.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Tout compte passe par une vérification d'identité avant d'envoyer en volume ; le niveau exigé dépend du type d'organisation et du secteur. Toute action sensible (ajustement de solde, suspension, changement de mode de paiement, clôture) exige un motif et, au-delà de seuils paramétrés, une seconde validation. L'accès support à une console client exige un ticket lié, l'accord explicite du client, une durée limitée, et reste visible du client.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Organisation en création · KYC soumis · compléments demandés · KYC validé · KYC refusé · active · suspendue (impayé, conformité, demande client) · clôturée. Accès support demandé · accordé · refusé · expiré · révoqué par le client. Action sensible en attente de validation · appliquée · refusée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Suspension d'un compte ayant une campagne en cours : la campagne est mise en pause, les fonds réservés restent réservés. Clôture avec solde positif : remboursement automatique proposé (lot 23). Deux organisations partageant le même numéro de contribuable : alerte doublon avant validation KYC. Owner injoignable pour accorder un accès support : escalade vers un autre membre Admin du client.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Le KYC doit-il être traité uniquement en interne, ou via un prestataire de vérification d'identité ? La suspension pour impayé doit-elle être automatique à J+15 ou toujours décidée par la Finance ? Recommandation : KYC interne en phase 1 avec prestataire en option, et suspension automatique précédée de deux relances.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 24 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 25</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'list' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['list', 'Annuaire'],
+      ['detail', 'Fiche client'],
+      ['kyc', 'Vérification KYC'],
+      ['actions', 'Actions sensibles'],
+      ['access', 'Accès support']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const warn = { color: 'var(--color-accent-300)' };
+    const open = () => this.setState({ tab: 'detail' });
+    const o = (name, id, segment, country, mode, volume, balance, kyc, state, low) =>
+      ({ name, id, segment, country, mode, volume, balance, kyc, state, balStyle: low ? warn : {}, onClick: open });
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isList: t === 'list',
+      isDetail: t === 'detail',
+      isKyc: t === 'kyc',
+      isActions: t === 'actions',
+      isAccess: t === 'access',
+      goActions: () => this.setState({ tab: 'actions' }),
+      goAccess: () => this.setState({ tab: 'access' }),
+
+      orgs: [
+        o('MaBanque SA','org_4410','Grand compte','Togo','Prépayé','612 400','1 249 984 FCFA', tag('tag-accent','Validé'), tag('tag-accent','Actif')),
+        o('Assur Ouest','org_3981','Grand compte','Côte d\u2019Ivoire','Post-payé','178 200','encours 4,2 M', tag('tag-accent','Validé'), tag('tag-accent','Actif')),
+        o('MicroCrédit Kara','org_4822','PME','Togo','Prépayé','71 400','84 200 FCFA', tag('tag-accent','Validé'), tag('tag-accent','Actif'), true),
+        o('Agence Digitale Lomé','org_3207','Revendeur','Togo','Post-payé','122 000','encours 2,8 M · retard 18 j', tag('tag-accent','Validé'), tag('tag-outline','Relance impayé'), true),
+        o('Transco Cotonou SARL','org_5127','PME','Bénin','Prépayé','50','48 000 FCFA', tag('tag-outline','À examiner'), tag('tag-neutral','Limité')),
+        o('Pharma Lomé','org_5090','PME','Togo','Prépayé','6 200','12 400 FCFA', tag('tag-accent','Validé'), tag('tag-accent','Actif'), true),
+        o('Promo Flash CI','org_4410b','Libre-service','Côte d\u2019Ivoire','Prépayé','0','0 FCFA', tag('tag-accent','Validé'), tag('tag-outline','Suspendu · conformité')),
+        o('EduNet Togo','org_5133','PME','Togo','Prépayé','0','0 FCFA', tag('tag-neutral','Compléments demandés'), tag('tag-neutral','Limité'))
+      ],
+
+      history: [
+        { at:'13/09/2026', label:'Devis NA-2026-031 soumis à validation direction', who:'Serge K. · Commercial' },
+        { at:'13/09/2026', label:'Accès support accordé · TCK-4821 · lecture seule', who:'Kossi A. (Owner) · agent Yawa T.' },
+        { at:'11/09/2026', label:'Compensation incident proposée · 50 000 FCFA', who:'Support · en attente Finance' },
+        { at:'01/09/2026', label:'Recharge Flooz 500 000 FCFA', who:'Afi M. · Billing Manager' },
+        { at:'04/2026', label:'Projet « Agence — pilote » créé', who:'Kossi A. · Owner' },
+        { at:'03/2026', label:'Contrat CT-2026-014 signé · remise − 6,4 %', who:'Kossi A. · Owner' }
+      ],
+
+      kycDocs: [
+        { label:'Attestation d\u2019immatriculation (RCCM)', note:'Datée du 14/01/2025 · plus de 3 mois', status:'Non conforme', tagCls:'tag tag-outline' },
+        { label:'Numéro d\u2019identification fiscale', note:'IFU 3202400118874 · cohérent avec la raison sociale', status:'Conforme', tagCls:'tag tag-accent' },
+        { label:'Pièce d\u2019identité du représentant légal', note:'Passeport · valide jusqu\u2019en 2031', status:'Conforme', tagCls:'tag tag-accent' },
+        { label:'Justificatif d\u2019adresse', note:'Facture SBEE · 08/2026', status:'Conforme', tagCls:'tag tag-accent' },
+        { label:'Usage déclaré', note:'Notifications de livraison et codes de retrait · aucun marketing', status:'Cohérent', tagCls:'tag tag-accent' }
+      ],
+      kycQueue: [
+        { name:'Transco Cotonou SARL', age:'1 j' },
+        { name:'EduNet Togo · compléments', age:'3 j' },
+        { name:'Sahel Retail', age:'4 j' },
+        { name:'Clinique du Golfe', age:'5 j' },
+        { name:'+ 19 autres', age:'moy. 1,4 j' }
+      ],
+
+      actions: [
+        { label:'Ajuster le solde', note:'Crédit ou débit manuel. Motif obligatoire, visible sur le relevé du client.', approval:'Finance > 100 000 FCFA', cta:'Ajuster' },
+        { label:'Passer en post-payé', note:'Ouvre un encours avec plafond et échéance. Exige un contrat signé.', approval:'Finance + Direction', cta:'Configurer' },
+        { label:'Modifier le plafond d\u2019encours', note:'Augmenter ou réduire la limite de crédit accordée.', approval:'Finance', cta:'Modifier' },
+        { label:'Suspendre le compte', note:'Bloque les nouveaux envois. Les OTP restent honorés 24 h.', approval:'Responsable', cta:'Suspendre' },
+        { label:'Transférer la propriété', note:'Change l\u2019Owner à la demande écrite du représentant légal.', approval:'Conformité', cta:'Transférer' },
+        { label:'Clôturer l\u2019organisation', note:'Irréversible. Solde remboursé, données conservées selon la durée légale.', approval:'Direction', cta:'Clôturer' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

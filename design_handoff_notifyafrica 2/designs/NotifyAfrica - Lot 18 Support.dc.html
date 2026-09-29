@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 18 · Support &amp; état du service</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Support prioritaire</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Support &amp; état du service</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Cinq écrans dont la moitié du travail est de réduire le nombre de tickets. Le centre d'aide et la page d'état répondent aux deux questions les plus fréquentes — « pourquoi ce message n'est pas arrivé » et « est-ce que ça vient de vous » — sans intervention humaine.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isHelp }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; flex-direction:column; gap:var(--space-3); max-width:640px">
+        <span class="card-kicker">Centre d'aide</span>
+        <h4 style="margin:0">Que cherchez-vous ?</h4>
+        <input class="input" type="text" placeholder="Ex. pourquoi un SMS est en échec, comment obtenir un nom d'expéditeur">
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <span class="tag tag-accent">Codes d'échec</span><span class="tag tag-neutral">Nom d'expéditeur</span><span class="tag tag-neutral">Facturation</span><span class="tag tag-neutral">Clés API</span><span class="tag tag-neutral">Paliers de prix</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--space-4)">
+      <sc-for list="{{ helpCats }}" as="c" hint-placeholder-count="6">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span class="card-title" style="font-size:15px">{{ c.name }}</span><span class="tag tag-neutral num">{{ c.count }}</span></div>
+          <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+            <sc-for list="{{ c.items }}" as="i">
+              <a href="#" style="font-size:13px">{{ i }}</a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Contextuel</span><p class="card-body" style="margin:0">Un message en échec affiche directement l'article qui explique son code, avec la règle de facturation associée. Le support n'est proposé qu'ensuite.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Deux langues</span><p class="card-body" style="margin:0">Français et anglais, la même base d'articles. Le choix suit la langue de l'interface du membre, pas celle de l'organisation.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Toujours un recours</span><p class="card-body" style="margin:0">Chaque article se termine par « cela n'a pas résolu mon problème », qui ouvre un ticket pré-rempli avec le contexte de l'article et du compte.</p><button type="button" class="btn btn-primary" onClick="{{ goNew }}" style="align-self:flex-start">Ouvrir un ticket</button></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isNew }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Nouveau ticket</span><div class="card-title" style="font-size:18px">Décrire le problème</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Catégorie</label><select class="input"><option>Délivrabilité d'un message</option><option>Facturation ou solde</option><option>Intégration API</option><option>Nom d'expéditeur ou modèle</option><option>Accès et sécurité</option><option>Autre</option></select></div>
+        <div class="field"><label>Priorité</label><select class="input" onChange="{{ onPriority }}"><option>Normale — question ou demande</option><option>Élevée — dégradation du service</option><option>Critique — service interrompu</option></select></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Projet concerné</label><select class="input"><option>Application mobile</option><option>Site web</option><option>Agence — pilote</option></select></div>
+        <div class="field"><label>Environnement</label><select class="input"><option>Production</option><option>Bac à sable</option></select></div>
+      </div>
+      <div class="field"><label>Sujet</label><input class="input" type="text" value="Taux d'échec anormal sur Yas Togo depuis le 11/09"></div>
+      <div class="field"><label>Description</label><textarea class="input" style="min-height:120px">Depuis le 11 septembre à 14 h, les messages vers les numéros Yas Togo affichent un délai médian de 22 s contre 6 s habituellement, et le taux d'échec est passé de 2,6 % à 4,2 %. Les autres opérateurs sont normaux. Identifiants de messages concernés joints.</textarea></div>
+      <div class="field"><label>Éléments joints automatiquement</label>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <span class="tag tag-accent">12 identifiants de messages</span><span class="tag tag-accent">Journal des appels API · 24 h</span><span class="tag tag-accent">Statistiques opérateur · 7 j</span><span class="tag tag-neutral">Clé API utilisée (masquée)</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Envoyer le ticket</button><button type="button" class="btn btn-secondary">Joindre un fichier</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Engagement de réponse</span>
+        <div style="display:flex; align-items:baseline; gap:var(--space-2)"><span class="num" style="font-size:27px; line-height:1.05; color:var(--color-accent-300)">{{ slaValue }}</span><span class="text-muted" style="font-size:13px">{{ slaUnit }}</span></div>
+        <p class="card-body" style="margin:0">{{ slaNote }}</p>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Votre contrat</span><span style="font-size:12px">Support prioritaire</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Heures ouvrées</span><span style="font-size:12px">8 h – 19 h GMT, lun-ven</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:12px">Astreinte critique</span><span style="font-size:12px">24 h / 7 j</span></div>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Avant d'envoyer</span><p class="card-body" style="margin:0">Un incident est déjà ouvert sur Yas Togo depuis le 11/09 à 14 h 02. Votre problème y est probablement lié — le suivre vous informera plus vite qu'un ticket.</p><button type="button" class="btn btn-secondary" onClick="{{ goIncidents }}" style="align-self:flex-start">Voir l'incident</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Pourquoi ces pièces jointes</span><p class="card-body" style="margin:0">Les identifiants de messages et les journaux permettent au support de trancher en une réponse au lieu de trois échanges. Aucun contenu de message n'est transmis, seulement des métadonnées.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTickets }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Statut</label><select class="input"><option>Tous</option><option>Ouvert</option><option>En attente de votre réponse</option><option>Résolu</option></select></div>
+        <div class="field"><label>Catégorie</label><select class="input"><option>Toutes</option><option>Délivrabilité</option><option>Facturation</option><option>API</option></select></div>
+        <div class="field"><label>Priorité</label><select class="input"><option>Toutes</option><option>Critique</option><option>Élevée</option><option>Normale</option></select></div>
+        <div class="field"><label>Recherche</label><input class="input" type="text" placeholder="Sujet ou référence"></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent">2 ouverts</span><span class="tag tag-neutral">1 en attente de vous</span><button type="button" class="btn btn-primary" onClick="{{ goNew }}" style="margin-left:auto">Nouveau ticket</button></div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:920px">
+        <thead><tr><th>Référence</th><th>Sujet</th><th>Catégorie</th><th>Priorité</th><th>Dernière activité</th><th>Statut</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ tickets }}" as="k" hint-placeholder-count="6">
+            <tr>
+              <td class="num"><strong>{{ k.ref }}</strong></td>
+              <td style="font-size:12.5px">{{ k.subject }}<div class="text-muted" style="font-size:11px">{{ k.author }}</div></td>
+              <td class="text-muted" style="font-size:12px">{{ k.cat }}</td>
+              <td>{{ k.priority }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ k.seen }}</td>
+              <td>{{ k.status }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">SUP-2026-0912 · Délivrabilité · priorité élevée</span><div class="card-title" style="font-size:17px">Taux d'échec anormal sur Yas Togo</div></div>
+        <span class="tag tag-accent">Réponse sous 1 h 20</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <sc-for list="{{ thread }}" as="m" hint-placeholder-count="4">
+          <div style="{{ m.rowStyle }}">
+            <div style="{{ m.bubbleStyle }}">
+              <div style="display:flex; justify-content:space-between; gap:var(--space-4); margin-bottom:6px"><span style="font-size:12px">{{ m.who }}</span><span class="text-muted num" style="font-size:11px">{{ m.at }}</span></div>
+              <p class="card-body" style="margin:0; font-size:13px">{{ m.text }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:var(--space-2); align-items:flex-end">
+        <div class="field" style="flex:1"><label>Répondre</label><input class="input" type="text" placeholder="Votre message"></div>
+        <button type="button" class="btn btn-primary">Envoyer</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isStatus }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-6)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+          <span class="card-kicker">État du service</span>
+          <h4 style="margin:0">Dégradation partielle — un opérateur affecté</h4>
+          <span class="text-muted num" style="font-size:12px">Dernière vérification : il y a 30 secondes</span>
+        </div>
+        <button type="button" class="btn btn-secondary">S'abonner aux alertes</button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:var(--space-3)">
+        <sc-for list="{{ components }}" as="c" hint-placeholder-count="8">
+          <div class="card" style="gap:var(--space-2); background:var(--color-neutral-900)">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-3)"><span style="font-size:13px">{{ c.name }}</span><span class="{{ c.tagCls }}">{{ c.state }}</span></div>
+            <div style="display:flex; gap:2px; align-items:flex-end; height:20px">
+              <sc-for list="{{ c.days }}" as="d">
+                <div title="{{ d.title }}" style="{{ d.style }}"></div>
+              </sc-for>
+            </div>
+            <span class="text-muted num" style="font-size:11px">{{ c.uptime }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:var(--space-4); flex-wrap:wrap; align-items:center">
+        <span class="text-muted num" style="font-size:11px">90 derniers jours</span>
+        <span style="display:flex; gap:6px; align-items:center; font-size:11px" class="text-muted"><span style="width:8px;height:8px;background:var(--color-accent);display:inline-block;border-radius:2px"></span> Nominal</span>
+        <span style="display:flex; gap:6px; align-items:center; font-size:11px" class="text-muted"><span style="width:8px;height:8px;background:var(--color-accent-700);display:inline-block;border-radius:2px"></span> Dégradé</span>
+        <span style="display:flex; gap:6px; align-items:center; font-size:11px" class="text-muted"><span style="width:8px;height:8px;background:var(--color-neutral-600);display:inline-block;border-radius:2px"></span> Interruption</span>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Page publique</span><p class="card-body" style="margin:0">Cette page existe aussi hors connexion, sur un domaine indépendant de la plateforme : elle reste accessible même si la console est en panne.</p><a href="#" style="font-size:13px">status.notifyafrica.com</a></div>
+      <div class="card elev-sm"><span class="card-kicker">Par opérateur</span><p class="card-body" style="margin:0">L'état est détaillé opérateur par opérateur, pas seulement par canal : c'est ce niveau de détail qui évite les tickets « mes SMS ne partent pas ».</p></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Maintenance planifiée</span><p class="card-body" style="margin:0">Bascule d'infrastructure le 21 septembre de 2 h à 4 h GMT. Aucune interruption d'envoi attendue, les appels API peuvent voir une latence accrue.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isIncidents }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Incident en cours · INC-2026-041</span><div class="card-title" style="font-size:18px">Latence et échecs élevés sur Yas Togo</div></div>
+        <span class="tag tag-outline">Identifié · correctif en cours</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Début</span><span class="num" style="font-size:15px">11/09 · 14:02 GMT</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Durée</span><span class="num" style="font-size:15px">2 j 00 h</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Périmètre</span><span style="font-size:15px">SMS · Yas Togo</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Vos messages affectés</span><span class="num" style="font-size:15px">18 400</span></div>
+      </div>
+      <div>
+        <span class="card-kicker">Chronologie</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-4); margin-top:var(--space-3)">
+          <sc-for list="{{ timeline }}" as="e" hint-placeholder-count="5">
+            <div style="display:flex; gap:var(--space-4); align-items:flex-start">
+              <span class="num text-muted" style="font-size:12px; min-width:86px">{{ e.at }}</span>
+              <span style="{{ e.dotStyle }}"></span>
+              <div style="display:flex; flex-direction:column; gap:2px">
+                <span style="font-size:13.5px">{{ e.label }}</span>
+                <span class="text-muted" style="font-size:12.5px">{{ e.detail }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="card" style="background:var(--color-neutral-900); gap:var(--space-2)">
+        <span class="card-kicker">Impact sur votre facturation</span>
+        <p class="card-body" style="margin:0">Les 4 200 messages non livrés ne sont pas facturés. Les messages routés par la voie de secours à un coût supérieur vous sont facturés au tarif normal : la différence est absorbée par NotifyAfrica pendant toute la durée de l'incident.</p>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <span class="card-kicker" style="padding:0 var(--space-2)">Historique des incidents</span>
+      <table class="table" style="min-width:840px; margin-top:var(--space-3)">
+        <thead><tr><th>Référence</th><th>Objet</th><th>Périmètre</th><th>Durée</th><th>Vos messages</th><th>Rapport</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ history }}" as="h" hint-placeholder-count="5">
+            <tr>
+              <td class="num"><strong>{{ h.ref }}</strong></td>
+              <td style="font-size:12.5px">{{ h.subject }}</td>
+              <td class="text-muted" style="font-size:12px">{{ h.scope }}</td>
+              <td class="num text-muted">{{ h.duration }}</td>
+              <td class="num">{{ h.affected }}</td>
+              <td>{{ h.report }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div class="card elev-sm"><span class="card-kicker">Rapport post-incident</span><p class="card-body" style="margin:0">Tout incident dépassant 30 minutes donne lieu à un rapport publié sous 5 jours ouvrés : cause, chronologie, impact chiffré, mesures correctives. C'est une exigence des clients bancaires, et le meilleur outil de confiance après une panne.</p></div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">L'engagement de réponse dépend du contrat et de la priorité déclarée ; une priorité critique hors astreinte contractuelle est traitée en priorité élevée, avec explication. Un ticket lié à un incident ouvert y est rattaché plutôt que traité séparément. Les messages non livrés pour cause d'incident ne sont jamais facturés. Tout incident de plus de 30 minutes produit un rapport public.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Ticket brouillon · envoyé · pris en charge · en attente de votre réponse · escaladé · résolu · rouvert · fermé automatiquement après 7 jours sans réponse. Service nominal · dégradé · interrompu · maintenance planifiée. Incident détecté · identifié · correctif en cours · surveillé · résolu.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Un ticket critique ouvert par un Viewer sans droit de voir la facturation ne doit pas exposer de montants dans les réponses. Un incident sur un opérateur d'un seul pays ne doit pas afficher « service interrompu » globalement. Un ticket ouvert pendant une panne de la console doit rester possible : l'email de support est le canal de repli, indiqué sur la page d'état publique.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il un canal de discussion en direct pour les comptes sous contrat prioritaire, ou les tickets suffisent-ils ? Le direct améliore la perception mais impose une couverture horaire réelle. Les rapports post-incident doivent-ils être publics ou réservés aux clients affectés ? Recommandation : tickets avec astreinte téléphonique pour le critique, rapports publics pour les incidents majeurs.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 18 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Fin du périmètre Console client · Suivant : Back-office (lots 19+)</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'help', priority: 'Normale — question ou demande' };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['help', "Centre d'aide"],
+      ['new', 'Nouveau ticket'],
+      ['tickets', 'Mes tickets'],
+      ['status', 'État du service'],
+      ['incidents', 'Incidents']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const link = txt => React.createElement('a', { href: '#', style: { fontSize: '12px' } }, txt);
+    const muted = txt => React.createElement('span', { className: 'text-muted', style: { fontSize: '12px' } }, txt);
+
+    const slaMap = {
+      'Normale — question ou demande': { v: '8', u: 'heures ouvrées', n: "Une question de configuration ou de facturation est traitée dans la journée ouvrée." },
+      'Élevée — dégradation du service': { v: '2', u: 'heures ouvrées', n: "Une dégradation mesurable — délais, taux d'échec, latence API — est prise en charge en priorité." },
+      'Critique — service interrompu': { v: '30', u: 'minutes · 24 h / 7 j', n: "Service totalement interrompu en production. Une astreinte est mobilisée, y compris la nuit et le week-end." }
+    };
+    const sla = slaMap[this.state.priority] || slaMap['Normale — question ou demande'];
+
+    const dayBar = code => ({
+      flex: 1,
+      minWidth: '2px',
+      height: code === 'n' ? '12px' : code === 'd' ? '16px' : '20px',
+      borderRadius: '1px',
+      background: code === 'n' ? 'var(--color-neutral-600)' : code === 'd' ? 'var(--color-accent-700)' : 'var(--color-accent)',
+      opacity: code === 'o' ? 0.75 : 1
+    });
+    const days = pattern => {
+      const arr = [];
+      for (let i = 0; i < 30; i++) {
+        const code = pattern[i] || 'o';
+        arr.push({ title: 'J-' + (30 - i) + ' · ' + (code === 'o' ? 'nominal' : code === 'd' ? 'dégradé' : 'interruption'), style: dayBar(code) });
+      }
+      return arr;
+    };
+    const dot = on => ({
+      width: '8px', height: '8px', flex: 'none', marginTop: '5px', borderRadius: '50%',
+      background: on ? 'var(--color-accent)' : 'var(--color-neutral-700)'
+    });
+
+    const bubble = mine => ({
+      maxWidth: '78%',
+      padding: 'var(--space-3) var(--space-4)',
+      borderRadius: 'var(--radius-md)',
+      border: '1px solid ' + (mine ? 'var(--color-accent)' : 'var(--color-divider)'),
+      background: mine ? 'color-mix(in srgb, var(--color-accent) 10%, transparent)' : 'var(--color-neutral-900)'
+    });
+    const row = mine => ({ display: 'flex', justifyContent: mine ? 'flex-end' : 'flex-start' });
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isHelp: t === 'help',
+      isNew: t === 'new',
+      isTickets: t === 'tickets',
+      isStatus: t === 'status',
+      isIncidents: t === 'incidents',
+      goNew: () => this.setState({ tab: 'new' }),
+      goIncidents: () => this.setState({ tab: 'incidents' }),
+
+      helpCats: [
+        { name:'Délivrabilité', count:'18 articles', items:['Comprendre les codes d\u2019échec SMS','Pourquoi un message livré n\u2019est pas reçu','Délais par opérateur et par pays','Ce qui est facturé en cas d\u2019échec'] },
+        { name:'Prix et facturation', count:'14 articles', items:['Comment fonctionnent les paliers de volume','Lire une facture de consommation','Solde disponible, réservé et en attente','Obtenir un devis sur mesure'] },
+        { name:'Intégration API', count:'22 articles', items:['Première requête en 5 minutes','Gérer le code 402 (solde insuffisant)','Vérifier la signature d\u2019un webhook','Clés d\u2019idempotence et réseaux instables'] },
+        { name:'Noms d\u2019expéditeur et modèles', count:'11 articles', items:['Faire valider un nom d\u2019expéditeur','Pourquoi un modèle WhatsApp est rejeté','Catégories WhatsApp et prix associés','Mentions obligatoires en marketing'] },
+        { name:'Campagnes et contacts', count:'9 articles', items:['Importer un fichier de destinataires','Gérer les désinscriptions','Fenêtres d\u2019envoi et horaires autorisés','Tests A/B sur un échantillon'] },
+        { name:'Compte et sécurité', count:'12 articles', items:['Activer la double authentification','Les sept rôles expliqués','Révoquer une session suspecte','Restreindre l\u2019accès par adresse IP'] }
+      ],
+
+      onPriority: e => this.setState({ priority: e.target.value }),
+      slaValue: sla.v,
+      slaUnit: sla.u,
+      slaNote: sla.n,
+
+      tickets: [
+        { ref:'SUP-2026-0912', subject:"Taux d'échec anormal sur Yas Togo", author:'Yao Mensah · 13/09', cat:'Délivrabilité', priority: tag('tag-outline','Élevée'), seen:'il y a 40 min', status: tag('tag-accent','Pris en charge') },
+        { ref:'SUP-2026-0908', subject:"Nom d'expéditeur MABANQUE refusé au Bénin", author:'Sarah Koffi · 09/09', cat:'Expéditeur', priority: tag('tag-neutral','Normale'), seen:'il y a 2 j', status: tag('tag-outline','En attente de votre réponse') },
+        { ref:'SUP-2026-0901', subject:'Écart de 2 340 FCFA sur la facture d\u2019août', author:'Fatou Diallo · 02/09', cat:'Facturation', priority: tag('tag-neutral','Normale'), seen:'il y a 6 j', status: tag('tag-accent','Résolu · avoir émis') },
+        { ref:'SUP-2026-0824', subject:'Webhook non appelé sur les échecs OTP', author:'Yao Mensah · 24/08', cat:'API', priority: tag('tag-outline','Élevée'), seen:'il y a 15 j', status: tag('tag-accent','Résolu') },
+        { ref:'SUP-2026-0811', subject:'Ajouter Wave comme moyen de paiement', author:'Fatou Diallo · 11/08', cat:'Facturation', priority: tag('tag-neutral','Normale'), seen:'il y a 28 j', status: tag('tag-accent','Résolu · livré') },
+        { ref:'SUP-2026-0729', subject:'Accès auditeur externe en lecture seule', author:'Kodjo Amegan · 29/07', cat:'Sécurité', priority: tag('tag-neutral','Normale'), seen:'il y a 41 j', status: tag('tag-neutral','Fermé') }
+      ],
+
+      thread: [
+        { who:'Yao Mensah (vous)', at:'13/09 · 13:20', text:"Depuis le 11/09 à 14 h, les messages vers Yas Togo affichent 22 s de délai médian contre 6 s habituellement, et 4,2 % d'échec. Les autres opérateurs sont normaux.", rowStyle: row(true), bubbleStyle: bubble(true) },
+        { who:'Support NotifyAfrica · Aïcha', at:'13/09 · 13:38', text:"Confirmé de notre côté : incident INC-2026-041 ouvert sur Yas Togo. La bascule sur la route de secours est active depuis 14 h 40 le 11/09, ce qui explique la latence résiduelle.", rowStyle: row(false), bubbleStyle: bubble(false) },
+        { who:'Support NotifyAfrica · Aïcha', at:'13/09 · 13:39', text:"Les 4 200 messages non livrés ne vous seront pas facturés — le recrédit est automatique et apparaîtra dans vos transactions sous 48 h. Le surcoût de la route de secours est absorbé par NotifyAfrica.", rowStyle: row(false), bubbleStyle: bubble(false) },
+        { who:'Yao Mensah (vous)', at:'13/09 · 13:52', text:"Merci. Avez-vous une estimation de retour à la normale ? Nous avons une campagne de 50 000 messages planifiée demain matin.", rowStyle: row(true), bubbleStyle: bubble(true) },
+        { who:'Support NotifyAfrica · Aïcha', at:'13/09 · 14:05', text:"L'opérateur annonce un correctif dans la nuit du 13 au 14. Nous recommandons de décaler la campagne à 11 h pour bénéficier de la route principale restaurée — sans surcoût.", rowStyle: row(false), bubbleStyle: bubble(false) }
+      ],
+
+      components: [
+        { name:'API d\u2019envoi', state:'Nominal', tagCls:'tag tag-accent', days: days({}), uptime:'99,98 % sur 90 j' },
+        { name:'Console web', state:'Nominal', tagCls:'tag tag-accent', days: days({}), uptime:'99,99 % sur 90 j' },
+        { name:'SMS · Togo — Moov', state:'Nominal', tagCls:'tag tag-accent', days: days({ 22: 'd' }), uptime:'99,94 % sur 90 j' },
+        { name:'SMS · Togo — Yas', state:'Dégradé', tagCls:'tag tag-outline', days: days({ 27: 'd', 28: 'd', 29: 'd', 22: 'n' }), uptime:'98,71 % sur 90 j' },
+        { name:'SMS · Bénin', state:'Nominal', tagCls:'tag tag-accent', days: days({}), uptime:'99,91 % sur 90 j' },
+        { name:'OTP', state:'Nominal', tagCls:'tag tag-accent', days: days({ 22: 'd' }), uptime:'99,96 % sur 90 j' },
+        { name:'WhatsApp Business', state:'Nominal', tagCls:'tag tag-accent', days: days({ 14: 'd' }), uptime:'99,89 % sur 90 j' },
+        { name:'Email', state:'Nominal', tagCls:'tag tag-accent', days: days({}), uptime:'99,97 % sur 90 j' }
+      ],
+
+      timeline: [
+        { at:'11/09 14:02', label:'Détection automatique', detail:'Le délai médian sur Yas Togo dépasse le seuil d\u2019alerte de 15 s. Incident ouvert sans intervention humaine.', dotStyle: dot(true) },
+        { at:'11/09 14:18', label:'Confirmation auprès de l\u2019opérateur', detail:'Yas confirme une maintenance non annoncée sur sa passerelle de messagerie.', dotStyle: dot(true) },
+        { at:'11/09 14:40', label:'Bascule sur la route de secours', detail:'Le trafic est rerouté. Délai ramené de 45 s à 22 s. Surcoût absorbé par NotifyAfrica.', dotStyle: dot(true) },
+        { at:'12/09 09:00', label:'Mise à jour', detail:'L\u2019opérateur annonce un correctif dans la nuit du 13 au 14 septembre.', dotStyle: dot(true) },
+        { at:'13/09 14:05', label:'Surveillance', detail:'Situation stable. 4 200 messages non livrés recrédités automatiquement.', dotStyle: dot(false) }
+      ],
+
+      history: [
+        { ref:'INC-2026-041', subject:'Latence et échecs sur Yas Togo', scope:'SMS · Togo', duration:'en cours', affected:'18 400', report: muted('à venir') },
+        { ref:'INC-2026-038', subject:'Interruption fournisseur de 42 minutes', scope:'SMS · multi-pays', duration:'42 min', affected:'2 958', report: link('Rapport') },
+        { ref:'INC-2026-031', subject:'Latence API élevée (p95 à 2,4 s)', scope:'API', duration:'1 h 12', affected:'—', report: link('Rapport') },
+        { ref:'INC-2026-024', subject:'Modèles WhatsApp temporairement rejetés', scope:'WhatsApp', duration:'3 h 40', affected:'1 204', report: link('Rapport') },
+        { ref:'INC-2026-019', subject:'Retard de consolidation des statistiques', scope:'Statistiques', duration:'5 h', affected:'—', report: link('Rapport') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

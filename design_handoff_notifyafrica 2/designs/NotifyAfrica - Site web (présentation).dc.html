@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  /* Variante claire du thème Nocturne : seuls les tokens de fond, de texte,
+     d'accent et d'élévation sont réaccordés — type, espacements, rayons et
+     composants restent ceux du design system. */
+  :root {
+    --color-bg: #f7f7fb;
+    --color-surface: #ffffff;
+    --color-text: #1b1b24;
+    --color-divider: color-mix(in srgb, #1b1b24 14%, transparent);
+    --color-accent: #5d5294;
+    --color-accent-300: #423a6a;
+    --shadow-sm: 0 0 0 1px #e4e7f5;
+    --shadow-md: 0 0 0 1px #e4e7f5, 0 6px 18px rgba(27,27,36,.08);
+    --shadow-lg: 0 0 0 1px #cfd3e5, 0 16px 40px rgba(27,27,36,.12);
+  }
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="min-height:100%; display:flex; flex-direction:column">
+
+  <div class="nav" style="max-width:1180px; width:100%; margin:0 auto; padding:var(--space-6) var(--space-8); gap:var(--space-6); flex-wrap:wrap">
+    <a href="#" class="nav-brand" style="display:flex; align-items:center; margin-right:auto"><img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:38px; width:auto; border-radius:var(--radius-md)"></a>
+    <a href="#" onClick="{{ goProducts }}" style="{{ navProducts }}">Produits</a>
+    <a href="#" onClick="{{ goSolutions }}" style="{{ navSolutions }}">Solutions</a>
+    <a href="#" onClick="{{ goPricing }}" style="{{ navPricing }}">Tarifs</a>
+    <a href="#" onClick="{{ goDevelopers }}" style="{{ navDevelopers }}">Développeurs</a>
+    <a href="#" onClick="{{ goDocs }}" style="{{ navDocs }}">Docs</a>
+    <div style="display:flex; gap:var(--space-2); align-items:center">
+      <a href="#" class="btn btn-secondary">Se connecter</a>
+      <a href="#" class="btn btn-primary">Créer un compte</a>
+    </div>
+  </div>
+
+  <div style="max-width:1180px; width:100%; margin:0 auto; padding:0 var(--space-8) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:calc(var(--space-8) * 2)">
+
+    <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap">
+      <button type="button" class="btn" onClick="{{ goHome }}" style="{{ homeStyle }}">Accueil</button>
+      <button type="button" class="btn" onClick="{{ goProducts }}" style="{{ productsStyle }}">Produits</button>
+      <button type="button" class="btn" onClick="{{ goSolutions }}" style="{{ solutionsStyle }}">Solutions</button>
+      <button type="button" class="btn" onClick="{{ goPricing }}" style="{{ pricingStyle }}">Tarifs</button>
+      <button type="button" class="btn" onClick="{{ goDevelopers }}" style="{{ developersStyle }}">Développeurs</button>
+      <button type="button" class="btn" onClick="{{ goDocs }}" style="{{ docsStyle }}">Docs</button>
+      <span class="text-muted" style="font-size:11px; margin-left:auto">Tarifs affichés à titre d'exemple · modifiables dans l'espace d'administration</span>
+    </div>
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 2)">
+
+      <section style="display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:calc(var(--space-8) * 1.5); align-items:center; position:relative; padding:calc(var(--space-8) * 1.5) 0; background:radial-gradient(120% 80% at 8% 0%, color-mix(in srgb, var(--color-accent) 13%, transparent) 0%, transparent 62%)">
+        <div style="display:flex; flex-direction:column; gap:var(--space-6); align-items:flex-start">
+          <div style="display:flex; align-items:center; gap:var(--space-3)">
+            <span style="display:block; width:36px; height:2px; background:var(--color-accent)"></span>
+            <span class="text-muted" style="font-size:11px; letter-spacing:.14em; text-transform:uppercase">Plateforme de communication</span>
+          </div>
+          <h1 style="font-size:clamp(38px,5.4vw,64px); line-height:1.02; max-width:17ch; margin:0">Parlez à toute l'Afrique depuis <span style="color:var(--color-accent-300)">une seule plateforme</span>.</h1>
+          <p class="text-muted" style="max-width:46ch; font-size:17px; margin:0">SMS, codes de sécurité, WhatsApp Business et Email — routage multi-opérateurs, tarifs transparents, paiement à l'usage sans abonnement.</p>
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap">
+            <a href="#" class="btn btn-primary">Créer un compte</a>
+            <a href="#" class="btn btn-secondary">Parler à un expert</a>
+          </div>
+          <p class="text-muted" style="margin:0; font-size:12px">100 messages de test offerts · aucune carte bancaire requise</p>
+        </div>
+        <div class="card elev-md" style="gap:var(--space-4)">
+          <div class="card-kicker">Envoi en cours</div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline"><span style="font-size:15px">Campagne « Rappel échéance »</span><span class="tag tag-accent">En cours</span></div>
+          <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-4)"><span class="text-muted" style="font-size:13px">Destinataires</span><span class="num" style="font-size:13px">50 000</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-4)"><span class="text-muted" style="font-size:13px">Livrés</span><span class="num" style="font-size:13px">48 912</span></div>
+            <div style="display:flex; justify-content:space-between; gap:var(--space-4)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="num" style="font-size:13px">6,80 FCFA</span></div>
+            <div style="height:4px; border-radius:2px; background:var(--color-neutral-200); overflow:hidden"><div style="width:78%; height:100%; background:var(--color-accent)"></div></div>
+          </div>
+          <hr class="hr" style="margin:var(--space-2) 0">
+          <div style="display:flex; justify-content:space-between; align-items:baseline"><span style="font-size:14px">Coût total</span><span class="num" style="font-size:20px; color:var(--color-accent-300)">340 000 FCFA</span></div>
+          <div style="display:flex; justify-content:space-between"><span class="text-muted" style="font-size:12px">Solde après envoi</span><span class="num text-muted" style="font-size:12px">1 260 000 FCFA</span></div>
+        </div>
+      </section>
+
+      <section style="border-radius:var(--radius-lg); background:var(--color-section); padding:calc(var(--space-8) * 1.6) calc(var(--space-8) * 1.5); display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-8)">
+        <div style="display:flex; flex-direction:column; gap:var(--space-1)"><div class="num" style="font-size:clamp(30px,3.4vw,42px); color:#ffffff; line-height:1">12</div><div style="font-size:12px; color:#cfd3e5">pays couverts</div></div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-1)"><div class="num" style="font-size:clamp(30px,3.4vw,42px); color:#ffffff; line-height:1">28</div><div style="font-size:12px; color:#cfd3e5">opérateurs connectés</div></div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-1)"><div class="num" style="font-size:clamp(30px,3.4vw,42px); color:#ffffff; line-height:1">98,4 %</div><div style="font-size:12px; color:#cfd3e5">taux de délivrabilité</div></div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-1)"><div class="num" style="font-size:clamp(30px,3.4vw,42px); color:#ffffff; line-height:1">99,95 %</div><div style="font-size:12px; color:#cfd3e5">disponibilité sur 30 jours</div></div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-8)">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-6); flex-wrap:wrap">
+          <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+            <h6 style="margin:0; color:var(--color-accent)">Produits</h6>
+            <h2 style="margin:0; max-width:22ch">Quatre canaux, un seul compte</h2>
+          </div>
+          <p class="text-muted" style="margin:0; max-width:34ch; font-size:13px">Activez ce dont vous avez besoin. Un solde unique, une seule facture.</p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-6)">
+          <sc-for list="{{ products }}" as="p" hint-placeholder-count="4">
+            <div class="card" style="{{ p.cardStyle }}" style-hover="transform: translateY(-3px)">
+              <div style="display:flex; align-items:center; gap:var(--space-4)">
+                <div style="{{ p.monoStyle }}">{{ p.mono }}</div>
+                <div style="display:flex; flex-direction:column">
+                  <span class="card-kicker">{{ p.kicker }}</span>
+                  <span class="card-title" style="font-size:19px">{{ p.name }}</span>
+                </div>
+                <sc-if value="{{ p.featured }}"><span class="tag tag-accent" style="margin-left:auto">Le plus choisi</span></sc-if>
+              </div>
+              <div style="display:flex; align-items:baseline; gap:var(--space-2)">
+                <span class="num" style="font-size:34px; line-height:1; color:var(--color-accent-300)">{{ p.price }}</span>
+                <span class="text-muted" style="font-size:12px">{{ p.unit }}</span>
+              </div>
+              <span style="display:block; width:48px; height:2px; background:var(--color-accent)"></span>
+              <p class="card-body" style="font-size:13.5px">{{ p.desc }}</p>
+              <p class="text-muted" style="margin:0; font-size:12px">{{ p.chips }}</p>
+              <div style="display:flex; gap:var(--space-3); align-items:center; margin-top:auto">
+                <a href="#" class="btn btn-primary" onClick="{{ goProducts }}">En savoir plus</a>
+                <a href="#" class="btn btn-ghost" onClick="{{ goPricing }}">Tarifs</a>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-8); align-items:start">
+        <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+          <h6 style="color:var(--color-accent)">Simple à mettre en place</h6>
+          <h2 style="margin:0">Opérationnel en une après-midi</h2>
+          <p class="text-muted" style="margin:0">Vos équipes techniques branchent NotifyAfrica en quelques heures : environnement de test gratuit, documentation complète, suivi des envois en temps réel. Vos équipes métier envoient depuis une interface, sans code.</p>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+            <span class="tag tag-neutral">Environnement de test</span><span class="tag tag-neutral">Interface sans code</span><span class="tag tag-neutral">Suivi temps réel</span><span class="tag tag-neutral">Support local</span>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+          <h6 style="color:var(--color-accent)">Comment ça marche</h6>
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex; gap:var(--space-4); align-items:baseline">
+              <span class="num" style="min-width:28px; color:var(--color-accent-300)">{{ s.n }}</span>
+              <div><div style="font-size:15px">{{ s.title }}</div><div class="text-muted" style="font-size:13px">{{ s.desc }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <div><h6 style="color:var(--color-accent)">Cas d'usage</h6><h2 style="margin:0">Ce que nos clients envoient</h2></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:var(--space-4)">
+          <sc-for list="{{ useCases }}" as="u" hint-placeholder-count="6">
+            <div class="card"><div class="card-title" style="font-size:15px">{{ u.title }}</div><p class="card-body">{{ u.desc }}</p></div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-6); flex-wrap:wrap">
+          <div><h6 style="color:var(--color-accent)">Tarifs</h6><h2 style="margin:0">Payez à l'usage, sans abonnement</h2></div>
+          <a href="#" class="btn btn-secondary" onClick="{{ goPricing }}">Voir tous les tarifs</a>
+        </div>
+        <div class="card elev-md" style="padding:var(--space-8); overflow:auto">
+          <table class="table" style="min-width:540px">
+            <thead><tr><th>Canal</th><th>À partir de</th><th>Unité</th><th>Dégressivité</th></tr></thead>
+            <tbody>
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="4">
+                <tr>
+                  <td style="font-size:15px">{{ p.name }}</td>
+                  <td class="num" style="font-size:17px; color:var(--color-accent-300)">{{ p.price }}</td>
+                  <td class="text-muted">{{ p.unit }}</td>
+                  <td class="text-muted">{{ p.tierNote }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+        <div class="card elev-sm"><div class="card-kicker">Sécurité</div><div class="card-title">Vos données restent les vôtres</div><p class="card-body">Chiffrement des échanges, accès par rôle, journal d'activité complet, conformité aux exigences locales de conservation des données.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Fiabilité</div><div class="card-title">Plusieurs routes par opérateur</div><p class="card-body">Si une route se dégrade, vos messages basculent automatiquement sur une autre. Page de statut publique et historique des incidents.</p><div class="card-meta num">99,95 % de disponibilité sur 30 jours</div></div>
+        <div class="card elev-sm"><div class="card-kicker">Couverture</div><div class="card-title">Multi-pays, multi-devises</div><p class="card-body">Facturation dans la devise de votre choix, disponibilité gérée pays par pays.</p><div class="card-meta">XOF · XAF · GHS · NGN · KES · USD · EUR · ZAR</div></div>
+      </section>
+
+      <section class="card elev-lg" style="align-items:flex-start; gap:var(--space-4); padding:calc(var(--space-8) * 1.5)">
+        <h2 style="margin:0; max-width:24ch">Vos 100 premiers messages de test sont offerts.</h2>
+        <p class="text-muted" style="margin:0; max-width:52ch">Créez un compte, testez gratuitement, rechargez seulement quand vous passez en production.</p>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap"><a href="#" class="btn btn-primary">Créer un compte</a><a href="#" class="btn btn-secondary">Demander un devis</a></div>
+      </section>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isPricing }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6); align-items:flex-start">
+        <h6 style="color:var(--color-accent)">Tarifs</h6>
+        <h1 style="margin:0; max-width:22ch">Un prix par message, dégressif par volume</h1>
+        <p class="text-muted" style="max-width:60ch; margin:0">Prépayé, sans engagement. Plus vous envoyez, moins le message coûte cher. Au-delà de 100 000 messages, nous construisons une offre avec vous.</p>
+        <div style="display:flex; gap:var(--space-6); flex-wrap:wrap; align-items:flex-end">
+          <div class="field" style="min-width:190px"><label>Pays de destination</label>
+            <select class="input"><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option><option>Sénégal</option><option>Ghana</option><option>Nigeria</option></select>
+          </div>
+          <div class="field" style="min-width:160px"><label>Devise d'affichage</label>
+            <select class="input"><option>XOF — FCFA</option><option>XAF</option><option>GHS</option><option>NGN</option><option>KES</option><option>USD</option><option>EUR</option><option>ZAR</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-6)">
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <sc-for list="{{ productTabs }}" as="t" hint-placeholder-count="5">
+            <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:var(--space-8); align-items:start">
+          <div class="card elev-md" style="gap:var(--space-4)">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap">
+              <div><div class="card-kicker">Paliers de volume</div><div class="card-title" style="font-size:20px">{{ activeName }}</div></div>
+              <span class="tag tag-neutral">{{ activeUnitLabel }}</span>
+            </div>
+            <div style="overflow:auto">
+              <table class="table" style="min-width:520px">
+                <thead><tr><th>Volume mensuel</th><th>Prix unitaire</th><th></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="5">
+                    <tr>
+                      <td class="num">{{ t.range }}</td>
+                      <td class="num" style="color:var(--color-accent-300)">{{ t.price }}</td>
+                      <td>{{ t.badge }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-muted" style="font-size:12px; margin:0">{{ activeNote }}</p>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+            <div class="card elev-sm">
+              <div class="card-kicker">Exemple de facture</div>
+              <div class="card-title" style="font-size:16px">50 000 SMS vers le Togo</div>
+              <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-2)">
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier appliqué</span><span style="font-size:13px">25 001 – 100 000</span></div>
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire</span><span class="num" style="font-size:13px">6,80 FCFA</span></div>
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sous-total</span><span class="num" style="font-size:13px">340 000 FCFA</span></div>
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remise</span><span class="num" style="font-size:13px">0 FCFA</span></div>
+                <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">TVA (18 %)</span><span class="num" style="font-size:13px">61 200 FCFA</span></div>
+                <hr class="hr" style="margin:var(--space-2) 0">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-3)"><span style="font-size:14px">Total</span><span class="num" style="font-size:20px; color:var(--color-accent-300)">401 200 FCFA</span></div>
+              </div>
+              <a href="#" class="btn btn-primary btn-block">Créer un compte pour envoyer</a>
+            </div>
+
+            <div class="card elev-sm" style="border-left:2px solid var(--color-accent)">
+              <div class="card-kicker">Gros volumes</div>
+              <p class="card-body">Au-delà de 100 000 messages par mois, le tarif est négocié : routes dédiées, engagement de qualité de service et prix construit avec votre équipe.</p>
+              <a href="#" class="btn btn-secondary" style="align-self:flex-start">Demander un devis</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <h4 style="margin:0">Moyens de paiement acceptés</h4>
+        <p class="text-muted" style="margin:0; max-width:60ch">Les méthodes disponibles dépendent de votre pays.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:var(--space-3)">
+          <div class="card"><div class="card-title" style="font-size:14px">Mobile Money</div><p class="card-body">Moov, MTN, Yas, Telecel — crédit immédiat</p></div>
+          <div class="card"><div class="card-title" style="font-size:14px">Carte bancaire</div><p class="card-body">Visa, Mastercard — crédit immédiat</p></div>
+          <div class="card"><div class="card-title" style="font-size:14px">Virement bancaire</div><p class="card-body">À partir de 500 000 FCFA — 24 à 48 h</p></div>
+          <div class="card"><div class="card-title" style="font-size:14px">Facturation mensuelle</div><p class="card-body">Réservée aux contrats Enterprise</p></div>
+        </div>
+      </section>
+
+      <section class="card elev-lg" style="gap:var(--space-4); padding:calc(var(--space-8) * 1.5); align-items:flex-start">
+        <div class="card-kicker">Enterprise</div>
+        <h2 style="margin:0; max-width:26ch">Gros volumes, intégration dédiée, tarif négocié</h2>
+        <p class="text-muted" style="margin:0; max-width:56ch">Contrat sur mesure, routes dédiées, engagement de service, support prioritaire. Le devis accepté devient automatiquement votre grille tarifaire.</p>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap"><a href="#" class="btn btn-primary">Demander un devis</a><a href="#" class="btn btn-secondary">Parler à un commercial</a></div>
+      </section>
+
+      <p class="text-muted" style="font-size:11px; margin:0; max-width:70ch">Prix hors taxes, par message envoyé, susceptibles d'évoluer selon les tarifs opérateurs. Les montants présentés ici sont des exemples de configuration et sont pilotés depuis l'espace d'administration NotifyAfrica.</p>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isProducts }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+      <section style="display:flex; flex-direction:column; gap:var(--space-4); align-items:flex-start">
+        <h6 style="color:var(--color-accent)">Produits</h6>
+        <h1 style="margin:0; max-width:24ch">Quatre canaux, une seule plateforme</h1>
+        <p class="text-muted" style="max-width:62ch; margin:0">Chaque canal s'active indépendamment sur votre compte. Vous payez uniquement ce que vous envoyez, au même endroit, avec le même solde.</p>
+      </section>
+
+      <section style="display:flex; flex-direction:column; gap:var(--space-8)">
+        <div class="card elev-md" style="gap:var(--space-4)">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap"><div><div class="card-kicker">Messagerie</div><h3 style="margin:0">SMS</h3></div><span class="num tag tag-accent">à partir de 7 FCFA / message</span></div>
+          <p class="card-body" style="font-size:14px">Envoi unitaire, envoi en masse et campagnes planifiées. Nom d'expéditeur personnalisé, modèles réutilisables, personnalisation par destinataire, plusieurs opérateurs avec repli automatique en cas de dégradation.</p>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-neutral">Envoi en masse</span><span class="tag tag-neutral">Planification</span><span class="tag tag-neutral">Modèles</span><span class="tag tag-neutral">Nom d'expéditeur</span><span class="tag tag-neutral">Suivi de livraison</span></div>
+          <a href="#" class="btn btn-ghost" style="align-self:flex-start" onClick="{{ goPricing }}">Voir les paliers SMS →</a>
+        </div>
+
+        <div class="card elev-md" style="gap:var(--space-4)">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap"><div><div class="card-kicker">Authentification</div><h3 style="margin:0">Codes OTP</h3></div><span class="num tag tag-accent">à partir de 9 FCFA / code vérifié</span></div>
+          <p class="card-body" style="font-size:14px">Génération, envoi et vérification de codes à usage unique. Durée de validité, longueur et format paramétrables, nombre de tentatives limité, message personnalisable. Les codes non délivrés ne sont pas facturés.</p>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-neutral">Vérification</span><span class="tag tag-neutral">Durée de validité</span><span class="tag tag-neutral">Anti-fraude</span><span class="tag tag-neutral">Multi-applications</span></div>
+          <a href="#" class="btn btn-ghost" style="align-self:flex-start" onClick="{{ goPricing }}">Voir les tarifs OTP →</a>
+        </div>
+
+        <div class="card elev-md" style="gap:var(--space-4)">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap"><div><div class="card-kicker">Conversationnel</div><h3 style="margin:0">WhatsApp Business</h3></div><span class="num tag tag-accent">à partir de 24 FCFA / conversation</span></div>
+          <p class="card-body" style="font-size:14px">Numéro professionnel vérifié, modèles de message approuvés, conversations entrantes centralisées. Catégories service client, authentification et marketing, chacune avec son tarif.</p>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-neutral">Modèles approuvés</span><span class="tag tag-neutral">Conversations entrantes</span><span class="tag tag-neutral">Numéros vérifiés</span><span class="tag tag-neutral">Catégories Meta</span></div>
+          <a href="#" class="btn btn-ghost" style="align-self:flex-start" onClick="{{ goPricing }}">Voir les tarifs WhatsApp →</a>
+        </div>
+
+        <div class="card elev-md" style="gap:var(--space-4)">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-4); flex-wrap:wrap"><div><div class="card-kicker">Transactionnel</div><h3 style="margin:0">Email</h3></div><span class="num tag tag-accent">à partir de 3 FCFA / email</span></div>
+          <p class="card-body" style="font-size:14px">Domaines authentifiés, adresses d'expédition vérifiées, gestion automatique des désinscriptions et des adresses invalides, suivi d'ouverture et de délivrabilité.</p>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-neutral">Domaines authentifiés</span><span class="tag tag-neutral">Désinscriptions</span><span class="tag tag-neutral">Délivrabilité</span><span class="tag tag-neutral">Modèles</span></div>
+          <a href="#" class="btn btn-ghost" style="align-self:flex-start" onClick="{{ goPricing }}">Voir les tarifs Email →</a>
+        </div>
+      </section>
+
+      <section class="card elev-lg" style="align-items:flex-start; gap:var(--space-4); padding:calc(var(--space-8) * 1.5)">
+        <h2 style="margin:0; max-width:26ch">Vous ne savez pas quel canal choisir ?</h2>
+        <p class="text-muted" style="margin:0; max-width:52ch">Nos équipes analysent vos usages et vous recommandent la combinaison la moins coûteuse.</p>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap"><a href="#" class="btn btn-primary">Parler à un expert</a><a href="#" class="btn btn-secondary" onClick="{{ goPricing }}">Comparer les tarifs</a></div>
+      </section>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isSolutions }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+      <section style="display:flex; flex-direction:column; gap:var(--space-4); align-items:flex-start">
+        <h6 style="color:var(--color-accent)">Solutions</h6>
+        <h1 style="margin:0; max-width:24ch">Par secteur, par besoin</h1>
+        <p class="text-muted" style="max-width:62ch; margin:0">Les mêmes canaux, configurés différemment selon votre métier : volumes, exigences de sécurité, horaires d'envoi et contraintes réglementaires.</p>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:var(--space-4)">
+        <sc-for list="{{ solutions }}" as="s" hint-placeholder-count="6">
+          <div class="card elev-sm" style="gap:var(--space-3)">
+            <div class="card-title" style="font-size:16px">{{ s.title }}</div>
+            <p class="card-body">{{ s.desc }}</p>
+            <a href="#" class="btn btn-ghost" style="align-self:flex-start">Découvrir →</a>
+          </div>
+        </sc-for>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+        <div class="card elev-sm"><div class="card-kicker">Pour les équipes métier</div><div class="card-title">Envoyer sans écrire une ligne de code</div><p class="card-body">Importez vos contacts, choisissez un modèle, vérifiez le coût, envoyez. Le rapport de campagne est disponible immédiatement.</p></div>
+        <div class="card elev-sm"><div class="card-kicker">Pour les équipes techniques</div><div class="card-title">Intégrer en quelques heures</div><p class="card-body">Une interface de programmation unique pour les quatre canaux, un environnement de test gratuit, des notifications de statut en temps réel.</p><a href="#" class="btn btn-ghost" style="align-self:flex-start" onClick="{{ goDevelopers }}">Espace développeurs →</a></div>
+        <div class="card elev-sm"><div class="card-kicker">Pour la direction</div><div class="card-title">Maîtriser la dépense</div><p class="card-body">Compte prépayé : impossible de dépasser votre solde. Coût affiché avant chaque envoi, suivi de la consommation par projet et par canal.</p></div>
+      </section>
+
+      <section class="card elev-lg" style="align-items:flex-start; gap:var(--space-4); padding:calc(var(--space-8) * 1.5)">
+        <h2 style="margin:0; max-width:26ch">Un besoin spécifique à votre secteur ?</h2>
+        <p class="text-muted" style="margin:0; max-width:52ch">Décrivez votre cas d'usage, nous revenons vers vous avec une proposition chiffrée.</p>
+        <a href="#" class="btn btn-primary">Demander un devis</a>
+      </section>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isDevelopers }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+      <section style="display:flex; flex-direction:column; gap:var(--space-4); align-items:flex-start">
+        <h6 style="color:var(--color-accent)">Développeurs</h6>
+        <h1 style="margin:0; max-width:24ch">Une intégration, quatre canaux</h1>
+        <p class="text-muted" style="max-width:62ch; margin:0">La même interface de programmation pour le SMS, l'OTP, WhatsApp et l'Email. Environnement de test gratuit, clés séparées test et production, notifications de statut signées.</p>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap"><a href="#" class="btn btn-primary" onClick="{{ goDocs }}">Lire la documentation</a><a href="#" class="btn btn-secondary">Créer une clé de test</a></div>
+      </section>
+
+      <section style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--space-8); align-items:start">
+        <div class="card elev-md" style="gap:0; padding:0; overflow:hidden">
+          <div style="display:flex; align-items:center; gap:var(--space-2); padding:var(--space-3) var(--space-4)">
+            <span class="tag tag-neutral">Envoyer un SMS</span>
+            <span class="tag tag-outline" style="margin-left:auto">Exemple</span>
+          </div>
+          <pre style="margin:0; padding:var(--space-6); font-size:12.5px; line-height:1.85; color:var(--color-neutral-700); background:var(--color-neutral-100); overflow:auto">POST /v1/messages
+
+{
+  "channel": "sms",
+  "to": "+228 90 00 00 00",
+  "sender_id": "MABANQUE",
+  "body": "Votre code est 4821"
+}
+
+Réponse
+{
+  "id": "msg_8f21c",
+  "status": "en file",
+  "price": { "unit": "6,80", "currency": "XOF" }
+}</pre>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+          <div class="card elev-sm"><div class="card-title" style="font-size:15px">Environnement de test</div><p class="card-body">Mêmes réponses qu'en production, sans coût et sans envoi réel. 100 messages de test offerts.</p></div>
+          <div class="card elev-sm"><div class="card-title" style="font-size:15px">Notifications de statut</div><p class="card-body">Recevez chaque changement de statut sur votre serveur, signé et réessayé en cas d'échec.</p></div>
+          <div class="card elev-sm"><div class="card-title" style="font-size:15px">Bibliothèques</div><p class="card-body">Node.js, PHP, Python, Java, et une collection prête à l'emploi pour vos tests manuels.</p></div>
+          <div class="card elev-sm"><div class="card-title" style="font-size:15px">Sécurité des envois</div><p class="card-body">Chaque envoi peut porter une référence unique : en cas de nouvelle tentative, le message n'est jamais envoyé deux fois.</p></div>
+        </div>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:var(--space-4)">
+        <div class="card"><div class="card-kicker">Disponibilité</div><div class="num card-title" style="font-size:22px">99,95 %</div><p class="card-body">sur les 30 derniers jours</p></div>
+        <div class="card"><div class="card-kicker">Latence moyenne</div><div class="num card-title" style="font-size:22px">1,2 s</div><p class="card-body">de l'appel à la remise opérateur</p></div>
+        <div class="card"><div class="card-kicker">Taux de livraison</div><div class="num card-title" style="font-size:22px">98,4 %</div><p class="card-body">toutes destinations confondues</p></div>
+        <div class="card"><div class="card-kicker">Page de statut</div><div class="card-title" style="font-size:18px">Publique</div><p class="card-body">incidents et maintenances en temps réel</p></div>
+      </section>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isDocs }}">
+    <div style="display:flex; flex-direction:column; gap:calc(var(--space-8) * 1.5)">
+      <section style="display:flex; flex-direction:column; gap:var(--space-4); align-items:flex-start">
+        <h6 style="color:var(--color-accent)">Documentation</h6>
+        <h1 style="margin:0; max-width:24ch">Tout ce qu'il faut pour démarrer</h1>
+        <p class="text-muted" style="max-width:62ch; margin:0">Guides pas à pas pour les équipes métier, référence complète pour les équipes techniques.</p>
+        <div class="field" style="min-width:280px; max-width:420px; width:100%"><label>Rechercher dans la documentation</label><input class="input" type="text" placeholder="ex. envoyer un SMS en masse"></div>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:var(--space-4)">
+        <sc-for list="{{ docsSections }}" as="d" hint-placeholder-count="8">
+          <div class="card elev-sm" style="gap:var(--space-2)">
+            <div class="card-title" style="font-size:15px">{{ d.title }}</div>
+            <p class="card-body">{{ d.items }}</p>
+            <a href="#" class="btn btn-ghost" style="align-self:flex-start">Ouvrir →</a>
+          </div>
+        </sc-for>
+      </section>
+
+      <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space-4)">
+        <div class="card elev-sm"><div class="card-kicker">Guide</div><div class="card-title">Envoyer votre première campagne</div><p class="card-body">Préparer un fichier de contacts, choisir un modèle, vérifier le coût, planifier l'envoi et lire le rapport.</p><a href="#" class="btn btn-ghost" style="align-self:flex-start">Lire le guide →</a></div>
+        <div class="card elev-sm"><div class="card-kicker">Guide</div><div class="card-title">Sécuriser vos connexions avec l'OTP</div><p class="card-body">Choisir une durée de validité, limiter les tentatives, gérer les renvois et mesurer le taux de vérification.</p><a href="#" class="btn btn-ghost" style="align-self:flex-start">Lire le guide →</a></div>
+        <div class="card elev-sm"><div class="card-kicker">Aide</div><div class="card-title">Une question sans réponse ?</div><p class="card-body">Notre support répond en français, aux heures ouvrées d'Afrique de l'Ouest.</p><a href="#" class="btn btn-primary" style="align-self:flex-start">Contacter le support</a></div>
+      </section>
+    </div>
+    </sc-if>
+  </div>
+
+  <hr class="hr">
+  <footer style="max-width:1180px; width:100%; margin:0 auto; padding:var(--space-6) var(--space-8) calc(var(--space-8) * 2); display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-6)">
+    <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+      <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:32px; width:auto; border-radius:var(--radius-md)">
+      <span class="text-muted" style="font-size:12px">Plateforme de communication pour l'Afrique</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Produits</span><a href="#" onClick="{{ goProducts }}">SMS</a><a href="#" onClick="{{ goProducts }}">Codes OTP</a><a href="#" onClick="{{ goProducts }}">WhatsApp</a><a href="#" onClick="{{ goProducts }}">Email</a><a href="#" onClick="{{ goPricing }}">Tarifs</a></div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Ressources</span><a href="#" onClick="{{ goDocs }}">Documentation</a><a href="#" onClick="{{ goDocs }}">Guides</a><a href="#" onClick="{{ goDevelopers }}">Espace développeurs</a><a href="#">Statut du service</a></div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Entreprise</span><a href="#">À propos</a><a href="#">Contact</a><a href="#">Devis</a></div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-2); font-size:13px"><span class="text-muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.08em">Légal</span><a href="#">CGU</a><a href="#">Confidentialité</a><a href="#">Mentions tarifaires</a></div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;pricing&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;'home'|'pricing'&quot;,&quot;section&quot;:&quot;Affichage&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { page: props.defaultPage || 'home', product: 'sms' };
+  }
+
+  get catalog() {
+    return [
+      { code:'sms', name:'SMS', kicker:'Messagerie', unit:'par message', price:'7 FCFA',
+        mono:'SMS', chips:'Envoi en masse · Planification · Modèles · Suivi',
+        desc:"Envoi unitaire ou en masse, nom d'expéditeur personnalisé, plusieurs opérateurs avec repli automatique.",
+        tierNote:'Dégressif dès 25 000 messages',
+        note:"Tarifs pour une destination Togo. Les prix varient selon le pays et l'opérateur de destination.",
+        tiers:[
+          { range:'0 – 25 000', price:'7,00 FCFA', badge:'' },
+          { range:'25 001 – 100 000', price:'6,80 FCFA', badge:'Le plus choisi' },
+          { range:'100 001 – 300 000', price:'Sur devis', badge:'' },
+          { range:'300 001 – 1 000 000', price:'Tarif négocié', badge:'' },
+          { range:'Plus de 1 000 000', price:'Contrat Enterprise', badge:'' }
+        ] },
+      { code:'otp', name:'Codes OTP', kicker:'Authentification', unit:'par code vérifié', price:'9 FCFA',
+        mono:'OTP', chips:'Vérification · Durée de validité · Anti-fraude',
+        desc:"Envoi et vérification de codes à usage unique, durée de validité et format paramétrables.",
+        tierNote:'Dégressif dès 50 000 codes',
+        note:"Facturation au code vérifié. Les codes non délivrés ne sont pas facturés.",
+        tiers:[
+          { range:'0 – 50 000', price:'9,00 FCFA', badge:'' },
+          { range:'50 001 – 200 000', price:'8,50 FCFA', badge:'Le plus choisi' },
+          { range:'200 001 – 500 000', price:'8,00 FCFA', badge:'' },
+          { range:'Plus de 500 000', price:'Sur devis', badge:'' }
+        ] },
+      { code:'whatsapp', name:'WhatsApp', kicker:'Conversationnel', unit:'par conversation', price:'24 FCFA',
+        mono:'WA', chips:'Modèles approuvés · Conversations · Numéros vérifiés',
+        desc:"Messages avec modèles approuvés, conversations entrantes, catégories marketing, service et authentification.",
+        tierNote:'Tarif selon la catégorie du message',
+        note:"Le tarif WhatsApp dépend de la catégorie du message et du pays de destination, selon la grille officielle de Meta.",
+        tiers:[
+          { range:'Service client (utility)', price:'24 FCFA', badge:'' },
+          { range:'Authentification', price:'28 FCFA', badge:'' },
+          { range:'Marketing', price:'46 FCFA', badge:'' },
+          { range:'Plus de 100 000 / mois', price:'Sur devis', badge:'' }
+        ] },
+      { code:'email', name:'Email', kicker:'Transactionnel', unit:'par email', price:'3 FCFA',
+        mono:'@', chips:'Domaines authentifiés · Désinscriptions · Délivrabilité',
+        desc:"Domaines authentifiés, adresses d'expédition vérifiées, gestion des désinscriptions et suivi de délivrabilité.",
+        tierNote:'Dégressif dès 100 000 emails',
+        note:"Les emails rejetés pour adresse invalide ne sont pas facturés.",
+        tiers:[
+          { range:'0 – 100 000', price:'3,00 FCFA', badge:'' },
+          { range:'100 001 – 500 000', price:'2,50 FCFA', badge:'Le plus choisi' },
+          { range:'500 001 – 2 000 000', price:'2,00 FCFA', badge:'' },
+          { range:'Plus de 2 000 000', price:'Sur devis', badge:'' }
+        ] },
+      { code:'enterprise', name:'Enterprise', kicker:'Sur mesure', unit:'contrat annuel', price:'Sur devis',
+        desc:"Volumes contractuels, routes dédiées, engagement de service et prix négocié.",
+        tierNote:'Construit avec votre équipe',
+        note:"Le tarif Enterprise est établi après étude de vos volumes, de vos destinations et de vos exigences de service.",
+        tiers:[
+          { range:'Engagement annuel', price:'Sur devis', badge:'' },
+          { range:'Routes dédiées', price:'Inclus', badge:'' },
+          { range:'Support prioritaire', price:'Inclus', badge:'' },
+          { range:'Facturation mensuelle', price:'Sur demande', badge:'' }
+        ] }
+    ];
+  }
+
+  navStyle(page) {
+    return { color: this.state.page === page ? 'var(--color-accent)' : 'inherit' };
+  }
+  tabStyle(on) {
+    return {
+      whiteSpace: 'nowrap',
+      color: on ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: on ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: on ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    };
+  }
+
+  renderVals() {
+    const active = this.catalog.find(x => x.code === this.state.product) || this.catalog[0];
+    return {
+      isHome: this.state.page === 'home',
+      isPricing: this.state.page === 'pricing',
+      isProducts: this.state.page === 'products',
+      isSolutions: this.state.page === 'solutions',
+      isDevelopers: this.state.page === 'developers',
+      isDocs: this.state.page === 'docs',
+      goHome: () => this.setState({ page: 'home' }),
+      goPricing: () => this.setState({ page: 'pricing' }),
+      goProducts: () => this.setState({ page: 'products' }),
+      goSolutions: () => this.setState({ page: 'solutions' }),
+      goDevelopers: () => this.setState({ page: 'developers' }),
+      goDocs: () => this.setState({ page: 'docs' }),
+      productsStyle: this.tabStyle(this.state.page === 'products'),
+      solutionsStyle: this.tabStyle(this.state.page === 'solutions'),
+      developersStyle: this.tabStyle(this.state.page === 'developers'),
+      docsStyle: this.tabStyle(this.state.page === 'docs'),
+      navProducts: this.navStyle('products'),
+      navSolutions: this.navStyle('solutions'),
+      navPricing: this.navStyle('pricing'),
+      navDevelopers: this.navStyle('developers'),
+      navDocs: this.navStyle('docs'),
+      solutions: [
+        { title:'Banques & fintechs', desc:'Codes de connexion, alertes de transaction, relances de prélèvement. Volumes élevés et exigences de sécurité.' },
+        { title:'Opérateurs & utilities', desc:'Rappels de facture, coupures programmées, campagnes de recouvrement.' },
+        { title:'E-commerce & logistique', desc:'Confirmations de commande, suivi de livraison, créneaux de retrait.' },
+        { title:'Santé & institutions', desc:'Convocations, rappels de rendez-vous, alertes de santé publique.' },
+        { title:'Plateformes SaaS', desc:'Notifications produit et authentification, en marque blanche via API.' },
+        { title:'ONG & bailleurs', desc:'Sensibilisation de masse, enquêtes par SMS, coordination terrain.' }
+      ],
+      docsSections: [
+        { title:'Démarrage', items:'Créer un compte · Générer une clé · Premier envoi' },
+        { title:'SMS', items:'Envoi simple · Envoi en masse · Noms d\u2019expéditeur · Modèles' },
+        { title:'OTP', items:'Générer un code · Vérifier · Durée de validité' },
+        { title:'WhatsApp', items:'Modèles approuvés · Conversations · Numéros' },
+        { title:'Email', items:'Domaines · Adresses d\u2019expédition · Désinscriptions' },
+        { title:'Suivi', items:'Statuts de livraison · Notifications de statut · Journaux' },
+        { title:'Facturation', items:'Solde · Recharges · Factures' },
+        { title:'Sécurité', items:'Clés et environnements · Rôles · Journal d\u2019activité' }
+      ],
+      homeStyle: this.tabStyle(this.state.page === 'home'),
+      pricingStyle: this.tabStyle(this.state.page === 'pricing'),
+
+      products: this.catalog.slice(0, 4).map(x => ({
+        name: x.name, kicker: x.kicker, desc: x.desc,
+        price: x.price, unit: x.unit, tierNote: x.tierNote,
+        mono: x.mono, chips: x.chips,
+        featured: x.code === 'sms',
+        cardStyle: {
+          background: 'var(--color-surface)',
+          gap: 'var(--space-4)',
+          padding: 'var(--space-8)',
+          transition: 'transform .18s ease, box-shadow .18s ease',
+          boxShadow: x.code === 'sms'
+            ? '0 0 0 1.5px var(--color-accent), 0 16px 40px rgba(27,27,36,.12)'
+            : 'var(--shadow-sm)'
+        },
+        monoStyle: {
+          width: '44px', height: '44px', flex: 'none',
+          display: 'grid', placeItems: 'center',
+          borderRadius: 'var(--radius-md)',
+          background: x.code === 'sms' ? 'var(--color-accent)' : 'var(--color-accent-200)',
+          color: x.code === 'sms' ? '#ffffff' : 'var(--color-accent-700)',
+          fontSize: '17px'
+        }
+      })),
+
+      steps: [
+        { n:'01', title:'Créez votre compte', desc:'Une organisation, autant de projets que nécessaire.' },
+        { n:'02', title:'Testez gratuitement', desc:'100 messages de test offerts, sans carte bancaire.' },
+        { n:'03', title:'Rechargez votre solde', desc:'Mobile money, carte bancaire ou virement.' },
+        { n:'04', title:'Envoyez et suivez', desc:'Coût affiché avant envoi, livraison suivie en temps réel.' }
+      ],
+
+      useCases: [
+        { title:'Codes de connexion', desc:'Sécuriser les connexions des banques, fintechs et applications.' },
+        { title:'Alertes transactionnelles', desc:'Confirmations de paiement, relevés, rappels d\u2019échéance.' },
+        { title:'Campagnes marketing', desc:'Audiences ciblées, planification, rapport de campagne.' },
+        { title:'Notifications logistiques', desc:'Statuts de livraison et confirmations de rendez-vous.' },
+        { title:'Secteur public', desc:'Convocations, rappels de santé, alertes institutionnelles.' },
+        { title:'Service client', desc:'WhatsApp entrant relié à vos outils internes.' }
+      ],
+
+      productTabs: this.catalog.map(x => ({
+        label: x.name,
+        style: this.tabStyle(x.code === this.state.product),
+        onClick: () => this.setState({ product: x.code })
+      })),
+      activeName: active.name,
+      activeUnitLabel: active.unit,
+      activeNote: active.note,
+      tiers: active.tiers
+    };
+  }
+}
+</script>
+</body>
+</html>

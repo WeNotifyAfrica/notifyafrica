@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 14 · Tarifs &amp; devis</h6>
+    <span class="tag tag-outline" style="margin-left:auto">MaBanque SA · Offre négociée active</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Tarifs &amp; devis</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">La face client du moteur de prix. Six écrans qui répondent à trois questions : quel est mon prix aujourd'hui, combien coûterait tel volume, et comment obtenir mieux. Le client ne voit jamais un coût fournisseur ni une marge — seulement son prix applicable et la règle qui le produit.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isRates }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-sm" style="gap:var(--space-4)">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--space-3)">
+        <div class="field"><label>Canal</label><select class="input"><option>SMS</option><option>OTP</option><option>WhatsApp</option><option>Email</option><option>Voix</option></select></div>
+        <div class="field"><label>Pays</label><select class="input"><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option><option>Tous</option></select></div>
+        <div class="field"><label>Opérateur</label><select class="input"><option>Tous</option><option>Moov</option><option>Yas</option></select></div>
+        <div class="field"><label>Devise d'affichage</label><select class="input"><option>XOF (FCFA)</option><option>EUR</option><option>USD</option></select></div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; align-items:center">
+        <span class="tag tag-accent">SMS · Togo</span>
+        <span class="tag tag-neutral">Offre négociée NA-2026-014 appliquée</span>
+        <span class="text-muted num" style="font-size:12px; margin-left:auto">En vigueur depuis le 01/03/2026</span>
+      </div>
+    </div>
+
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Vos tarifs applicables</span><div class="card-title" style="font-size:18px">SMS · Togo · par palier de volume mensuel</div></div>
+        <span class="tag tag-outline">Source : moteur de prix</span>
+      </div>
+      <div style="overflow:auto">
+        <table class="table" style="min-width:780px">
+          <thead><tr><th>Palier (messages / mois)</th><th>Prix public</th><th>Votre prix</th><th>Remise</th><th>Applicable à</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ tiers }}" as="r" hint-placeholder-count="5">
+              <tr style="{{ r.rowStyle }}">
+                <td><strong>{{ r.tier }}</strong><div class="text-muted" style="font-size:11.5px">{{ r.note }}</div></td>
+                <td class="num text-muted">{{ r.public }}</td>
+                <td class="num" style="color:var(--color-accent-300)">{{ r.yours }}</td>
+                <td class="num text-muted">{{ r.discount }}</td>
+                <td class="text-muted" style="font-size:12px">{{ r.scope }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted" style="margin:0; font-size:12px">Le palier est déterminé par le volume cumulé du mois en cours, toutes destinations confondues. Vous êtes actuellement dans le palier 100 001 – 500 000 : <span class="num">412 800</span> messages consommés.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Comment votre prix est calculé</span><p class="card-body" style="margin:0">Prix de base du pays et de l'opérateur, puis palier de volume, puis remise contractuelle, puis taxes locales. L'ordre est fixe : une remise ne s'applique jamais avant le palier.</p><a href="#" style="font-size:13px">Voir le détail d'un calcul</a></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Changement annoncé</span><p class="card-body" style="margin:0">Le tarif WhatsApp Marketing au Bénin augmente de 4 % le 15 octobre, suite à la grille Meta. Notification envoyée 30 jours avant, comme prévu au contrat.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Historique</span><p class="card-body" style="margin:0">Chaque version de tarif reste consultable avec sa date d'effet, pour vérifier une facture ancienne sans solliciter le support.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Voir l'historique</button></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSim }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Simulateur</span><div class="card-title" style="font-size:18px">Estimer un volume avant de l'engager</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Canal</label><select class="input" onChange="{{ onChannel }}"><option>SMS</option><option>OTP</option><option>WhatsApp (Utility)</option><option>Email</option></select></div>
+        <div class="field"><label>Pays de destination</label><select class="input"><option>Togo</option><option>Bénin</option><option>Côte d'Ivoire</option></select></div>
+      </div>
+      <div class="field"><label>Volume mensuel : <span class="num" style="color:var(--color-accent-300)">{{ volumeLabel }}</span> messages</label>
+        <input type="range" min="1000" max="1000000" step="1000" value="{{ volume }}" onInput="{{ onVolume }}" style="width:100%; accent-color:var(--color-accent)">
+        <div style="display:flex; justify-content:space-between"><span class="text-muted num" style="font-size:11px">1 000</span><span class="text-muted num" style="font-size:11px">1 000 000</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Durée d'engagement</label><select class="input"><option>Sans engagement</option><option>6 mois</option><option>12 mois</option></select></div>
+        <div class="field"><label>Devise</label><select class="input"><option>XOF (FCFA)</option><option>EUR</option></select></div>
+      </div>
+      <hr class="hr" style="margin:0">
+      <div>
+        <span class="card-kicker">Décomposition</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-3)">
+          <sc-for list="{{ breakdown }}" as="b" hint-placeholder-count="6">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">{{ b.label }}</span><span class="num" style="font-size:13px">{{ b.value }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <span class="card-kicker">Estimation mensuelle</span>
+        <div style="display:flex; align-items:baseline; gap:var(--space-2)"><span class="num" style="font-size:30px; line-height:1.05; color:var(--color-accent-300)">{{ total }}</span><span class="text-muted" style="font-size:13px">FCFA / mois</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Prix unitaire appliqué</span><span class="num" style="font-size:13px">{{ unit }}</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Palier atteint</span><span style="font-size:13px">{{ tierLabel }}</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Sur 12 mois</span><span class="num" style="font-size:13px">{{ yearly }}</span></div>
+        <hr class="hr" style="margin:var(--space-2) 0">
+        <p class="card-body" style="margin:0">{{ advice }}</p>
+        <button type="button" class="btn btn-primary btn-block" onClick="{{ goRequest }}">{{ ctaLabel }}</button>
+        <p class="text-muted" style="margin:0; font-size:11px">Estimation indicative. Seul un devis signé engage un tarif.</p>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Comparaison de canaux</span><p class="card-body" style="margin:0">À volume égal, le simulateur affiche le coût des quatre canaux côte à côte — utile pour arbitrer entre un SMS bon marché et un WhatsApp plus cher mais mesurable.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Comparer les canaux</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Partage</span><p class="card-body" style="margin:0">Exporter la simulation en PDF avec l'en-tête de votre organisation, pour une validation budgétaire interne.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRequest }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div><span class="card-kicker">Nouvelle demande</span><div class="card-title" style="font-size:18px">Demander un devis</div></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Canaux concernés</label><select class="input" multiple size="4"><option selected>SMS</option><option selected>OTP</option><option>WhatsApp</option><option>Email</option><option>Voix</option></select></div>
+        <div class="field"><label>Pays visés</label><select class="input" multiple size="4"><option selected>Togo</option><option selected>Bénin</option><option>Côte d'Ivoire</option><option>Ghana</option><option>Sénégal</option></select></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--space-4)">
+        <div class="field"><label>Volume mensuel estimé</label><input class="input num" type="text" value="750 000"></div>
+        <div class="field"><label>Durée d'engagement souhaitée</label><select class="input"><option>12 mois</option><option>6 mois</option><option>24 mois</option></select></div>
+        <div class="field"><label>Date de démarrage</label><input class="input" type="text" value="01/11/2026"></div>
+      </div>
+      <div class="field"><label>Contexte du projet</label><textarea class="input" style="min-height:100px">Extension du périmètre de notification aux échéances de crédit et aux alertes de solde, sur le Togo et le Bénin. Volume en croissance de 15 % par trimestre. Besoin d'un tarif ferme sur 12 mois pour le budget 2027.</textarea></div>
+      <div class="field"><label>Besoins particuliers</label>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+          <span class="tag tag-accent">Nom d'expéditeur dédié</span><span class="tag tag-accent">Engagement de délai de livraison</span><span class="tag tag-neutral">Facturation mensuelle à terme échu</span><span class="tag tag-neutral">Support prioritaire</span><span class="tag tag-neutral">Route dédiée</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Envoyer la demande</button><button type="button" class="btn btn-secondary">Enregistrer le brouillon</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">Ce qui se passe ensuite</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex; gap:var(--space-3); align-items:baseline">
+              <span class="num" style="font-size:12px; color:var(--color-accent-300); min-width:14px">{{ s.n }}</span>
+              <div style="display:flex; flex-direction:column"><span style="font-size:13.5px">{{ s.label }}</span><span class="text-muted" style="font-size:12px">{{ s.detail }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Pré-rempli</span><p class="card-body" style="margin:0">Votre consommation réelle des 3 derniers mois est joignable à la demande en un clic : elle accélère la qualification commerciale.</p><button type="button" class="btn btn-secondary" style="align-self:flex-start">Joindre ma consommation</button></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Délai</span><p class="card-body" style="margin:0">Réponse commerciale sous 2 jours ouvrés pour un périmètre standard, 5 jours si une route ou un opérateur nouveau doit être ouvert.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isQuotes }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:900px">
+        <thead><tr><th>Référence</th><th>Périmètre</th><th>Volume / mois</th><th>Demandé le</th><th>Validité</th><th>Statut</th><th></th></tr></thead>
+        <tbody>
+          <sc-for list="{{ quotes }}" as="q" hint-placeholder-count="5">
+            <tr>
+              <td class="num"><strong>{{ q.ref }}</strong></td>
+              <td class="text-muted" style="font-size:12.5px">{{ q.scope }}</td>
+              <td class="num">{{ q.volume }}</td>
+              <td class="num text-muted">{{ q.date }}</td>
+              <td class="num text-muted">{{ q.valid }}</td>
+              <td>{{ q.status }}</td>
+              <td>{{ q.action }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Action attendue</span><p class="card-body" style="margin:0">L'offre NA-2026-031 expire dans 6 jours. Sans réponse, elle devient caduque et la demande doit être refaite — les tarifs pouvant avoir changé entre-temps.</p><button type="button" class="btn btn-primary" onClick="{{ goOffer }}" style="align-self:flex-start">Voir l'offre</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Suivi</span><p class="card-body" style="margin:0">Chaque changement d'état est notifié par email et dans la console. L'historique complet d'une demande, y compris les échanges, reste attaché à sa référence.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Droits</span><p class="card-body" style="margin:0">Seuls les rôles Owner et Billing Manager peuvent accepter une offre. Un Campaign Manager peut demander un devis mais pas l'engager.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isOffer }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Offre reçue · NA-2026-031</span><div class="card-title" style="font-size:18px">SMS &amp; OTP · Togo et Bénin · 12 mois</div></div>
+        <span class="tag tag-accent">Valide jusqu'au 19/09/2026</span>
+      </div>
+      <div style="overflow:auto">
+        <table class="table" style="min-width:660px">
+          <thead><tr><th>Canal · pays</th><th>Palier</th><th>Tarif actuel</th><th>Tarif proposé</th><th>Gain</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ offerRows }}" as="o" hint-placeholder-count="5">
+              <tr>
+                <td>{{ o.scope }}</td>
+                <td class="text-muted" style="font-size:12px">{{ o.tier }}</td>
+                <td class="num text-muted">{{ o.current }}</td>
+                <td class="num" style="color:var(--color-accent-300)">{{ o.proposed }}</td>
+                <td class="num">{{ o.gain }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <span class="card-kicker">Conditions</span>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-3)">
+          <span style="font-size:13.5px">Engagement de volume minimum : <span class="num">600 000</span> messages par mois</span>
+          <span style="font-size:13.5px">Durée : 12 mois à compter du 1<sup>er</sup> novembre 2026</span>
+          <span style="font-size:13.5px">Facturation mensuelle à terme échu, paiement à 30 jours</span>
+          <span style="font-size:13.5px">Nom d'expéditeur dédié inclus sur les deux pays</span>
+          <span class="text-muted" style="font-size:13px">En deçà du volume minimum, le tarif public du palier réellement atteint s'applique pour le mois concerné.</span>
+        </div>
+      </div>
+      <div class="card" style="background:var(--color-neutral-900); gap:var(--space-2)">
+        <span class="card-kicker">Impact estimé sur votre consommation actuelle</span>
+        <div style="display:flex; gap:var(--space-8); flex-wrap:wrap">
+          <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Coût mensuel actuel</span><span class="num" style="font-size:19px">12,80 M FCFA</span></div>
+          <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Avec cette offre</span><span class="num" style="font-size:19px; color:var(--color-accent-300)">11,42 M FCFA</span></div>
+          <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Économie sur 12 mois</span><span class="num" style="font-size:19px">16,56 M FCFA</span></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Accepter l'offre</button><button type="button" class="btn btn-secondary">Demander une modification</button><button type="button" class="btn btn-ghost">Refuser</button></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+        <span class="card-kicker">À l'acceptation</span>
+        <p class="card-body" style="margin:0">L'offre devient une règle du moteur de prix, datée. Elle s'applique aux envois à partir de sa date d'effet, jamais rétroactivement. Les estimations, simulateurs et factures basculent automatiquement.</p>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Date d'effet</span><span class="num" style="font-size:13px">01/11/2026</span></div>
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="text-muted" style="font-size:13px">Remplace</span><span class="num" style="font-size:13px">NA-2026-014</span></div>
+      </div>
+      <div class="card elev-sm"><span class="card-kicker">Documents</span><p class="card-body" style="margin:0">Le devis signé électroniquement et l'annexe tarifaire restent téléchargeables pendant toute la durée du contrat et cinq ans après.</p><a href="#" style="font-size:13px">Télécharger le devis (PDF)</a></div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Contre-proposition</span><p class="card-body" style="margin:0">Demander une modification ouvre un fil de discussion attaché à la référence, sans annuler l'offre initiale tant qu'elle est valide.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isNegotiated }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker">Offre active · NA-2026-014</span><div class="card-title" style="font-size:18px">SMS · Togo et Bénin · sans engagement</div></div>
+        <span class="tag tag-accent">En vigueur depuis le 01/03/2026</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:var(--space-4)">
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Remise moyenne obtenue</span><span class="num" style="font-size:21px">6,4 %</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Économie depuis mars</span><span class="num" style="font-size:21px">4,82 M FCFA</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Volume engagé</span><span class="num" style="font-size:21px">Aucun</span></div>
+        <div style="display:flex; flex-direction:column"><span class="text-muted" style="font-size:12px">Échéance</span><span class="num" style="font-size:21px">Tacite</span></div>
+      </div>
+    </div>
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <span class="card-kicker" style="padding:0 var(--space-2)">Historique des offres</span>
+      <table class="table" style="min-width:840px; margin-top:var(--space-3)">
+        <thead><tr><th>Référence</th><th>Périmètre</th><th>Période d'effet</th><th>Remise</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="num"><strong>NA-2026-014</strong></td><td class="text-muted" style="font-size:12.5px">SMS · Togo, Bénin</td><td class="num text-muted">01/03/2026 → en cours</td><td class="num">6,4 %</td><td><span class="tag tag-accent">Active</span></td></tr>
+          <tr><td class="num"><strong>NA-2025-208</strong></td><td class="text-muted" style="font-size:12.5px">SMS · Togo</td><td class="num text-muted">01/06/2025 → 28/02/2026</td><td class="num">3,1 %</td><td><span class="tag tag-neutral">Remplacée</span></td></tr>
+          <tr><td class="num"><strong>NA-2025-044</strong></td><td class="text-muted" style="font-size:12.5px">OTP · Togo</td><td class="num text-muted">15/01/2025 → 31/05/2025</td><td class="num">2,0 %</td><td><span class="tag tag-neutral">Expirée</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm"><span class="card-kicker">Traçabilité</span><p class="card-body" style="margin:0">Chaque facture porte la référence de l'offre appliquée à la date de l'envoi. Un contrôle peut donc remonter d'une ligne de facture à la règle tarifaire et au devis signé.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Renégociation</span><p class="card-body" style="margin:0">Votre volume a doublé depuis mars : une renégociation est pertinente. Le simulateur pré-remplit une demande avec votre consommation réelle.</p><button type="button" class="btn btn-primary" onClick="{{ goRequest }}" style="align-self:flex-start">Demander une révision</button></div>
+      <div class="card elev-sm"><span class="card-kicker">Portée</span><p class="card-body" style="margin:0">Une offre s'applique à l'organisation entière ou à un projet précis. Ici, portée organisation : tous les projets en bénéficient.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">L'ordre de calcul est immuable : prix de base pays/opérateur → palier de volume → remise contractuelle → taxes. Une offre acceptée devient une règle datée du moteur de prix et ne s'applique jamais rétroactivement. Un devis a une durée de validité ; passée cette date il est caduc et doit être redemandé. Le client ne voit ni coût fournisseur ni marge.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Demande : brouillon · envoyée · en qualification · offre reçue · acceptée · refusée · expirée · en renégociation. Tarif : public · négocié actif · négocié à venir · changement annoncé. Simulateur : volume hors grille (devis obligatoire), canal non couvert sur le pays choisi, devise sans taux du jour disponible.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">Deux offres se chevauchant : la plus récente par date d'effet gagne, l'autre est marquée remplacée. Une offre acceptée après sa date d'effet prend effet le jour de l'acceptation. Volume engagé non atteint : le tarif public du palier réel s'applique pour le mois, sans pénalité. Un changement de tarif fournisseur en cours de contrat ferme n'est pas répercuté.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Le client doit-il voir la remise en pourcentage, ou seulement son prix final ? Afficher le pourcentage rend la négociation transparente mais crée un point de comparaison entre clients. Faut-il autoriser l'acceptation en ligne avec signature électronique, ou exiger un contrat contresigné hors plateforme ? Recommandation : prix final et remise visibles, signature électronique pour les offres sans engagement, contrat classique au-delà.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 14 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 15 — Facturation</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'rates', volume: 250000 };
+  }
+
+  fmt(n, dec) {
+    return n.toLocaleString('fr-FR', { minimumFractionDigits: dec || 0, maximumFractionDigits: dec || 0 }).replace(/\u202f/g, ' ');
+  }
+
+  tierFor(v) {
+    if (v <= 25000) return { label: '0 – 25 000', unit: 7.00, disc: 0 };
+    if (v <= 100000) return { label: '25 001 – 100 000', unit: 6.80, disc: 2.9 };
+    if (v <= 500000) return { label: '100 001 – 500 000', unit: 6.55, disc: 6.4 };
+    return { label: '500 001 – 1 000 000', unit: 6.20, disc: 11.4 };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['rates', 'Mes tarifs'],
+      ['sim', 'Simulateur'],
+      ['request', 'Nouvelle demande'],
+      ['quotes', 'Mes devis'],
+      ['offer', 'Offre reçue'],
+      ['negotiated', 'Tarifs négociés']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const link = txt => React.createElement('a', { href: '#', style: { fontSize: '12px' } }, txt);
+
+    const v = this.state.volume;
+    const tier = this.tierFor(v);
+    const sub = v * tier.unit;
+    const tax = sub * 0.18;
+    const overGrid = v >= 1000000;
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isRates: t === 'rates',
+      isSim: t === 'sim',
+      isRequest: t === 'request',
+      isQuotes: t === 'quotes',
+      isOffer: t === 'offer',
+      isNegotiated: t === 'negotiated',
+      goRequest: () => this.setState({ tab: 'request' }),
+      goOffer: () => this.setState({ tab: 'offer' }),
+
+      tiers: [
+        { tier:'0 – 25 000', note:'tarif d\u2019entrée', public:'7,20 FCFA', yours:'7,00 FCFA', discount:'− 2,8 %', scope:'Organisation', rowStyle: {} },
+        { tier:'25 001 – 100 000', note:'', public:'7,00 FCFA', yours:'6,80 FCFA', discount:'− 2,9 %', scope:'Organisation', rowStyle: {} },
+        { tier:'100 001 – 500 000', note:'palier actuel', public:'6,80 FCFA', yours:'6,55 FCFA', discount:'− 3,7 %', scope:'Organisation', rowStyle: { background: 'color-mix(in srgb, var(--color-accent) 8%, transparent)' } },
+        { tier:'500 001 – 1 000 000', note:'', public:'6,50 FCFA', yours:'6,20 FCFA', discount:'− 4,6 %', scope:'Organisation', rowStyle: {} },
+        { tier:'Au-delà de 1 000 000', note:'sur devis uniquement', public:'Sur devis', yours:'Sur devis', discount:'—', scope:'Devis NA-2026-031 en cours', rowStyle: {} }
+      ],
+
+      volume: v,
+      volumeLabel: this.fmt(v),
+      onVolume: e => this.setState({ volume: parseInt(e.target.value, 10) }),
+      onChannel: () => {},
+      unit: this.fmt(tier.unit, 2) + ' FCFA',
+      tierLabel: overGrid ? 'Hors grille' : tier.label,
+      total: overGrid ? 'Sur devis' : this.fmt(sub + tax),
+      yearly: overGrid ? '—' : this.fmt((sub + tax) * 12) + ' FCFA',
+      breakdown: [
+        { label: 'Volume mensuel', value: this.fmt(v) + ' messages' },
+        { label: 'Palier appliqué', value: overGrid ? 'Hors grille' : tier.label },
+        { label: 'Prix unitaire', value: overGrid ? 'Sur devis' : this.fmt(tier.unit, 2) + ' FCFA' },
+        { label: 'Remise contractuelle', value: overGrid ? 'À négocier' : '− ' + this.fmt(tier.disc, 1) + ' %' },
+        { label: 'Sous-total', value: overGrid ? 'Sur devis' : this.fmt(sub) + ' FCFA' },
+        { label: 'Taxe (18 %)', value: overGrid ? 'Sur devis' : this.fmt(tax) + ' FCFA' }
+      ],
+      advice: overGrid
+        ? 'Ce volume dépasse la grille publique : un devis est nécessaire, et c\u2019est aussi là que la remise est la plus significative.'
+        : (v > 400000
+          ? 'Vous approchez du palier 500 001. À ce seuil, le prix unitaire passe à 6,20 FCFA — soit 350 000 FCFA de moins par mois à volume constant.'
+          : 'À ce volume, la grille publique s\u2019applique avec votre remise contractuelle. Un devis devient intéressant au-delà de 500 000 messages par mois.'),
+      ctaLabel: overGrid ? 'Demander un devis' : 'Demander un tarif sur mesure',
+
+      quotes: [
+        { ref:'NA-2026-031', scope:'SMS & OTP · Togo, Bénin · 12 mois', volume:'750 000', date:'05/09/2026', valid:'19/09/2026', status: tag('tag-accent', 'Offre reçue'), action: link('Voir') },
+        { ref:'NA-2026-027', scope:'WhatsApp Utility · Togo', volume:'120 000', date:'28/08/2026', valid:'—', status: tag('tag-outline', 'En qualification'), action: link('Suivre') },
+        { ref:'NA-2026-019', scope:'Email transactionnel · tous pays', volume:'400 000', date:'12/07/2026', valid:'26/07/2026', status: tag('tag-neutral', 'Expirée'), action: link('Redemander') },
+        { ref:'NA-2026-014', scope:'SMS · Togo, Bénin', volume:'300 000', date:'18/02/2026', valid:'—', status: tag('tag-accent', 'Acceptée · active'), action: link('Voir') },
+        { ref:'Brouillon', scope:'Voix · Côte d\u2019Ivoire', volume:'—', date:'—', valid:'—', status: tag('tag-neutral', 'Brouillon'), action: link('Compléter') }
+      ],
+
+      steps: [
+        { n:'1', label:'Qualification', detail:'Un commercial vérifie le périmètre et la couverture opérateur demandée.' },
+        { n:'2', label:'Construction du tarif', detail:'Le prix est calculé sur les coûts fournisseurs réels et la marge cible de votre segment.' },
+        { n:'3', label:'Offre transmise', detail:'Vous recevez une grille complète avec sa durée de validité et ses conditions.' },
+        { n:'4', label:'Acceptation', detail:'L\u2019offre devient une règle datée du moteur de prix, visible dans « Mes tarifs ».' }
+      ],
+
+      offerRows: [
+        { scope:'SMS · Togo', tier:'600 000 – 1 000 000', current:'6,55 FCFA', proposed:'5,90 FCFA', gain:'− 9,9 %' },
+        { scope:'SMS · Bénin', tier:'600 000 – 1 000 000', current:'7,80 FCFA', proposed:'7,10 FCFA', gain:'− 9,0 %' },
+        { scope:'OTP · Togo', tier:'toutes tranches', current:'6,50 FCFA', proposed:'6,00 FCFA', gain:'− 7,7 %' },
+        { scope:'OTP · Bénin', tier:'toutes tranches', current:'7,40 FCFA', proposed:'6,90 FCFA', gain:'− 6,8 %' },
+        { scope:'Nom d\u2019expéditeur dédié', tier:'2 pays', current:'24 000 FCFA / mois', proposed:'Inclus', gain:'− 100 %' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

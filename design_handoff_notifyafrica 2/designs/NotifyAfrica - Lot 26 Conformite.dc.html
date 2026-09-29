@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/styles.css">
+<script src="_ds/nocturne-11d26c84-b5d6-4d86-b913-1c729fcc3807/_ds_bundle.js"></script>
+<style>
+  body { margin:0; }
+  a:hover { color: var(--color-accent-300); }
+  .btn, .tag { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+</style>
+</helmet>
+
+<div style="max-width:1320px; margin:0 auto; padding:var(--space-6) var(--space-6) calc(var(--space-8) * 3); display:flex; flex-direction:column; gap:var(--space-6)">
+
+  <div style="display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap">
+    <img src="assets/notifyafrica-logo-lockup.png" alt="notifyAfrica" style="height:30px; width:auto; border-radius:var(--radius-md)">
+    <h6 class="text-muted" style="margin:0">Lot 26 · Conformité &amp; modération</h6>
+    <span class="tag tag-accent" style="margin-left:auto">Interne NotifyAfrica · Conformité · Nadia O.</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:var(--space-3)">
+    <h2 style="margin:0">Conformité &amp; modération</h2>
+    <p class="text-muted" style="margin:0; max-width:72ch; font-size:14px">Protéger les destinataires, les opérateurs et la réputation des routes. Un seul client qui abuse peut faire bloquer un nom d'expéditeur ou une route pour tous les autres. Cinq écrans : noms d'expéditeur, revue des modèles, désinscriptions, filtrage du contenu, signalements et abus.</p>
+    <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="btn" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isSenders }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">À examiner</span><span class="num" style="font-size:24px">14</span><span class="text-muted" style="font-size:12px">plus ancien : 3 j</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Chez l'opérateur</span><span class="num" style="font-size:24px">22</span><span class="text-muted" style="font-size:12px">délai moyen 4,2 j</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Validés</span><span class="num" style="font-size:24px">486</span><span class="text-muted" style="font-size:12px">sur 9 opérateurs</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Refusés · 30 j</span><span class="num" style="font-size:24px">9</span><span class="text-muted" style="font-size:12px">dont 6 par NotifyAfrica</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+        <table class="table" style="min-width:760px">
+          <thead><tr><th>Nom</th><th>Organisation</th><th>Pays · opérateurs</th><th>Usage</th><th>Contrôles</th><th>État</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ senders }}" as="s" hint-placeholder-count="7">
+              <tr>
+                <td class="mono"><strong>{{ s.name }}</strong></td>
+                <td style="font-size:12.5px">{{ s.org }}</td>
+                <td class="text-muted" style="font-size:12px">{{ s.scope }}</td>
+                <td class="text-muted" style="font-size:12px">{{ s.usage }}</td>
+                <td class="text-muted" style="font-size:11.5px">{{ s.checks }}</td>
+                <td>{{ s.state }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Examen · BANQUETG</span><div class="card-title" style="font-size:17px">Demandé par Pharma Lomé</div></div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+          <sc-for list="{{ senderChecks }}" as="c" hint-placeholder-count="5">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3); padding-bottom:var(--space-2); border-bottom:1px solid var(--color-divider)"><span style="font-size:13px">{{ c.label }}</span><span class="{{ c.tagCls }}">{{ c.result }}</span></div>
+          </sc-for>
+        </div>
+        <div class="card" style="background:var(--color-neutral-900); gap:var(--space-1)"><span class="card-kicker">Risque d'usurpation</span><p class="card-body" style="margin:0">Le nom évoque une banque alors que le demandeur est une pharmacie. Un nom trompeur fait bloquer la route par l'opérateur et expose NotifyAfrica.</p></div>
+        <div class="field"><label>Motif communiqué au client</label><textarea class="input" style="min-height:60px">Le nom d'expéditeur doit correspondre à votre raison sociale ou à une marque que vous détenez. Proposition : PHARMALOME.</textarea></div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><button type="button" class="btn btn-primary">Refuser avec motif</button><button type="button" class="btn btn-secondary">Transmettre à l'opérateur</button></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTemplates }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-6)">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-4); flex-wrap:wrap">
+        <div><span class="card-kicker mono">util_promo_fr · Agence Digitale Lomé</span><div class="card-title" style="font-size:18px">Revue avant soumission à Meta</div></div>
+        <span class="tag tag-outline">Catégorie à revoir</span>
+      </div>
+      <div class="card" style="background:var(--color-neutral-900); gap:var(--space-2)">
+        <div style="display:flex; justify-content:space-between; gap:var(--space-3)"><span class="card-kicker">Contenu soumis</span><span class="tag tag-neutral">Déclaré : Utility</span></div>
+        <p class="card-body" style="margin:0">Bonjour &#123;&#123;1&#125;&#125;, votre commande est prête ! Profitez de <strong style="color:var(--color-accent-300)">-20 % sur votre prochain achat</strong> avec le code &#123;&#123;2&#125;&#125;. Offre valable jusqu'au &#123;&#123;3&#125;&#125;.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+        <sc-for list="{{ tplChecks }}" as="c" hint-placeholder-count="5">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3); padding-bottom:var(--space-2); border-bottom:1px solid var(--color-divider)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">{{ c.label }}</span><span class="text-muted" style="font-size:11.5px">{{ c.detail }}</span></div><span class="{{ c.tagCls }}">{{ c.result }}</span></div>
+        </sc-for>
+      </div>
+      <div class="field"><label>Décision</label>
+        <div class="seg" style="max-width:600px; white-space:nowrap">
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="td"><span>Soumettre tel quel</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="td" checked><span>Requalifier en Marketing</span></label>
+          <label class="seg-opt" style="flex:1; justify-content:center"><input type="radio" name="td"><span>Renvoyer au client</span></label>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" style="align-self:flex-start">Enregistrer et notifier le client</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Pourquoi une revue interne</span><p class="card-body" style="margin:0">Un modèle rejeté par Meta ou signalé par les destinataires dégrade la note de qualité du <em>numéro</em>, et donc sa limite d'envoi. La revue interne coûte quelques heures ; un numéro dégradé coûte des semaines.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">Effet prix</span><p class="card-body" style="margin:0">Requalifier en Marketing fait passer le prix de 24 à 46 FCFA par conversation au Togo. Le client doit voir et accepter ce changement avant soumission — jamais découvert sur sa facture.</p></div>
+      <div class="card elev-sm"><span class="card-kicker">File</span><p class="card-body" style="margin:0">8 modèles en attente · délai cible 4 h ouvrées · les modèles Authentication passent en priorité.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isOptout }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:var(--space-4)">
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Désinscrits · global</span><span class="num" style="font-size:24px">48 210</span><span class="text-muted" style="font-size:12px">bloqués pour tout client</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Désinscrits · par client</span><span class="num" style="font-size:24px">312 440</span><span class="text-muted" style="font-size:12px">bloqués pour un expéditeur</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">STOP reçus · 30 j</span><span class="num" style="font-size:24px">6 820</span><span class="text-muted" style="font-size:12px">traités en moins de 1 s</span></div>
+      <div class="card elev-sm" style="gap:2px"><span class="card-kicker">Envois évités · 30 j</span><span class="num" style="font-size:24px">41 900</span><span class="text-muted" style="font-size:12px">non facturés</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+        <div><span class="card-kicker">Vérifier un numéro</span><div class="card-title" style="font-size:17px">Pourquoi ce destinataire ne reçoit-il rien ?</div></div>
+        <div style="display:flex; gap:var(--space-2); align-items:flex-end; flex-wrap:wrap"><div class="field" style="flex:1; min-width:220px"><label>Numéro</label><input class="input mono" type="text" value="+228 90 12 88 41"></div><button type="button" class="btn btn-primary">Vérifier</button></div>
+        <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+          <sc-for list="{{ optoutLookup }}" as="o" hint-placeholder-count="4">
+            <div style="display:flex; justify-content:space-between; gap:var(--space-3); padding-bottom:var(--space-2); border-bottom:1px solid var(--color-divider)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">{{ o.scope }}</span><span class="text-muted" style="font-size:11.5px">{{ o.detail }}</span></div><span class="{{ o.tagCls }}">{{ o.state }}</span></div>
+          </sc-for>
+        </div>
+        <p class="text-muted" style="margin:0; font-size:11.5px">Une réinscription n'est possible que sur action du destinataire lui-même (mot-clé START ou consentement horodaté). Ni le client ni le support ne peuvent lever un STOP.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-md" style="padding:var(--space-6); gap:var(--space-3)">
+          <span class="card-kicker">Mots-clés reconnus</span>
+          <div style="display:flex; gap:var(--space-2); flex-wrap:wrap"><span class="tag tag-accent mono">STOP</span><span class="tag tag-accent mono">ARRET</span><span class="tag tag-accent mono">ARRÊT</span><span class="tag tag-accent mono">DESABONNER</span><span class="tag tag-accent mono">UNSUBSCRIBE</span><span class="tag tag-neutral mono">START</span><span class="tag tag-neutral mono">AIDE</span></div>
+          <button type="button" class="btn btn-secondary" style="align-self:flex-start">Ajouter une langue locale</button>
+        </div>
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Deux niveaux</span><p class="card-body" style="margin:0">Un STOP répondu à un expéditeur bloque cet expéditeur. Une demande via le support ou la liste nationale bloque le numéro pour tous les clients. Le marketing est bloqué ; le transactionnel et les OTP restent autorisés.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isFilter }}">
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+    <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-4)">
+      <div><span class="card-kicker">Tester le filtre</span><div class="card-title" style="font-size:18px">Que ferait la plateforme de ce message ?</div></div>
+      <div class="field"><label>Message</label><textarea class="input" style="min-height:90px" value="{{ msg }}" onInput="{{ onMsg }}"></textarea></div>
+      <div class="field"><label>Type déclaré</label><select class="input" onChange="{{ onKind }}"><sc-for list="{{ kindOpts }}" as="k"><option value="{{ k.v }}" selected="{{ k.sel }}">{{ k.l }}</option></sc-for></select></div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-2)">
+        <sc-for list="{{ filterHits }}" as="h" hint-placeholder-count="4">
+          <div style="display:flex; justify-content:space-between; gap:var(--space-3); padding-bottom:var(--space-2); border-bottom:1px solid var(--color-divider)"><div style="display:flex; flex-direction:column"><span style="font-size:13px">{{ h.rule }}</span><span class="text-muted" style="font-size:11.5px">{{ h.detail }}</span></div><span class="{{ h.tagCls }}">{{ h.effect }}</span></div>
+        </sc-for>
+      </div>
+      <div class="card" style="{{ verdictStyle }}"><span class="card-kicker">Décision</span><p class="card-body" style="margin:0">{{ verdict }}</p></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+      <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+        <span class="card-kicker">Règles actives</span>
+        <table class="table" style="min-width:420px; margin-top:var(--space-3)">
+          <thead><tr><th>Règle</th><th>Effet</th><th>30 j</th></tr></thead>
+          <tbody>
+            <tr><td style="font-size:12.5px">Liens raccourcis inconnus</td><td class="text-muted" style="font-size:12px">Mise en attente</td><td class="num">184</td></tr>
+            <tr><td style="font-size:12.5px">Demande de code ou mot de passe</td><td class="text-muted" style="font-size:12px">Blocage</td><td class="num">12</td></tr>
+            <tr><td style="font-size:12.5px">Marketing sans mention STOP</td><td class="text-muted" style="font-size:12px">Blocage</td><td class="num">96</td></tr>
+            <tr><td style="font-size:12.5px">Marketing hors fenêtre horaire</td><td class="text-muted" style="font-size:12px">Report</td><td class="num">440</td></tr>
+            <tr><td style="font-size:12.5px">Jeux d'argent, crédit non agréé</td><td class="text-muted" style="font-size:12px">Blocage</td><td class="num">8</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Mise en attente, pas silence</span><p class="card-body" style="margin:0">Un message retenu apparaît côté client comme « en revue » avec le motif. Il n'est pas facturé tant qu'il n'est pas parti. Délai de revue cible : 30 minutes ouvrées.</p></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isAbuse }}">
+  <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+    <div class="card elev-md" style="padding:var(--space-6); overflow:auto">
+      <table class="table" style="min-width:1040px">
+        <thead><tr><th>Signal</th><th>Organisation</th><th>Source</th><th>Indicateur</th><th>Seuil</th><th>Ouvert le</th><th>État</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ abuse }}" as="a" hint-placeholder-count="6">
+            <tr>
+              <td style="font-size:12.5px"><strong>{{ a.signal }}</strong></td>
+              <td style="font-size:12.5px">{{ a.org }}</td>
+              <td class="text-muted" style="font-size:12px">{{ a.source }}</td>
+              <td class="num" style="{{ a.valStyle }}">{{ a.value }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ a.threshold }}</td>
+              <td class="num text-muted" style="font-size:12px">{{ a.at }}</td>
+              <td>{{ a.state }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--space-6); align-items:start">
+      <div class="card elev-md" style="padding:var(--space-8); gap:var(--space-3)">
+        <div><span class="card-kicker">Dossier · Promo Flash CI</span><div class="card-title" style="font-size:17px">Suspendu pour conformité le 09/09</div></div>
+        <sc-for list="{{ caseLog }}" as="c" hint-placeholder-count="5">
+          <div style="display:flex; gap:var(--space-4); align-items:baseline"><span class="num text-muted" style="font-size:11.5px; min-width:84px">{{ c.at }}</span><span style="font-size:13px">{{ c.label }}</span></div>
+        </sc-for>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-2)"><button type="button" class="btn btn-secondary">Demander un plan de remédiation</button><button type="button" class="btn btn-ghost">Clôturer le compte</button></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:var(--space-4)">
+        <div class="card elev-sm" style="border-left:2px solid var(--color-accent)"><span class="card-kicker">Gradation</span><p class="card-body" style="margin:0">Avertissement → limitation du débit → suspension du marketing → suspension totale. Seule la fraude avérée (hameçonnage, usurpation) déclenche une suspension immédiate.</p></div>
+        <div class="card elev-sm"><span class="card-kicker">Source des signaux</span><p class="card-body" style="margin:0">Taux de STOP, plaintes transmises par les opérateurs, note de qualité Meta, filtrage de contenu, pic de volume vers des numéros jamais contactés.</p></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--space-4); margin-top:var(--space-6)">
+    <div class="card elev-sm"><div class="card-kicker">I · Règles métier</div><p class="card-body">Un nom d'expéditeur doit correspondre à la raison sociale ou à une marque détenue ; il est examiné par NotifyAfrica avant transmission à l'opérateur. Tout modèle WhatsApp passe une revue interne ; une requalification de catégorie est acceptée par le client avant soumission. Un STOP est appliqué en moins d'une seconde et ne peut être levé que par le destinataire. Un message bloqué ou retenu n'est jamais facturé. Les sanctions suivent une gradation, sauf fraude avérée.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">J · États</div><p class="card-body">Nom d'expéditeur soumis · en revue interne · chez l'opérateur · validé · refusé (NotifyAfrica ou opérateur) · révoqué. Modèle en revue · requalification proposée · soumis à Meta · approuvé · rejeté. Numéro désinscrit (expéditeur / global). Message accepté · retenu en revue · bloqué · reporté. Signal ouvert · en analyse · sanction appliquée · clos.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">L · Cas limites</div><p class="card-body">STOP reçu pendant une campagne en cours : les messages restants vers ce numéro sont retirés et non facturés. Deux organisations demandant le même nom : priorité au détenteur de la marque, sur justificatif. Message retenu dont la revue dépasse la fenêtre horaire autorisée : reporté au lendemain, client prévenu. Un OTP n'est jamais bloqué par une désinscription marketing.</p></div>
+    <div class="card elev-sm"><div class="card-kicker">N · À valider</div><p class="card-body">Faut-il une liste de désinscription globale partagée entre tous les clients, ou uniquement par expéditeur ? La première protège mieux les destinataires mais peut surprendre un client. Le filtrage doit-il bloquer ou seulement retenir les messages douteux ? Recommandation : liste globale limitée aux demandes explicites, et retenue plutôt que blocage sauf fraude.</p></div>
+  </section>
+
+  <hr class="hr">
+  <footer style="display:flex; gap:var(--space-4); justify-content:space-between; flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px">NotifyAfrica · Lot 26 · Design System Nocturne</span>
+    <span class="text-muted" style="font-size:12px">Suivant : Lot 27 — Administration plateforme</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: 'senders',
+      kind: 'mkt',
+      msg: 'PROMO ! -30% sur tous nos produits ce week-end. Cliquez vite : bit.ly/pr0mo-ci'
+    };
+  }
+
+  renderVals() {
+    const tabs = [
+      ['senders', "Noms d'expéditeur"],
+      ['templates', 'Revue des modèles'],
+      ['optout', 'Désinscriptions'],
+      ['filter', 'Filtrage du contenu'],
+      ['abuse', 'Signalements & abus']
+    ];
+    const t = this.state.tab;
+    const pill = a => ({
+      whiteSpace: 'nowrap',
+      color: a ? 'var(--color-accent)' : 'var(--color-text)',
+      borderColor: a ? 'var(--color-accent)' : 'var(--color-divider)',
+      background: a ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent'
+    });
+    const tag = (cls, txt) => React.createElement('span', { className: 'tag ' + cls }, txt);
+    const warn = { color: 'var(--color-accent-300)' };
+    const ok = 'tag tag-accent', ko = 'tag tag-outline', na = 'tag tag-neutral';
+
+    const { msg, kind } = this.state;
+    const m = msg.toLowerCase();
+    const hits = [];
+    const hasShort = /(bit\.ly|tinyurl|goo\.gl|t\.co|cutt\.ly)/.test(m);
+    const hasStop = /\bstop\b/.test(m);
+    const asksCode = /(mot de passe|code secret|code pin|votre pin|identifiants)/.test(m) && kind !== 'otp';
+    const promo = /(promo|%|réduction|offre|soldes|gratuit)/.test(m);
+    const gambling = /(pari|casino|jackpot|gagnez)/.test(m);
+    if (hasShort) hits.push({ rule:'Lien raccourci inconnu', detail:'Le domaine de destination ne peut pas être vérifié', effect:'Mise en attente', tagCls: ko });
+    if (kind === 'mkt' && !hasStop) hits.push({ rule:'Marketing sans mention STOP', detail:'Obligatoire sur tout message promotionnel', effect:'Blocage', tagCls: ko });
+    if (kind === 'trx' && promo) hits.push({ rule:'Contenu promotionnel déclaré transactionnel', detail:'Doit être requalifié en marketing', effect:'Requalification', tagCls: ko });
+    if (asksCode) hits.push({ rule:'Demande de code ou mot de passe', detail:'Schéma typique d\u2019hameçonnage', effect:'Blocage', tagCls: ko });
+    if (gambling) hits.push({ rule:'Jeux d\u2019argent', detail:'Agrément requis', effect:'Blocage', tagCls: ko });
+    if (!hits.length) hits.push({ rule:'Aucune règle déclenchée', detail:'Le message peut partir', effect:'Accepté', tagCls: ok });
+    const blocked = hits.some(h => h.effect === 'Blocage');
+    const held = !blocked && hits.some(h => h.effect === 'Mise en attente' || h.effect === 'Requalification');
+    const verdict = blocked
+      ? 'Bloqué avant envoi. Le client voit le motif exact et peut corriger. Aucun coût facturé.'
+      : held ? 'Retenu en revue manuelle (cible 30 min ouvrées). Le client voit « en revue » avec le motif ; non facturé tant qu\u2019il n\u2019est pas parti.'
+      : 'Accepté. Le message part sans intervention.';
+
+    return {
+      tabs: tabs.map(([k, label]) => ({ label, onClick: () => this.setState({ tab: k }), style: pill(k === t) })),
+      isSenders: t === 'senders',
+      isTemplates: t === 'templates',
+      isOptout: t === 'optout',
+      isFilter: t === 'filter',
+      isAbuse: t === 'abuse',
+
+      senders: [
+        { name:'BANQUETG', org:'Pharma Lomé', scope:'Togo · Moov, Yas', usage:'Transactionnel', checks:'Nom ≠ raison sociale', state: tag('tag-outline','À examiner') },
+        { name:'MABANQUE', org:'MaBanque SA', scope:'Bénin · MTN, Moov', usage:'Transactionnel', checks:'Tous conformes', state: tag('tag-neutral','Chez l\u2019opérateur · 3 j') },
+        { name:'TRANSCO', org:'Transco Cotonou', scope:'Bénin · MTN', usage:'Transactionnel', checks:'KYC non validé', state: tag('tag-neutral','En attente KYC') },
+        { name:'ASSUROUEST', org:'Assur Ouest', scope:'Côte d\u2019Ivoire · Orange, MTN', usage:'Mixte', checks:'Tous conformes', state: tag('tag-accent','Validé') },
+        { name:'MABPROMO', org:'MaBanque SA', scope:'Togo · Moov', usage:'Marketing', checks:'Refus opérateur', state: tag('tag-outline','Refusé · opérateur') },
+        { name:'INFO', org:'EduNet Togo', scope:'Togo · tous', usage:'Transactionnel', checks:'Nom générique interdit', state: tag('tag-outline','Refusé · NotifyAfrica') },
+        { name:'PROMOFLASH', org:'Promo Flash CI', scope:'Côte d\u2019Ivoire · tous', usage:'Marketing', checks:'Compte suspendu', state: tag('tag-neutral','Révoqué') }
+      ],
+      senderChecks: [
+        { label:'KYC de l\u2019organisation', result:'Validé', tagCls: ok },
+        { label:'Correspondance avec la raison sociale', result:'Non', tagCls: ko },
+        { label:'Marque déposée justifiée', result:'Absente', tagCls: ko },
+        { label:'Nom générique ou réservé', result:'Non', tagCls: ok },
+        { label:'Ressemblance avec un nom existant', result:'MABANQUE · 71 %', tagCls: ko }
+      ],
+
+      tplChecks: [
+        { label:'Cohérence catégorie / contenu', detail:'Remise et code promo dans un modèle Utility', result:'Non conforme', tagCls: ko },
+        { label:'Variables encadrées', detail:'Aucune variable en début ou fin de message', result:'Conforme', tagCls: ok },
+        { label:'Langue déclarée', detail:'Français · cohérent', result:'Conforme', tagCls: ok },
+        { label:'Liens', detail:'Aucun lien', result:'Conforme', tagCls: ok },
+        { label:'Historique du compte', detail:'1 modèle rejeté par Meta ce mois-ci', result:'Vigilance', tagCls: na }
+      ],
+
+      optoutLookup: [
+        { scope:'Liste globale', detail:'Aucune demande', state:'Non inscrit', tagCls: ok },
+        { scope:'MaBanque SA · MABANQUE', detail:'STOP reçu le 02/09 · 18:42 · réponse à une campagne', state:'Désinscrit', tagCls: ko },
+        { scope:'Assur Ouest · ASSUROUEST', detail:'Aucune demande', state:'Non inscrit', tagCls: ok },
+        { scope:'Effet', detail:'Marketing MaBanque bloqué · OTP et transactionnel MaBanque autorisés', state:'Partiel', tagCls: na }
+      ],
+
+      msg, kind,
+      onMsg: e => this.setState({ msg: e.target.value }),
+      onKind: e => this.setState({ kind: e.target.value }),
+      kindOpts: [['mkt','Marketing'],['trx','Transactionnel'],['otp','Code de vérification']].map(([v,l]) => ({ v, l, sel: v === kind })),
+      filterHits: hits,
+      verdict,
+      verdictStyle: blocked || held
+        ? { background:'var(--color-neutral-900)', borderLeft:'2px solid var(--color-accent)', gap:'var(--space-1)' }
+        : { background:'var(--color-neutral-900)', gap:'var(--space-1)' },
+
+      abuse: [
+        { signal:'Taux de STOP élevé', org:'Agence Digitale Lomé', source:'Plateforme', value:'4,8 %', threshold:'> 2 %', at:'12/09', valStyle: warn, state: tag('tag-outline','Avertissement envoyé') },
+        { signal:'Plainte opérateur', org:'Promo Flash CI', source:'Orange CI', value:'38 plaintes', threshold:'> 10 / sem.', at:'08/09', valStyle: warn, state: tag('tag-outline','Suspendu') },
+        { signal:'Qualité Meta basse', org:'Livraison Express', source:'Meta', value:'Moyenne', threshold:'≠ Élevée', at:'10/09', valStyle:{}, state: tag('tag-neutral','Surveillance') },
+        { signal:'Pic vers numéros inconnus', org:'Transco Cotonou', source:'Plateforme', value:'+ 2 400 %', threshold:'> 500 %', at:'13/09', valStyle: warn, state: tag('tag-outline','Débit limité') },
+        { signal:'Contenu d\u2019hameçonnage', org:'Compte org_5201', source:'Filtrage', value:'12 messages', threshold:'1', at:'11/09', valStyle: warn, state: tag('tag-outline','Suspension immédiate') },
+        { signal:'Taux de STOP élevé', org:'MicroCrédit Kara', source:'Plateforme', value:'2,1 %', threshold:'> 2 %', at:'06/09', valStyle:{}, state: tag('tag-accent','Clos · corrigé') }
+      ],
+      caseLog: [
+        { at:'02/09 10:14', label:'Pic de STOP à 6,2 % sur une campagne de 40 000 destinataires' },
+        { at:'03/09 09:00', label:'Avertissement envoyé · rappel des règles marketing' },
+        { at:'06/09 16:30', label:'Nouvelle campagne sans mention STOP · 18 000 messages bloqués' },
+        { at:'08/09 11:20', label:'Orange CI transmet 38 plaintes et menace de bloquer la route partagée' },
+        { at:'09/09 08:05', label:'Suspension totale · nom PROMOFLASH révoqué · solde conservé' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
