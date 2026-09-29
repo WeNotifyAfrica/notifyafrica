@@ -21,6 +21,7 @@ ENV NODE_ENV=production
 COPY --from=installer /repo/apps/website/.next ./apps/website/.next
 COPY --from=installer /repo/apps/website/public ./apps/website/public
 COPY --from=installer /repo/apps/website/package.json ./apps/website/package.json
+COPY --from=installer /repo/apps/website/node_modules ./apps/website/node_modules
 COPY --from=installer /repo/node_modules ./node_modules
 WORKDIR /repo/apps/website
 EXPOSE 3000

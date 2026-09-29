@@ -20,6 +20,7 @@ WORKDIR /repo
 ENV NODE_ENV=production
 COPY --from=installer /repo/apps/admin/.next ./apps/admin/.next
 COPY --from=installer /repo/apps/admin/package.json ./apps/admin/package.json
+COPY --from=installer /repo/apps/admin/node_modules ./apps/admin/node_modules
 COPY --from=installer /repo/node_modules ./node_modules
 WORKDIR /repo/apps/admin
 EXPOSE 3002

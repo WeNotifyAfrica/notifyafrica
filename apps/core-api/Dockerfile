@@ -1,6 +1,10 @@
 # Build context: repo root (see infra/docker/docker-compose.yml).
 FROM node:20-alpine AS base
 RUN corepack enable
+# Prisma's query/schema engine binaries are compiled against a specific
+# OpenSSL version; node:20-alpine ships none, so without this the engine
+# fails at runtime with an unparseable (non-JSON) crash message.
+RUN apk add --no-cache openssl
 
 FROM base AS pruner
 WORKDIR /repo
