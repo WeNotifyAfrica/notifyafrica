@@ -35,6 +35,8 @@ const NAV_ITEMS: ShellNavItem[] = [
   { href: "/dashboard/organizations", label: "Organisations" },
   { href: "/dashboard/users", label: "Utilisateurs" },
   { href: "/dashboard/transactions", label: "Transactions" },
+  { href: "/dashboard/audit-log", label: "Journal d'audit" },
+  { href: "/dashboard/team", label: "Équipe interne & rôles" },
 ];
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {

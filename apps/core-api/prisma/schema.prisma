@@ -34,12 +34,14 @@ enum ConsoleRole {
   VIEWER_AUDITOR
 }
 
-// Internal (Admin) roles are pending design lot 27 (not yet designed per
-// design_handoff_notifyafrica/README §8). Keep a single placeholder role so
-// the Admin app can gate on RBAC today without inventing the final role set.
+// Internal (Admin) roles per design lot 27, "Équipe interne & rôles".
 enum InternalRole {
   SUPER_ADMIN
-  STAFF
+  FINANCE
+  COMMERCIAL
+  CONFORMITE
+  SUPPORT
+  TECHNIQUE
 }
 
 enum ConfigScope {

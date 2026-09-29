@@ -1,6 +1,7 @@
 import type {
   AdminDashboardSummary,
   ApiKeySummary,
+  AuditLogEntry,
   Campaign,
   CatalogProduct,
   Currency,
@@ -20,6 +21,7 @@ import type {
   RouteSummary,
   SenderName,
   SmsTemplate,
+  StaffMember,
   TeamMember,
   Transaction,
   Wallet,
@@ -176,9 +178,24 @@ export function createCoreApiClient({ baseUrl, sessionToken, environment }: Core
     createSmsTemplate: (payload: unknown) =>
       request<{ template: SmsTemplate }>("/api/sms/templates", { method: "POST", body: JSON.stringify(payload) }),
     listAdminSenderNames: () => request<{ senderNames: SenderName[] }>("/api/admin/sms/sender-names"),
+    listAuditLog: (params?: { action?: string; resource?: string; actorEmail?: string }) => {
+      const qs = params ? `?${new URLSearchParams(Object.entries(params).filter(([, v]) => v) as [string, string][]).toString()}` : "";
+      return request<{ entries: AuditLogEntry[]; resources: string[] }>(`/api/admin/audit-log${qs}`);
+    },
     reviewSenderName: (id: string, payload: unknown) =>
       request<{ senderName: SenderName }>(`/api/admin/sms/sender-names/${id}/review`, {
         method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    listStaff: () => request<{ staff: StaffMember[] }>("/api/admin/staff"),
+    createStaff: (payload: unknown) =>
+      request<{ staff: StaffMember; tempPassword: string }>("/api/admin/staff", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    updateStaff: (id: string, payload: unknown) =>
+      request<{ staff: StaffMember }>(`/api/admin/staff/${id}`, {
+        method: "PATCH",
         body: JSON.stringify(payload),
       }),
     listApiKeys: () => request<{ keys: ApiKeySummary[] }>("/api/keys"),

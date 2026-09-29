@@ -71,8 +71,7 @@ export const SUPPORTED_CURRENCIES = [
 
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
-/** Console-side RBAC roles (handoff §5 invariant 8). Admin-internal roles are
- * pending lot 27 (not yet designed) — do not add them here until validated. */
+/** Console-side RBAC roles (handoff §5 invariant 8). */
 export const CONSOLE_ROLES = [
   "OWNER",
   "ADMIN",
@@ -84,3 +83,25 @@ export const CONSOLE_ROLES = [
 ] as const;
 
 export type ConsoleRole = (typeof CONSOLE_ROLES)[number];
+
+/** Admin-internal (back-office) RBAC roles (design_handoff lot 27, "Équipe
+ * interne & rôles"). */
+export const INTERNAL_ROLES = [
+  "SUPER_ADMIN",
+  "FINANCE",
+  "COMMERCIAL",
+  "CONFORMITE",
+  "SUPPORT",
+  "TECHNIQUE",
+] as const;
+
+export type InternalRole = (typeof INTERNAL_ROLES)[number];
+
+export const INTERNAL_ROLE_LABELS: Record<InternalRole, string> = {
+  SUPER_ADMIN: "Super-admin",
+  FINANCE: "Finance",
+  COMMERCIAL: "Commercial",
+  CONFORMITE: "Conformité",
+  SUPPORT: "Support",
+  TECHNIQUE: "Technique",
+};

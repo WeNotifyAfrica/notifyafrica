@@ -935,6 +935,62 @@ Console-wide Live/Test toggle (which project a key belongs to). Both
 exist on the Developers page now; worth reconciling in a future pass
 rather than conflating them under time pressure here.
 
+## Équipe interne & rôles (Lot 27 partial)
+
+`InternalRole` was a two-value placeholder (`SUPER_ADMIN`/`STAFF`) since
+Phase A because lot 27 wasn't designed yet. With `design_handoff_notifyafrica
+2/`'s mockup now available, it's the mockup's real role set: `SUPER_ADMIN`,
+`FINANCE`, `COMMERCIAL`, `CONFORMITE`, `SUPPORT`, `TECHNIQUE` (the mockup's
+"Direction" column has no corresponding back-office account — it only shows
+up as an audit-log approver — so it isn't modeled as a role).
+
+`internalRoleHasPermission` (`packages/auth/src/rbac.ts`) mirrors the
+existing `consoleRoleHasPermission` pattern, encoding the mockup's
+domain × role permission matrix (L/É/V → `.read`/`.write`/`.validate`
+per domain). It's wired into the one place that needed a real gate today —
+`/api/admin/staff` (only a Super-admin can add or edit internal accounts,
+via `platform.write`) — rather than retrofitted across every existing
+`/api/admin/*` route, which all still gate on the coarser
+`requireInternalRole` (any internal role) as before; doing that narrowing
+for two dozen routes at once, untested per-domain, was judged too risky to
+bundle into this pass.
+
+Before this, there was no way to create a second internal Admin account
+outside the Prisma seed script. New Admin page `/dashboard/team`
+("Équipe interne & rôles") fills that gap, deliberately scoped down from
+the mockup's email-invitation flow (no email provider exists) to the same
+"shown once" UX already used for API key secrets: creating a member
+generates a random temp password, returns it exactly once in the API
+response, and stores only its bcrypt hash.
+
+The mockup's edge case ("Dernier super-admin qui tente de se retirer ses
+droits : refusé") is enforced server-side in `PATCH
+/api/admin/staff/[id]`: demoting or suspending a user fails with
+`409 last_super_admin` if they're the only active Super-admin left.
+
+Verified end-to-end against local Postgres: migrated `InternalRole`
+in place (confirmed via `psql` that the only pre-existing row was
+`SUPER_ADMIN`, so no data was at risk from the removed `STAFF` value) →
+created a `CONFORMITE` member via the API, got a temp password → logged
+in as them → confirmed they get `403` creating another staff member
+(no `platform.write`) but `200` reading the list (`requireInternalRole`
+still passes) → Super-admin `PATCH`'d their role and suspended them →
+attempted to suspend the sole remaining Super-admin → correctly refused
+with `409`. Also hit `/dashboard/team` directly and confirmed the page
+renders the table and invite form with no server error.
+
+One real bug surfaced and fixed along the way, worth noting because it'll
+recur: the long-running `core-api` dev server had the *previous* generated
+Prisma Client loaded in memory from before `prisma migrate` +
+`prisma generate` ran, so `prisma.user.create` with a new enum value
+(`CONFORMITE`) 500'd with no body — silently succeeding for reads (old and
+new enums agree on `SUPER_ADMIN`) but failing for anything referencing a
+value the in-memory client didn't know about. A dev server needs restarting
+after `prisma generate`, the same way it would after any other dependency
+whose generated code it already loaded — this doesn't apply to `prisma
+migrate deploy` in the Docker/production path, since that always starts a
+fresh process.
+
 ## What's built vs. what's next
 
 Built:
@@ -985,9 +1041,20 @@ Built:
 - Infra: docker-compose (dev deps + full stack), per-app Dockerfiles, Caddy
   proxy, CI/CD (`.github/workflows/deploy.yml`) — push to `main` builds and
   pushes images to GHCR, then deploys to a VPS over SSH, see
-  `docs/DEPLOYMENT.md`. Not yet exercised against a real server (no VPS
-  access in this session) — only compose/CI YAML and the Dockerfile logic
-  have been validated locally.
+  `docs/DEPLOYMENT.md`. Live on a real Hostinger VPS
+  (`www`/`console`/`backoffice`/`api`.wenotifyafrica.com) — GHCR packages
+  stay private, the VPS authenticates with a `read:packages` PAT rather
+  than making them public. Getting the first real deploy green surfaced 5
+  Docker-only bugs invisible to local `pnpm build`/`typecheck` (a pruned
+  monorepo missing `tsconfig.base.json`, a Prisma schema outside the
+  Worker's dependency graph, two apps' runner stages `COPY`ing a
+  nonexistent `public/`, four runner stages missing their own app-level
+  `node_modules` so `npx` silently ran the latest registry version instead
+  of the pinned one, and no OpenSSL for Prisma's engine on Alpine) — all
+  fixed, see git history from `226329b` through `efd5993`.
+- **Équipe interne & rôles** (Lot 27 partial) — real `InternalRole` set,
+  `internalRoleHasPermission`, Admin staff create/list/update with a
+  one-time temp password and a last-Super-admin guard (see above).
 
 Verified end-to-end against local Postgres/Redis: register → 0 balance →
 send blocked with `insufficient_balance` → Admin credits wallet → send

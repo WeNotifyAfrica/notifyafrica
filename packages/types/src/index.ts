@@ -15,3 +15,5 @@ export * from "./campaigns";
 export * from "./whatsapp";
 export * from "./dashboard";
 export * from "./sms";
+export * from "./audit";
+export * from "./staff";

@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
-import type { ConsoleRole } from "@notifyafrica/design-system";
+import type { ConsoleRole, InternalRole } from "@notifyafrica/design-system";
 
 /**
  * Session tokens across app boundaries.
@@ -24,7 +24,7 @@ export interface SessionPayload {
   email: string;
   organizationId: string | null;
   role: ConsoleRole | null;
-  internalRole: "SUPER_ADMIN" | "STAFF" | null;
+  internalRole: InternalRole | null;
 }
 
 const alg = "HS256";
