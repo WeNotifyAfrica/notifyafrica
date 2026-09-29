@@ -7,18 +7,18 @@
     email {$ACME_EMAIL:admin@example.com}
 }
 
-{$PUBLIC_SITE_DOMAIN:notifyafrica.com} {
+{$PUBLIC_SITE_DOMAIN:www.wenotifyafrica.com} {
     reverse_proxy website:3000
 }
 
-{$CONSOLE_DOMAIN:app.notifyafrica.com} {
+{$CONSOLE_DOMAIN:console.wenotifyafrica.com} {
     reverse_proxy console:3001
 }
 
-{$ADMIN_DOMAIN:admin.notifyafrica.com} {
+{$ADMIN_DOMAIN:backoffice.wenotifyafrica.com} {
     reverse_proxy admin:3002
 }
 
-{$API_DOMAIN:api.notifyafrica.com} {
+{$API_DOMAIN:api.wenotifyafrica.com} {
     reverse_proxy core-api:3010
 }

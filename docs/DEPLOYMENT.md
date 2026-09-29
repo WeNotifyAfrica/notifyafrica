@@ -9,10 +9,10 @@ setup** you do by hand once, and **CI/CD** (already wired in
 
 | Subdomain | Service | Container |
 |---|---|---|
-| `notifyafrica.com` (+ `www`) | Website | `website` |
-| `app.notifyafrica.com` | Console | `console` |
-| `admin.notifyafrica.com` | Admin | `admin` |
-| `api.notifyafrica.com` | Core API | `core-api` |
+| `www.wenotifyafrica.com` (+ `www`) | Website | `website` |
+| `console.wenotifyafrica.com` | Console | `console` |
+| `backoffice.wenotifyafrica.com` | Admin | `admin` |
+| `api.wenotifyafrica.com` | Core API | `core-api` |
 
 A Caddy reverse proxy (`infra/proxy/Caddyfile`) routes each domain to its
 container and gets free HTTPS certificates automatically (Let's Encrypt) —
@@ -26,10 +26,9 @@ VPS's public IPv4 address:
 
 | Type | Host | Value |
 |---|---|---|
-| A | `@` (root) | `<VPS_IP>` |
 | A | `www` | `<VPS_IP>` |
-| A | `app` | `<VPS_IP>` |
-| A | `admin` | `<VPS_IP>` |
+| A | `console` | `<VPS_IP>` |
+| A | `backoffice` | `<VPS_IP>` |
 | A | `api` | `<VPS_IP>` |
 
 If your DNS host is Cloudflare: keep the orange "proxy" cloud **off** (grey,
@@ -37,7 +36,7 @@ DNS-only) until everything works — Cloudflare's proxy can interfere with
 Caddy's certificate issuance on first setup. You can turn it on afterwards.
 
 DNS propagation can take a few minutes to a few hours. You can check with
-`dig +short app.notifyafrica.com` — once it returns your VPS IP, it's live.
+`dig +short console.wenotifyafrica.com` — once it returns your VPS IP, it's live.
 
 ## 3. Find your VPS's IP and enable SSH
 
@@ -133,18 +132,18 @@ goes through git — it's created once, by hand, on the server):
 
 ```bash
 cat > /opt/notifyafrica/.env <<'EOF'
-PUBLIC_SITE_URL=https://notifyafrica.com
-CONSOLE_URL=https://app.notifyafrica.com
-ADMIN_URL=https://admin.notifyafrica.com
-CORE_API_URL=https://api.notifyafrica.com
-DOCS_URL=https://notifyafrica.com/docs
-STATUS_URL=https://notifyafrica.com/status
+PUBLIC_SITE_URL=https://www.wenotifyafrica.com
+CONSOLE_URL=https://console.wenotifyafrica.com
+ADMIN_URL=https://backoffice.wenotifyafrica.com
+CORE_API_URL=https://api.wenotifyafrica.com
+DOCS_URL=https://www.wenotifyafrica.com/docs
+STATUS_URL=https://www.wenotifyafrica.com/status
 
-PUBLIC_SITE_DOMAIN=notifyafrica.com
-CONSOLE_DOMAIN=app.notifyafrica.com
-ADMIN_DOMAIN=admin.notifyafrica.com
-API_DOMAIN=api.notifyafrica.com
-ACME_EMAIL=you@notifyafrica.com
+PUBLIC_SITE_DOMAIN=www.wenotifyafrica.com
+CONSOLE_DOMAIN=console.wenotifyafrica.com
+ADMIN_DOMAIN=backoffice.wenotifyafrica.com
+API_DOMAIN=api.wenotifyafrica.com
+ACME_EMAIL=easi.shop.tg@gmail.com
 
 POSTGRES_USER=notifyafrica
 POSTGRES_PASSWORD=CHANGE_ME_STRONG_RANDOM
@@ -154,7 +153,7 @@ DATABASE_URL=postgresql://notifyafrica:CHANGE_ME_STRONG_RANDOM@postgres:5432/not
 REDIS_URL=redis://redis:6379
 
 AUTH_SECRET=CHANGE_ME_LONG_RANDOM_VALUE
-AUTH_URL=https://app.notifyafrica.com
+AUTH_URL=https://console.wenotifyafrica.com
 
 NOTIFYAFRICA_ENV=production
 EOF
@@ -216,11 +215,11 @@ Caddy's first certificate request — give it a minute after containers are up.
 ## 8. Verify
 
 ```bash
-curl -I https://api.notifyafrica.com/api/health
+curl -I https://api.wenotifyafrica.com/api/health
 ```
 
-Then open `https://notifyafrica.com`, `https://app.notifyafrica.com`,
-`https://admin.notifyafrica.com` in a browser. Log into Admin with the dev
+Then open `https://www.wenotifyafrica.com`, `https://console.wenotifyafrica.com`,
+`https://backoffice.wenotifyafrica.com` in a browser. Log into Admin with the dev
 super-admin unless you've changed it (`docs/ARCHITECTURE.md` /
 `apps/core-api/prisma/seed.ts`) — **change that password** once you're able
 to log in, this is a placeholder credential, not something to leave on a
