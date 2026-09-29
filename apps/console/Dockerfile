@@ -19,7 +19,6 @@ FROM base AS runner
 WORKDIR /repo
 ENV NODE_ENV=production
 COPY --from=installer /repo/apps/console/.next ./apps/console/.next
-COPY --from=installer /repo/apps/console/public ./apps/console/public
 COPY --from=installer /repo/apps/console/package.json ./apps/console/package.json
 COPY --from=installer /repo/node_modules ./node_modules
 WORKDIR /repo/apps/console

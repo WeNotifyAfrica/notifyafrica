@@ -19,7 +19,6 @@ FROM base AS runner
 WORKDIR /repo
 ENV NODE_ENV=production
 COPY --from=installer /repo/apps/admin/.next ./apps/admin/.next
-COPY --from=installer /repo/apps/admin/public ./apps/admin/public
 COPY --from=installer /repo/apps/admin/package.json ./apps/admin/package.json
 COPY --from=installer /repo/node_modules ./node_modules
 WORKDIR /repo/apps/admin
