@@ -15,6 +15,13 @@ async function tokenOrRedirect() {
   return token;
 }
 
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_COOKIE);
+  cookieStore.delete(ENV_COOKIE);
+  redirect("/login");
+}
+
 /** Live/Test switch (design handoff Lots 5-6 shell). Sets the cookie every
  * project-scoped page/action reads via getCurrentEnvironment(), then
  * revalidates the whole app shell so the current page re-renders with

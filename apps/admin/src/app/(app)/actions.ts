@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
@@ -10,6 +11,12 @@ async function tokenOrThrow() {
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) throw new Error("unauthorized");
   return token;
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_COOKIE);
+  redirect("/login");
 }
 
 export async function triggerSeedImportAction() {

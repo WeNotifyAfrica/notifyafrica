@@ -2,7 +2,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { coreApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/env";
+import { logoutAction } from "./actions";
 import {
+  Button,
   Shell,
   ShellSidebar,
   ShellBrand,
@@ -67,9 +69,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
         <ShellTopbar>
           <ShellPageTitle items={NAV_ITEMS} fallback="Back-office" />
-          <Tag variant="accent" style={{ marginLeft: "auto" }}>
-            Interne NotifyAfrica · {session.email} · {session.internalRole}
-          </Tag>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginLeft: "auto" }}>
+            <Tag variant="accent">
+              Interne NotifyAfrica · {session.email} · {session.internalRole}
+            </Tag>
+            <form action={logoutAction}>
+              <Button type="submit" variant="ghost">
+                Se déconnecter
+              </Button>
+            </form>
+          </div>
         </ShellTopbar>
 
         <ShellMain>{children}</ShellMain>

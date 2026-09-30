@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { coreApi } from "@/lib/api";
 import { getCurrentEnvironment } from "@/lib/environment";
-import { setEnvironmentAction } from "./actions";
+import { setEnvironmentAction, logoutAction } from "./actions";
 import { SESSION_COOKIE } from "@/lib/env";
 import {
   Button,
@@ -158,6 +158,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             >
               {initials}
             </span>
+            <form action={logoutAction}>
+              <Button type="submit" variant="ghost">
+                Se déconnecter
+              </Button>
+            </form>
           </div>
         </ShellTopbar>
 
