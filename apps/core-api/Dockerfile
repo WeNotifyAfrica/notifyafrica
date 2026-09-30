@@ -28,6 +28,15 @@ COPY --from=installer /repo/apps/core-api/prisma ./apps/core-api/prisma
 COPY --from=installer /repo/apps/core-api/package.json ./apps/core-api/package.json
 COPY --from=installer /repo/apps/core-api/node_modules ./apps/core-api/node_modules
 COPY --from=installer /repo/node_modules ./node_modules
+# `.next` is enough to serve the app (webpack already bundled everything it
+# needs), but `pnpm db:seed` (prisma/seed.ts) runs via tsx against raw
+# source, not the Next.js build — it needs apps/core-api/src and the
+# workspace packages it imports (none of which have their own build step)
+# actually present as files, the same reason the Worker's Dockerfile copies
+# them. Only used for the documented one-time post-deploy seed
+# (docs/DEPLOYMENT.md step 8), never at normal container startup.
+COPY --from=installer /repo/apps/core-api/src ./apps/core-api/src
+COPY --from=installer /repo/packages ./packages
 WORKDIR /repo/apps/core-api
 EXPOSE 3010
 # Migrations run on every container start so a deploy never ships a build

@@ -3,10 +3,14 @@ import { importConfigSeed } from "../src/lib/seed-import";
 import { hashPassword } from "@notifyafrica/auth";
 
 /**
- * Dev-only convenience: internal (Admin) accounts have no self-registration
- * (00_Contexte_Global §17 keeps internal/customer roles separate), so local
- * development needs one bootstrap super-admin to log into the Admin app.
- * DO NOT reuse this path for staging/production provisioning.
+ * Internal (Admin) accounts have no self-registration (00_Contexte_Global
+ * §17 keeps internal/customer roles separate), so both local dev and a
+ * fresh production deploy need one bootstrap super-admin to log into the
+ * Admin app at all. Idempotent (no-ops if ADMIN_SEED_EMAIL already
+ * exists), which is what makes it safe to also be the documented one-time
+ * post-deploy step (docs/DEPLOYMENT.md step 8) — not just a dev
+ * convenience. Always pass ADMIN_SEED_EMAIL/ADMIN_SEED_PASSWORD explicitly
+ * in production rather than relying on the placeholder defaults below.
  */
 async function ensureDevSuperAdmin() {
   const email = process.env.ADMIN_SEED_EMAIL ?? "admin@notifyafrica.dev";
